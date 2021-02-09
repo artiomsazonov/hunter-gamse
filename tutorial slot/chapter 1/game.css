@@ -1,0 +1,15 @@
+* {padding: 0; margin: 0}
+body { background-color: #000;}
+#gameArea {
+	position: fixed;
+	left:     50%;
+	top:      50%;
+	width:	1280px;
+	height:	720px;
+	margin-left: -640px;
+	margin-top: -360px;
+	-ms-touch-action: none;
+}
+canvas { 
+	position: absolute;
+}
