@@ -21,14 +21,15 @@ document.body.appendChild(app.view);
 var stage = new Container();
 
 loader
-    .add("images/dungeon.png")
+    .add("dungeon", "images/dungeon.png")
     .add("images/treasureHunter.json")
-    .add("images/explorers.png")
+    .add("explorer", "images/explorers.png")
     .add("images/star.png")
     .add("images/blob.png")
+    .add("press", "images/btn.png")
     .load(setup);
 
-var gameScene, healthBar, innerBar, outerBar, gameOverScene, message, id, dungeon, door, treasure, explorer, blobs, blob, state, collision, explorerHit, stars, blobOff;
+var gameScene, healthBar, innerBar, outerBar, gameOverScene, message, id, dungeon, door, treasure, explorer, blobs, blob, state, collision, explorerHit, stars, blobOff, btnRestart;
 
 function setup() {
     gameScene = new Container();
@@ -38,7 +39,7 @@ function setup() {
     gameOverScene.visible = false;
 
     //метод с картинкой
-    dungeon = new Sprite(TextureCache["images/dungeon.png"]);
+    dungeon = new Sprite(resources.dungeon.texture);
     gameScene.addChild(dungeon);
 
     //метод со спрайтом
@@ -110,13 +111,27 @@ function setup() {
     healthBar.outer = outerBar;
     message = new Text(
         "The End!", {
-            fontFamily: "Futura",
-            fontSize: "48px",
-            fill: "white"
-        }
+        fontFamily: "Futura",
+        fontSize: "48px",
+        fill: "white"
+    }
     );
     message.position.set(150, stage.height / 2 - 32);
     gameOverScene.addChild(message);
+    btnRestart = new Sprite(resources.press.texture);
+    btnRestart.position.set(stage.width / 2 - btnRestart.width / 2, stage.height - btnRestart.height - 50);
+    btnMsg = new Text(
+        "RESTART", {
+        fontFamily: "Futura",
+        fontSize: "18px",
+        fill: "white"
+    });
+    btnMsg.position.set(btnRestart.width / 2 - btnMsg.width / 2, btnRestart.height / 2 - btnMsg.height / 2);
+    btnRestart.addChild(btnMsg)
+    gameOverScene.addChild(btnRestart)
+
+    btnRestart.interactive = true;
+    btnRestart.on("mousedown", btnOnDawn);
 
     stars = d.emitter(
         1000,
@@ -125,7 +140,7 @@ function setup() {
                 256,
                 256,
                 () =>
-                su.sprite("images/star.png"),
+                    su.sprite("images/star.png"),
                 gameOverScene,
                 50,
                 0,
@@ -148,7 +163,7 @@ function setup() {
                 256,
                 256,
                 () =>
-                su.sprite("images/blob.png"),
+                    su.sprite("images/blob.png"),
                 gameOverScene,
                 50,
                 0,
@@ -305,3 +320,7 @@ function contain(sprite, container) {
     }
     return collision;
 };
+
+function btnOnDawn() {
+    location.href = location.href;
+}

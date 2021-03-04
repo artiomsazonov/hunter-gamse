@@ -1,6 +1,6 @@
 /*!
  * pixi.js - v4.3.2
- * Compiled Thu, 20 Jul 2017 07:24:36 UTC
+ * Compiled Mon, 09 Jan 2017 14:29:41 UTC
  *
  * pixi.js is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -212,8 +212,6 @@ exports.nextCombination = function(v) {
 
 
 },{}],2:[function(require,module,exports){
-
-},{}],3:[function(require,module,exports){
 'use strict';
 
 module.exports = earcut;
@@ -859,7 +857,7 @@ earcut.flatten = function (data) {
     return result;
 };
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 'use strict';
 
 var has = Object.prototype.hasOwnProperty
@@ -1172,9 +1170,9 @@ if ('undefined' !== typeof module) {
   module.exports = EventEmitter;
 }
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /**
- * isMobile.js v0.4.1
+ * isMobile.js v0.4.0
  *
  * A simple library to detect Apple phones and tablets,
  * Android phones and tablets, other mobile devices (like blackberry, mini-opera and windows phone),
@@ -1193,7 +1191,7 @@ if ('undefined' !== typeof module) {
         android_tablet      = /Android/i,
         amazon_phone        = /(?=.*\bAndroid\b)(?=.*\bSD4930UR\b)/i,
         amazon_tablet       = /(?=.*\bAndroid\b)(?=.*\b(?:KFOT|KFTT|KFJWI|KFJWA|KFSOWI|KFTHWI|KFTHWA|KFAPWI|KFAPWA|KFARWI|KFASWI|KFSAWI|KFSAWA)\b)/i,
-        windows_phone       = /Windows Phone/i,
+        windows_phone       = /IEMobile/i,
         windows_tablet      = /(?=.*\bWindows\b)(?=.*\bARM\b)/i, // Match 'Windows' AND 'ARM'
         other_blackberry    = /BlackBerry/i,
         other_blackberry_10 = /BB10/i,
@@ -1311,183 +1309,9 @@ if ('undefined' !== typeof module) {
 
 })(this);
 
-},{}],6:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var MiniSignalBinding = (function () {
-  function MiniSignalBinding(fn, once, thisArg) {
-    if (once === undefined) once = false;
-
-    _classCallCheck(this, MiniSignalBinding);
-
-    this._fn = fn;
-    this._once = once;
-    this._thisArg = thisArg;
-    this._next = this._prev = this._owner = null;
-  }
-
-  _createClass(MiniSignalBinding, [{
-    key: 'detach',
-    value: function detach() {
-      if (this._owner === null) return false;
-      this._owner.detach(this);
-      return true;
-    }
-  }]);
-
-  return MiniSignalBinding;
-})();
-
-function _addMiniSignalBinding(self, node) {
-  if (!self._head) {
-    self._head = node;
-    self._tail = node;
-  } else {
-    self._tail._next = node;
-    node._prev = self._tail;
-    self._tail = node;
-  }
-
-  node._owner = self;
-
-  return node;
-}
-
-var MiniSignal = (function () {
-  function MiniSignal() {
-    _classCallCheck(this, MiniSignal);
-
-    this._head = this._tail = undefined;
-  }
-
-  _createClass(MiniSignal, [{
-    key: 'handlers',
-    value: function handlers() {
-      var exists = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
-
-      var node = this._head;
-
-      if (exists) return !!node;
-
-      var ee = [];
-
-      while (node) {
-        ee.push(node);
-        node = node._next;
-      }
-
-      return ee;
-    }
-  }, {
-    key: 'has',
-    value: function has(node) {
-      if (!(node instanceof MiniSignalBinding)) {
-        throw new Error('MiniSignal#has(): First arg must be a MiniSignalBinding object.');
-      }
-
-      return node._owner === this;
-    }
-  }, {
-    key: 'dispatch',
-    value: function dispatch() {
-      var node = this._head;
-
-      if (!node) return false;
-
-      while (node) {
-        if (node._once) this.detach(node);
-        node._fn.apply(node._thisArg, arguments);
-        node = node._next;
-      }
-
-      return true;
-    }
-  }, {
-    key: 'add',
-    value: function add(fn) {
-      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-
-      if (typeof fn !== 'function') {
-        throw new Error('MiniSignal#add(): First arg must be a Function.');
-      }
-      return _addMiniSignalBinding(this, new MiniSignalBinding(fn, false, thisArg));
-    }
-  }, {
-    key: 'once',
-    value: function once(fn) {
-      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-
-      if (typeof fn !== 'function') {
-        throw new Error('MiniSignal#once(): First arg must be a Function.');
-      }
-      return _addMiniSignalBinding(this, new MiniSignalBinding(fn, true, thisArg));
-    }
-  }, {
-    key: 'detach',
-    value: function detach(node) {
-      if (!(node instanceof MiniSignalBinding)) {
-        throw new Error('MiniSignal#detach(): First arg must be a MiniSignalBinding object.');
-      }
-      if (node._owner !== this) return this;
-
-      if (node._prev) node._prev._next = node._next;
-      if (node._next) node._next._prev = node._prev;
-
-      if (node === this._head) {
-        this._head = node._next;
-        if (node._next === null) {
-          this._tail = null;
-        }
-      } else if (node === this._tail) {
-        this._tail = node._prev;
-        this._tail._next = null;
-      }
-
-      node._owner = null;
-      return this;
-    }
-  }, {
-    key: 'detachAll',
-    value: function detachAll() {
-      var node = this._head;
-      if (!node) return this;
-
-      this._head = this._tail = null;
-
-      while (node) {
-        node._owner = null;
-        node = node._next;
-      }
-      return this;
-    }
-  }]);
-
-  return MiniSignal;
-})();
-
-MiniSignal.MiniSignalBinding = MiniSignalBinding;
-
-exports['default'] = MiniSignal;
-module.exports = exports['default'];
-
-},{}],7:[function(require,module,exports){
-/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
-
+},{}],5:[function(require,module,exports){
 'use strict';
 /* eslint-disable no-unused-vars */
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
@@ -1508,7 +1332,7 @@ function shouldUseNative() {
 		// Detect buggy property enumeration order in older V8 versions.
 
 		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		var test1 = new String('abc');  // eslint-disable-line
 		test1[5] = 'de';
 		if (Object.getOwnPropertyNames(test1)[0] === '5') {
 			return false;
@@ -1537,7 +1361,7 @@ function shouldUseNative() {
 		}
 
 		return true;
-	} catch (err) {
+	} catch (e) {
 		// We don't expect any of the above to throw, but better to be safe.
 		return false;
 	}
@@ -1557,8 +1381,8 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 			}
 		}
 
-		if (getOwnPropertySymbols) {
-			symbols = getOwnPropertySymbols(from);
+		if (Object.getOwnPropertySymbols) {
+			symbols = Object.getOwnPropertySymbols(from);
 			for (var i = 0; i < symbols.length; i++) {
 				if (propIsEnumerable.call(from, symbols[i])) {
 					to[symbols[i]] = from[symbols[i]];
@@ -1570,39 +1394,1590 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],8:[function(require,module,exports){
-'use strict'
+},{}],6:[function(require,module,exports){
+var EMPTY_ARRAY_BUFFER = new ArrayBuffer(0);
 
-module.exports = function parseURI (str, opts) {
-  opts = opts || {}
+/**
+ * Helper class to create a webGL buffer
+ *
+ * @class
+ * @memberof PIXI.glCore
+ * @param gl {WebGLRenderingContext} The current WebGL rendering context
+ * @param type {gl.ARRAY_BUFFER | gl.ELEMENT_ARRAY_BUFFER} @mat
+ * @param data {ArrayBuffer| SharedArrayBuffer|ArrayBufferView} an array of data
+ * @param drawType {gl.STATIC_DRAW|gl.DYNAMIC_DRAW|gl.STREAM_DRAW}
+ */
+var Buffer = function(gl, type, data, drawType)
+{
 
-  var o = {
-    key: ['source', 'protocol', 'authority', 'userInfo', 'user', 'password', 'host', 'port', 'relative', 'path', 'directory', 'file', 'query', 'anchor'],
-    q: {
-      name: 'queryKey',
-      parser: /(?:^|&)([^&=]*)=?([^&]*)/g
-    },
-    parser: {
-      strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
-      loose: /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+	/**
+     * The current WebGL rendering context
+     *
+     * @member {WebGLRenderingContext}
+     */
+	this.gl = gl;
+
+	/**
+     * The WebGL buffer, created upon instantiation
+     *
+     * @member {WebGLBuffer}
+     */
+	this.buffer = gl.createBuffer(); 
+
+	/**
+     * The type of the buffer
+     *
+     * @member {gl.ARRAY_BUFFER|gl.ELEMENT_ARRAY_BUFFER}
+     */
+	this.type = type || gl.ARRAY_BUFFER;
+
+	/**
+     * The draw type of the buffer
+     *
+     * @member {gl.STATIC_DRAW|gl.DYNAMIC_DRAW|gl.STREAM_DRAW}
+     */
+	this.drawType = drawType || gl.STATIC_DRAW;
+
+	/**
+     * The data in the buffer, as a typed array
+     *
+     * @member {ArrayBuffer| SharedArrayBuffer|ArrayBufferView}
+     */
+	this.data = EMPTY_ARRAY_BUFFER;
+
+	if(data)
+	{
+		this.upload(data);
+	}
+};
+
+/**
+ * Uploads the buffer to the GPU
+ * @param data {ArrayBuffer| SharedArrayBuffer|ArrayBufferView} an array of data to upload
+ * @param offset {Number} if only a subset of the data should be uploaded, this is the amount of data to subtract
+ * @param dontBind {Boolean} whether to bind the buffer before uploading it
+ */
+Buffer.prototype.upload = function(data, offset, dontBind)
+{
+	// todo - needed?
+	if(!dontBind) this.bind();
+
+	var gl = this.gl;
+
+	data = data || this.data;
+	offset = offset || 0;
+
+	if(this.data.byteLength >= data.byteLength)
+	{
+		gl.bufferSubData(this.type, offset, data);
+	}
+	else
+	{
+		gl.bufferData(this.type, data, this.drawType);
+	}
+
+	this.data = data;
+};
+/**
+ * Binds the buffer
+ *
+ */
+Buffer.prototype.bind = function()
+{
+	var gl = this.gl;
+	gl.bindBuffer(this.type, this.buffer);
+};
+
+Buffer.createVertexBuffer = function(gl, data, drawType)
+{
+	return new Buffer(gl, gl.ARRAY_BUFFER, data, drawType);
+};
+
+Buffer.createIndexBuffer = function(gl, data, drawType)
+{
+	return new Buffer(gl, gl.ELEMENT_ARRAY_BUFFER, data, drawType);
+};
+
+Buffer.create = function(gl, type, data, drawType)
+{
+	return new Buffer(gl, type, data, drawType);
+};
+
+/**
+ * Destroys the buffer
+ *
+ */
+Buffer.prototype.destroy = function(){
+	this.gl.deleteBuffer(this.buffer);
+};
+
+module.exports = Buffer;
+
+},{}],7:[function(require,module,exports){
+
+var Texture = require('./GLTexture');
+
+/**
+ * Helper class to create a webGL Framebuffer
+ *
+ * @class
+ * @memberof PIXI.glCore
+ * @param gl {WebGLRenderingContext} The current WebGL rendering context
+ * @param width {Number} the width of the drawing area of the frame buffer
+ * @param height {Number} the height of the drawing area of the frame buffer
+ */
+var Framebuffer = function(gl, width, height)
+{
+    /**
+     * The current WebGL rendering context
+     *
+     * @member {WebGLRenderingContext}
+     */
+    this.gl = gl;
+
+    /**
+     * The frame buffer
+     *
+     * @member {WebGLFramebuffer}
+     */
+    this.framebuffer = gl.createFramebuffer();
+
+    /**
+     * The stencil buffer
+     *
+     * @member {WebGLRenderbuffer}
+     */
+    this.stencil = null;
+
+    /**
+     * The stencil buffer
+     *
+     * @member {PIXI.glCore.GLTexture}
+     */
+    this.texture = null;
+
+    /**
+     * The width of the drawing area of the buffer
+     *
+     * @member {Number}
+     */
+    this.width = width || 100;
+    /**
+     * The height of the drawing area of the buffer
+     *
+     * @member {Number}
+     */
+    this.height = height || 100;
+};
+
+/**
+ * Adds a texture to the frame buffer
+ * @param texture {PIXI.glCore.GLTexture}
+ */
+Framebuffer.prototype.enableTexture = function(texture)
+{
+    var gl = this.gl;
+
+    this.texture = texture || new Texture(gl);
+
+    this.texture.bind();
+
+    //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,  this.width, this.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+    this.bind();
+
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.texture.texture, 0);
+};
+
+/**
+ * Initialises the stencil buffer
+ */
+Framebuffer.prototype.enableStencil = function()
+{
+    if(this.stencil)return;
+
+    var gl = this.gl;
+
+    this.stencil = gl.createRenderbuffer();
+
+    gl.bindRenderbuffer(gl.RENDERBUFFER, this.stencil);
+
+    // TODO.. this is depth AND stencil?
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, this.stencil);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL,  this.width  , this.height );
+};
+
+/**
+ * Erases the drawing area and fills it with a colour
+ * @param  r {Number} the red value of the clearing colour
+ * @param  g {Number} the green value of the clearing colour
+ * @param  b {Number} the blue value of the clearing colour
+ * @param  a {Number} the alpha value of the clearing colour
+ */
+Framebuffer.prototype.clear = function( r, g, b, a )
+{
+    this.bind();
+
+    var gl = this.gl;
+
+    gl.clearColor(r, g, b, a);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+};
+
+/**
+ * Binds the frame buffer to the WebGL context
+ */
+Framebuffer.prototype.bind = function()
+{
+    var gl = this.gl;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer );
+};
+
+/**
+ * Unbinds the frame buffer to the WebGL context
+ */
+Framebuffer.prototype.unbind = function()
+{
+    var gl = this.gl;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null );
+};
+/**
+ * Resizes the drawing area of the buffer to the given width and height
+ * @param  width  {Number} the new width
+ * @param  height {Number} the new height
+ */
+Framebuffer.prototype.resize = function(width, height)
+{
+    var gl = this.gl;
+
+    this.width = width;
+    this.height = height;
+
+    if ( this.texture )
+    {
+        this.texture.uploadData(null, width, height);
     }
-  }
 
-  var m = o.parser[opts.strictMode ? 'strict' : 'loose'].exec(str)
-  var uri = {}
-  var i = 14
+    if ( this.stencil )
+    {
+        // update the stencil buffer width and height
+        gl.bindRenderbuffer(gl.RENDERBUFFER, this.stencil);
+        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, width, height);
+    }
+};
 
-  while (i--) uri[o.key[i]] = m[i] || ''
+/**
+ * Destroys this buffer
+ */
+Framebuffer.prototype.destroy = function()
+{
+    var gl = this.gl;
 
-  uri[o.q.name] = {}
-  uri[o.key[12]].replace(o.q.parser, function ($0, $1, $2) {
-    if ($1) uri[o.q.name][$1] = $2
-  })
+    //TODO
+    if(this.texture)
+    {
+        this.texture.destroy();
+    }
 
-  return uri
+    gl.deleteFramebuffer(this.framebuffer);
+
+    this.gl = null;
+
+    this.stencil = null;
+    this.texture = null;
+};
+
+/**
+ * Creates a frame buffer with a texture containing the given data
+ * @static
+ * @param gl {WebGLRenderingContext} The current WebGL rendering context
+ * @param width {Number} the width of the drawing area of the frame buffer
+ * @param height {Number} the height of the drawing area of the frame buffer
+ * @param data {ArrayBuffer| SharedArrayBuffer|ArrayBufferView} an array of data
+ */
+Framebuffer.createRGBA = function(gl, width, height, data)
+{
+    var texture = Texture.fromData(gl, null, width, height);
+    texture.enableNearestScaling();
+    texture.enableWrapClamp();
+
+    //now create the framebuffer object and attach the texture to it.
+    var fbo = new Framebuffer(gl, width, height);
+    fbo.enableTexture(texture);
+
+    fbo.unbind();
+
+    return fbo;
+};
+
+/**
+ * Creates a frame buffer with a texture containing the given data
+ * @static
+ * @param gl {WebGLRenderingContext} The current WebGL rendering context
+ * @param width {Number} the width of the drawing area of the frame buffer
+ * @param height {Number} the height of the drawing area of the frame buffer
+ * @param data {ArrayBuffer| SharedArrayBuffer|ArrayBufferView} an array of data
+ */
+Framebuffer.createFloat32 = function(gl, width, height, data)
+{
+    // create a new texture..
+    var texture = new Texture.fromData(gl, data, width, height);
+    texture.enableNearestScaling();
+    texture.enableWrapClamp();
+
+    //now create the framebuffer object and attach the texture to it.
+    var fbo = new Framebuffer(gl, width, height);
+    fbo.enableTexture(texture);
+
+    fbo.unbind();
+
+    return fbo;
+};
+
+module.exports = Framebuffer;
+
+},{"./GLTexture":9}],8:[function(require,module,exports){
+
+var compileProgram = require('./shader/compileProgram'),
+	extractAttributes = require('./shader/extractAttributes'),
+	extractUniforms = require('./shader/extractUniforms'),
+	generateUniformAccessObject = require('./shader/generateUniformAccessObject');
+
+/**
+ * Helper class to create a webGL Shader
+ *
+ * @class
+ * @memberof PIXI.glCore
+ * @param gl {WebGLRenderingContext}
+ * @param vertexSrc {string|string[]} The vertex shader source as an array of strings.
+ * @param fragmentSrc {string|string[]} The fragment shader source as an array of strings.
+ */
+var Shader = function(gl, vertexSrc, fragmentSrc)
+{
+	/**
+	 * The current WebGL rendering context
+	 *
+	 * @member {WebGLRenderingContext}
+	 */
+	this.gl = gl;
+
+	/**
+	 * The shader program
+	 *
+	 * @member {WebGLProgram}
+	 */
+	// First compile the program..
+	this.program = compileProgram(gl, vertexSrc, fragmentSrc);
+
+
+	/**
+	 * The attributes of the shader as an object containing the following properties
+	 * {
+	 * 	type,
+	 * 	size,
+	 * 	location,
+	 * 	pointer
+	 * }
+	 * @member {Object}
+	 */
+	// next extract the attributes
+	this.attributes = extractAttributes(gl, this.program);
+
+    var uniformData = extractUniforms(gl, this.program);
+
+	/**
+	 * The uniforms of the shader as an object containing the following properties
+	 * {
+	 * 	gl,
+	 * 	data
+	 * }
+	 * @member {Object}
+	 */
+    this.uniforms = generateUniformAccessObject( gl, uniformData );
+};
+/**
+ * Uses this shader
+ */
+Shader.prototype.bind = function()
+{
+	this.gl.useProgram(this.program);
+};
+
+/**
+ * Destroys this shader
+ * TODO
+ */
+Shader.prototype.destroy = function()
+{
+	// var gl = this.gl;
+};
+
+module.exports = Shader;
+
+},{"./shader/compileProgram":14,"./shader/extractAttributes":16,"./shader/extractUniforms":17,"./shader/generateUniformAccessObject":18}],9:[function(require,module,exports){
+
+/**
+ * Helper class to create a WebGL Texture
+ *
+ * @class
+ * @memberof PIXI.glCore
+ * @param gl {WebGLRenderingContext} The current WebGL context
+ * @param width {number} the width of the texture
+ * @param height {number} the height of the texture
+ * @param format {number} the pixel format of the texture. defaults to gl.RGBA
+ * @param type {number} the gl type of the texture. defaults to gl.UNSIGNED_BYTE
+ */
+var Texture = function(gl, width, height, format, type)
+{
+	/**
+	 * The current WebGL rendering context
+	 *
+	 * @member {WebGLRenderingContext}
+	 */
+	this.gl = gl;
+
+
+	/**
+	 * The WebGL texture
+	 *
+	 * @member {WebGLTexture}
+	 */
+	this.texture = gl.createTexture();
+
+	/**
+	 * If mipmapping was used for this texture, enable and disable with enableMipmap()
+	 *
+	 * @member {Boolean}
+	 */
+	// some settings..
+	this.mipmap = false;
+
+
+	/**
+	 * Set to true to enable pre-multiplied alpha
+	 *
+	 * @member {Boolean}
+	 */
+	this.premultiplyAlpha = false;
+
+	/**
+	 * The width of texture
+	 *
+	 * @member {Number}
+	 */
+	this.width = width || -1;
+	/**
+	 * The height of texture
+	 *
+	 * @member {Number}
+	 */
+	this.height = height || -1;
+
+	/**
+	 * The pixel format of the texture. defaults to gl.RGBA
+	 *
+	 * @member {Number}
+	 */
+	this.format = format || gl.RGBA;
+
+	/**
+	 * The gl type of the texture. defaults to gl.UNSIGNED_BYTE
+	 *
+	 * @member {Number}
+	 */
+	this.type = type || gl.UNSIGNED_BYTE;
+
+
+};
+
+/**
+ * Uploads this texture to the GPU
+ * @param source {HTMLImageElement|ImageData|HTMLVideoElement} the source image of the texture
+ */
+Texture.prototype.upload = function(source)
+{
+	this.bind();
+
+	var gl = this.gl;
+
+
+	gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha);
+
+	var newWidth = source.videoWidth || source.width;
+	var newHeight = source.videoHeight || source.height;
+
+	if(newHeight !== this.height || newWidth !== this.width)
+	{
+    	gl.texImage2D(gl.TEXTURE_2D, 0, this.format, this.format, this.type, source);
+	}
+	else
+	{
+    	gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, this.format, this.type, source);
+	}
+
+	// if the source is a video, we need to use the videoWidth / videoHeight properties as width / height will be incorrect.
+	this.width = newWidth;
+	this.height = newHeight;
+
+};
+
+var FLOATING_POINT_AVAILABLE = false;
+
+/**
+ * Use a data source and uploads this texture to the GPU
+ * @param data {TypedArray} the data to upload to the texture
+ * @param width {number} the new width of the texture
+ * @param height {number} the new height of the texture
+ */
+Texture.prototype.uploadData = function(data, width, height)
+{
+	this.bind();
+
+	var gl = this.gl;
+
+
+	if(data instanceof Float32Array)
+	{
+		if(!FLOATING_POINT_AVAILABLE)
+		{
+			var ext = gl.getExtension("OES_texture_float");
+
+			if(ext)
+			{
+				FLOATING_POINT_AVAILABLE = true;
+			}
+			else
+			{
+				throw new Error('floating point textures not available');
+			}
+		}
+
+		this.type = gl.FLOAT;
+	}
+	else
+	{
+		// TODO support for other types
+		this.type = gl.UNSIGNED_BYTE;
+	}
+
+	// what type of data?
+	gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha);
+
+
+	if(width !== this.width || height !== this.height)
+	{
+		gl.texImage2D(gl.TEXTURE_2D, 0, this.format,  width, height, 0, this.format, this.type, data || null);
+	}
+	else
+	{
+		gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, this.format, this.type, data || null);
+	}
+
+	this.width = width;
+	this.height = height;
+
+
+//	texSubImage2D
+};
+
+/**
+ * Binds the texture
+ * @param  location
+ */
+Texture.prototype.bind = function(location)
+{
+	var gl = this.gl;
+
+	if(location !== undefined)
+	{
+		gl.activeTexture(gl.TEXTURE0 + location);
+	}
+
+	gl.bindTexture(gl.TEXTURE_2D, this.texture);
+};
+
+/**
+ * Unbinds the texture
+ */
+Texture.prototype.unbind = function()
+{
+	var gl = this.gl;
+	gl.bindTexture(gl.TEXTURE_2D, null);
+};
+
+/**
+ * @param linear {Boolean} if we want to use linear filtering or nearest neighbour interpolation
+ */
+Texture.prototype.minFilter = function( linear )
+{
+	var gl = this.gl;
+
+	this.bind();
+
+	if(this.mipmap)
+	{
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, linear ? gl.LINEAR_MIPMAP_LINEAR : gl.NEAREST_MIPMAP_NEAREST);
+	}
+	else
+	{
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, linear ? gl.LINEAR : gl.NEAREST);
+	}
+};
+
+/**
+ * @param linear {Boolean} if we want to use linear filtering or nearest neighbour interpolation
+ */
+Texture.prototype.magFilter = function( linear )
+{
+	var gl = this.gl;
+
+	this.bind();
+
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, linear ? gl.LINEAR : gl.NEAREST);
+};
+
+/**
+ * Enables mipmapping
+ */
+Texture.prototype.enableMipmap = function()
+{
+	var gl = this.gl;
+
+	this.bind();
+
+	this.mipmap = true;
+
+	gl.generateMipmap(gl.TEXTURE_2D);
+};
+
+/**
+ * Enables linear filtering
+ */
+Texture.prototype.enableLinearScaling = function()
+{
+	this.minFilter(true);
+	this.magFilter(true);
+};
+
+/**
+ * Enables nearest neighbour interpolation
+ */
+Texture.prototype.enableNearestScaling = function()
+{
+	this.minFilter(false);
+	this.magFilter(false);
+};
+
+/**
+ * Enables clamping on the texture so WebGL will not repeat it
+ */
+Texture.prototype.enableWrapClamp = function()
+{
+	var gl = this.gl;
+
+	this.bind();
+
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+};
+
+/**
+ * Enable tiling on the texture
+ */
+Texture.prototype.enableWrapRepeat = function()
+{
+	var gl = this.gl;
+
+	this.bind();
+
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+};
+
+Texture.prototype.enableWrapMirrorRepeat = function()
+{
+	var gl = this.gl;
+
+	this.bind();
+
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+};
+
+
+/**
+ * Destroys this texture
+ */
+Texture.prototype.destroy = function()
+{
+	var gl = this.gl;
+	//TODO
+	gl.deleteTexture(this.texture);
+};
+
+/**
+ * @static
+ * @param gl {WebGLRenderingContext} The current WebGL context
+ * @param source {HTMLImageElement|ImageData} the source image of the texture
+ * @param premultiplyAlpha {Boolean} If we want to use pre-multiplied alpha
+ */
+Texture.fromSource = function(gl, source, premultiplyAlpha)
+{
+	var texture = new Texture(gl);
+	texture.premultiplyAlpha = premultiplyAlpha || false;
+	texture.upload(source);
+
+	return texture;
+};
+
+/**
+ * @static
+ * @param gl {WebGLRenderingContext} The current WebGL context
+ * @param data {TypedArray} the data to upload to the texture
+ * @param width {number} the new width of the texture
+ * @param height {number} the new height of the texture
+ */
+Texture.fromData = function(gl, data, width, height)
+{
+	//console.log(data, width, height);
+	var texture = new Texture(gl);
+	texture.uploadData(data, width, height);
+
+	return texture;
+};
+
+
+module.exports = Texture;
+
+},{}],10:[function(require,module,exports){
+
+// state object//
+var setVertexAttribArrays = require( './setVertexAttribArrays' );
+
+/**
+ * Helper class to work with WebGL VertexArrayObjects (vaos)
+ * Only works if WebGL extensions are enabled (they usually are)
+ *
+ * @class
+ * @memberof PIXI.glCore
+ * @param gl {WebGLRenderingContext} The current WebGL rendering context
+ */
+function VertexArrayObject(gl, state)
+{
+    this.nativeVaoExtension = null;
+
+    if(!VertexArrayObject.FORCE_NATIVE)
+    {
+        this.nativeVaoExtension = gl.getExtension('OES_vertex_array_object') ||
+                                  gl.getExtension('MOZ_OES_vertex_array_object') ||
+                                  gl.getExtension('WEBKIT_OES_vertex_array_object');
+    }
+
+    this.nativeState = state;
+
+    if(this.nativeVaoExtension)
+    {
+        this.nativeVao = this.nativeVaoExtension.createVertexArrayOES();
+
+        var maxAttribs = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
+
+        // VAO - overwrite the state..
+        this.nativeState = {
+            tempAttribState: new Array(maxAttribs),
+            attribState: new Array(maxAttribs)
+        };
+    }
+
+    /**
+     * The current WebGL rendering context
+     *
+     * @member {WebGLRenderingContext}
+     */
+    this.gl = gl;
+
+    /**
+     * An array of attributes
+     *
+     * @member {Array}
+     */
+    this.attributes = [];
+
+    /**
+     * @member {PIXI.glCore.GLBuffer}
+     */
+    this.indexBuffer = null;
+
+    /**
+     * A boolean flag
+     *
+     * @member {Boolean}
+     */
+    this.dirty = false;
 }
 
-},{}],9:[function(require,module,exports){
+VertexArrayObject.prototype.constructor = VertexArrayObject;
+module.exports = VertexArrayObject;
+
+/**
+* Some devices behave a bit funny when using the newer extensions (im looking at you ipad 2!)
+* If you find on older devices that things have gone a bit weird then set this to true.
+*/
+/**
+ * Lets the VAO know if you should use the WebGL extension or the native methods.
+ * Some devices behave a bit funny when using the newer extensions (im looking at you ipad 2!)
+ * If you find on older devices that things have gone a bit weird then set this to true.
+ * @static
+ * @property {Boolean} FORCE_NATIVE
+ */
+VertexArrayObject.FORCE_NATIVE = false;
+
+/**
+ * Binds the buffer
+ */
+VertexArrayObject.prototype.bind = function()
+{
+    if(this.nativeVao)
+    {
+        this.nativeVaoExtension.bindVertexArrayOES(this.nativeVao);
+
+        if(this.dirty)
+        {
+            this.dirty = false;
+            this.activate();
+        }
+    }
+    else
+    {
+
+        this.activate();
+    }
+
+    return this;
+};
+
+/**
+ * Unbinds the buffer
+ */
+VertexArrayObject.prototype.unbind = function()
+{
+    if(this.nativeVao)
+    {
+        this.nativeVaoExtension.bindVertexArrayOES(null);
+    }
+
+    return this;
+};
+
+/**
+ * Uses this vao
+ */
+VertexArrayObject.prototype.activate = function()
+{
+
+    var gl = this.gl;
+    var lastBuffer = null;
+
+    for (var i = 0; i < this.attributes.length; i++)
+    {
+        var attrib = this.attributes[i];
+
+        if(lastBuffer !== attrib.buffer)
+        {
+            attrib.buffer.bind();
+            lastBuffer = attrib.buffer;
+        }
+
+        //attrib.attribute.pointer(attrib.type, attrib.normalized, attrib.stride, attrib.start);
+        gl.vertexAttribPointer(attrib.attribute.location,
+                               attrib.attribute.size, attrib.type || gl.FLOAT,
+                               attrib.normalized || false,
+                               attrib.stride || 0,
+                               attrib.start || 0);
+
+
+    }
+
+    setVertexAttribArrays(gl, this.attributes, this.nativeState);
+
+    this.indexBuffer.bind();
+
+    return this;
+};
+
+/**
+ *
+ * @param buffer     {PIXI.gl.GLBuffer}
+ * @param attribute  {*}
+ * @param type       {String}
+ * @param normalized {Boolean}
+ * @param stride     {Number}
+ * @param start      {Number}
+ */
+VertexArrayObject.prototype.addAttribute = function(buffer, attribute, type, normalized, stride, start)
+{
+    this.attributes.push({
+        buffer:     buffer,
+        attribute:  attribute,
+
+        location:   attribute.location,
+        type:       type || this.gl.FLOAT,
+        normalized: normalized || false,
+        stride:     stride || 0,
+        start:      start || 0
+    });
+
+    this.dirty = true;
+
+    return this;
+};
+
+/**
+ *
+ * @param buffer   {PIXI.gl.GLBuffer}
+ */
+VertexArrayObject.prototype.addIndex = function(buffer/*, options*/)
+{
+    this.indexBuffer = buffer;
+
+    this.dirty = true;
+
+    return this;
+};
+
+/**
+ * Unbinds this vao and disables it
+ */
+VertexArrayObject.prototype.clear = function()
+{
+    // var gl = this.gl;
+
+    // TODO - should this function unbind after clear?
+    // for now, no but lets see what happens in the real world!
+    if(this.nativeVao)
+    {
+        this.nativeVaoExtension.bindVertexArrayOES(this.nativeVao);
+    }
+
+    this.attributes.length = 0;
+    this.indexBuffer = null;
+
+    return this;
+};
+
+/**
+ * @param type  {Number}
+ * @param size  {Number}
+ * @param start {Number}
+ */
+VertexArrayObject.prototype.draw = function(type, size, start)
+{
+    var gl = this.gl;
+    gl.drawElements(type, size, gl.UNSIGNED_SHORT, start || 0);
+
+    return this;
+};
+
+/**
+ * Destroy this vao
+ */
+VertexArrayObject.prototype.destroy = function()
+{
+    // lose references
+    this.gl = null;
+    this.indexBuffer = null;
+    this.attributes = null;
+    this.nativeState = null;
+
+    if(this.nativeVao)
+    {
+        this.nativeVaoExtension.deleteVertexArrayOES(this.nativeVao);
+    }
+
+    this.nativeVaoExtension = null;
+    this.nativeVao = null;
+};
+
+},{"./setVertexAttribArrays":13}],11:[function(require,module,exports){
+
+/**
+ * Helper class to create a webGL Context
+ *
+ * @class
+ * @memberof PIXI.glCore
+ * @param canvas {HTMLCanvasElement} the canvas element that we will get the context from
+ * @param options {Object} An options object that gets passed in to the canvas element containing the context attributes,
+ *                         see https://developer.mozilla.org/en/docs/Web/API/HTMLCanvasElement/getContext for the options available
+ * @return {WebGLRenderingContext} the WebGL context
+ */
+var createContext = function(canvas, options)
+{
+    var gl = canvas.getContext('webgl', options) || 
+         canvas.getContext('experimental-webgl', options);
+
+    if (!gl)
+    {
+        // fail, not able to get a context
+        throw new Error('This browser does not support webGL. Try using the canvas renderer');
+    }
+
+    return gl;
+};
+
+module.exports = createContext;
+
+},{}],12:[function(require,module,exports){
+var gl = {
+    createContext:          require('./createContext'),
+    setVertexAttribArrays:  require('./setVertexAttribArrays'),
+    GLBuffer:               require('./GLBuffer'),
+    GLFramebuffer:          require('./GLFramebuffer'),
+    GLShader:               require('./GLShader'),
+    GLTexture:              require('./GLTexture'),
+    VertexArrayObject:      require('./VertexArrayObject'),
+    shader:                 require('./shader')
+};
+
+// Export for Node-compatible environments
+if (typeof module !== 'undefined' && module.exports)
+{
+    // Export the module
+    module.exports = gl;
+}
+
+// Add to the browser window pixi.gl
+if (typeof window !== 'undefined')
+{
+    // add the window object
+    window.PIXI = window.PIXI || {};
+    window.PIXI.glCore = gl;
+}
+
+},{"./GLBuffer":6,"./GLFramebuffer":7,"./GLShader":8,"./GLTexture":9,"./VertexArrayObject":10,"./createContext":11,"./setVertexAttribArrays":13,"./shader":19}],13:[function(require,module,exports){
+// var GL_MAP = {};
+
+/**
+ * @param gl {WebGLRenderingContext} The current WebGL context
+ * @param attribs {*}
+ * @param state {*}
+ */
+var setVertexAttribArrays = function (gl, attribs, state)
+{
+    var i;
+    if(state)
+    {
+        var tempAttribState = state.tempAttribState,
+            attribState = state.attribState;
+
+        for (i = 0; i < tempAttribState.length; i++)
+        {
+            tempAttribState[i] = false;
+        }
+
+        // set the new attribs
+        for (i = 0; i < attribs.length; i++)
+        {
+            tempAttribState[attribs[i].attribute.location] = true;
+        }
+
+        for (i = 0; i < attribState.length; i++)
+        {
+            if (attribState[i] !== tempAttribState[i])
+            {
+                attribState[i] = tempAttribState[i];
+
+                if (state.attribState[i])
+                {
+                    gl.enableVertexAttribArray(i);
+                }
+                else
+                {
+                    gl.disableVertexAttribArray(i);
+                }
+            }
+        }
+
+    }
+    else
+    {
+        for (i = 0; i < attribs.length; i++)
+        {
+            var attrib = attribs[i];
+            gl.enableVertexAttribArray(attrib.attribute.location);
+        }
+    }
+};
+
+module.exports = setVertexAttribArrays;
+
+},{}],14:[function(require,module,exports){
+
+/**
+ * @class
+ * @memberof PIXI.glCore.shader
+ * @param gl {WebGLRenderingContext} The current WebGL context {WebGLProgram}
+ * @param vertexSrc {string|string[]} The vertex shader source as an array of strings.
+ * @param fragmentSrc {string|string[]} The fragment shader source as an array of strings.
+ * @return {WebGLProgram} the shader program
+ */
+var compileProgram = function(gl, vertexSrc, fragmentSrc)
+{
+    var glVertShader = compileShader(gl, gl.VERTEX_SHADER, vertexSrc);
+    var glFragShader = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSrc);
+
+    var program = gl.createProgram();
+
+    gl.attachShader(program, glVertShader);
+    gl.attachShader(program, glFragShader);
+    gl.linkProgram(program);
+
+    // if linking fails, then log and cleanup
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS))
+    {
+        console.error('Pixi.js Error: Could not initialize shader.');
+        console.error('gl.VALIDATE_STATUS', gl.getProgramParameter(program, gl.VALIDATE_STATUS));
+        console.error('gl.getError()', gl.getError());
+
+        // if there is a program info log, log it
+        if (gl.getProgramInfoLog(program) !== '')
+        {
+            console.warn('Pixi.js Warning: gl.getProgramInfoLog()', gl.getProgramInfoLog(program));
+        }
+
+        gl.deleteProgram(program);
+        program = null;
+    }
+
+    // clean up some shaders
+    gl.deleteShader(glVertShader);
+    gl.deleteShader(glFragShader);
+
+    return program;
+};
+
+/**
+ * @private
+ * @param gl {WebGLRenderingContext} The current WebGL context {WebGLProgram}
+ * @param type {Number} the type, can be either VERTEX_SHADER or FRAGMENT_SHADER
+ * @param vertexSrc {string|string[]} The vertex shader source as an array of strings.
+ * @return {WebGLShader} the shader
+ */
+var compileShader = function (gl, type, src)
+{
+    var shader = gl.createShader(type);
+
+    gl.shaderSource(shader, src);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
+    {
+        console.log(gl.getShaderInfoLog(shader));
+        return null;
+    }
+
+    return shader;
+};
+
+module.exports = compileProgram;
+
+},{}],15:[function(require,module,exports){
+/**
+ * @class
+ * @memberof PIXI.glCore.shader
+ * @param type {String} Type of value
+ * @param size {Number}
+ */
+var defaultValue = function(type, size) 
+{
+    switch (type)
+    {
+        case 'float':
+            return 0;
+
+        case 'vec2': 
+            return new Float32Array(2 * size);
+
+        case 'vec3':
+            return new Float32Array(3 * size);
+
+        case 'vec4':     
+            return new Float32Array(4 * size);
+            
+        case 'int':
+        case 'sampler2D':
+            return 0;
+
+        case 'ivec2':   
+            return new Int32Array(2 * size);
+
+        case 'ivec3':
+            return new Int32Array(3 * size);
+
+        case 'ivec4': 
+            return new Int32Array(4 * size);
+
+        case 'bool':     
+            return false;
+
+        case 'bvec2':
+
+            return booleanArray( 2 * size);
+
+        case 'bvec3':
+            return booleanArray(3 * size);
+
+        case 'bvec4':
+            return booleanArray(4 * size);
+
+        case 'mat2':
+            return new Float32Array([1, 0,
+                                     0, 1]);
+
+        case 'mat3': 
+            return new Float32Array([1, 0, 0,
+                                     0, 1, 0,
+                                     0, 0, 1]);
+
+        case 'mat4':
+            return new Float32Array([1, 0, 0, 0,
+                                     0, 1, 0, 0,
+                                     0, 0, 1, 0,
+                                     0, 0, 0, 1]);
+    }
+};
+
+var booleanArray = function(size)
+{
+    var array = new Array(size);
+
+    for (var i = 0; i < array.length; i++) 
+    {
+        array[i] = false;
+    }
+
+    return array;
+};
+
+module.exports = defaultValue;
+
+},{}],16:[function(require,module,exports){
+
+var mapType = require('./mapType');
+var mapSize = require('./mapSize');
+
+/**
+ * Extracts the attributes
+ * @class
+ * @memberof PIXI.glCore.shader
+ * @param gl {WebGLRenderingContext} The current WebGL rendering context
+ * @param program {WebGLProgram} The shader program to get the attributes from
+ * @return attributes {Object}
+ */
+var extractAttributes = function(gl, program)
+{
+    var attributes = {};
+
+    var totalAttributes = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+
+    for (var i = 0; i < totalAttributes; i++)
+    {
+        var attribData = gl.getActiveAttrib(program, i);
+        var type = mapType(gl, attribData.type);
+
+        attributes[attribData.name] = {
+            type:type,
+            size:mapSize(type),
+            location:gl.getAttribLocation(program, attribData.name),
+            //TODO - make an attribute object
+            pointer: pointer
+        };
+    }
+
+    return attributes;
+};
+
+var pointer = function(type, normalized, stride, start){
+    // console.log(this.location)
+    gl.vertexAttribPointer(this.location,this.size, type || gl.FLOAT, normalized || false, stride || 0, start || 0);
+};
+
+module.exports = extractAttributes;
+
+},{"./mapSize":20,"./mapType":21}],17:[function(require,module,exports){
+var mapType = require('./mapType');
+var defaultValue = require('./defaultValue');
+
+/**
+ * Extracts the uniforms
+ * @class
+ * @memberof PIXI.glCore.shader
+ * @param gl {WebGLRenderingContext} The current WebGL rendering context
+ * @param program {WebGLProgram} The shader program to get the uniforms from
+ * @return uniforms {Object}
+ */
+var extractUniforms = function(gl, program)
+{
+	var uniforms = {};
+
+    var totalUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+
+    for (var i = 0; i < totalUniforms; i++)
+    {
+    	var uniformData = gl.getActiveUniform(program, i);
+    	var name = uniformData.name.replace(/\[.*?\]/, "");
+        var type = mapType(gl, uniformData.type );
+
+    	uniforms[name] = {
+    		type:type,
+    		size:uniformData.size,
+    		location:gl.getUniformLocation(program, name),
+    		value:defaultValue(type, uniformData.size)
+    	};
+    }
+
+	return uniforms;
+};
+
+module.exports = extractUniforms;
+
+},{"./defaultValue":15,"./mapType":21}],18:[function(require,module,exports){
+/**
+ * Extracts the attributes
+ * @class
+ * @memberof PIXI.glCore.shader
+ * @param gl {WebGLRenderingContext} The current WebGL rendering context
+ * @param uniforms {Array} @mat ?
+ * @return attributes {Object}
+ */
+var generateUniformAccessObject = function(gl, uniformData)
+{
+    // this is the object we will be sending back.
+    // an object hierachy will be created for structs
+    var uniforms = {data:{}};
+
+    uniforms.gl = gl;
+
+    var uniformKeys= Object.keys(uniformData);
+
+    for (var i = 0; i < uniformKeys.length; i++)
+    {
+        var fullName = uniformKeys[i];
+
+        var nameTokens = fullName.split('.');
+        var name = nameTokens[nameTokens.length - 1];
+
+        var uniformGroup = getUniformGroup(nameTokens, uniforms);
+
+        var uniform =  uniformData[fullName];
+        uniformGroup.data[name] = uniform;
+
+        uniformGroup.gl = gl;
+
+        Object.defineProperty(uniformGroup, name, {
+            get: generateGetter(name),
+            set: generateSetter(name, uniform)
+        });
+    }
+
+    return uniforms;
+};
+
+var generateGetter = function(name)
+{
+	var template = getterTemplate.replace('%%', name);
+	return new Function(template); // jshint ignore:line
+};
+
+var generateSetter = function(name, uniform)
+{
+    var template = setterTemplate.replace(/%%/g, name);
+    var setTemplate;
+
+    if(uniform.size === 1)
+    {
+        setTemplate = GLSL_TO_SINGLE_SETTERS[uniform.type];
+    }
+    else
+    {
+        setTemplate = GLSL_TO_ARRAY_SETTERS[uniform.type];
+    }
+
+    if(setTemplate)
+    {
+        template += "\nthis.gl." + setTemplate + ";";
+    }
+
+  	return new Function('value', template); // jshint ignore:line
+};
+
+var getUniformGroup = function(nameTokens, uniform)
+{
+    var cur = uniform;
+
+    for (var i = 0; i < nameTokens.length - 1; i++)
+    {
+        var o = cur[nameTokens[i]] || {data:{}};
+        cur[nameTokens[i]] = o;
+        cur = o;
+    }
+
+    return cur;
+};
+
+var getterTemplate = [
+    'return this.data.%%.value;',
+].join('\n');
+
+var setterTemplate = [
+    'this.data.%%.value = value;',
+    'var location = this.data.%%.location;'
+].join('\n');
+
+
+var GLSL_TO_SINGLE_SETTERS = {
+
+    'float':    'uniform1f(location, value)',
+
+    'vec2':     'uniform2f(location, value[0], value[1])',
+    'vec3':     'uniform3f(location, value[0], value[1], value[2])',
+    'vec4':     'uniform4f(location, value[0], value[1], value[2], value[3])',
+
+    'int':      'uniform1i(location, value)',
+    'ivec2':    'uniform2i(location, value[0], value[1])',
+    'ivec3':    'uniform3i(location, value[0], value[1], value[2])',
+    'ivec4':    'uniform4i(location, value[0], value[1], value[2], value[3])',
+
+    'bool':     'uniform1i(location, value)',
+    'bvec2':    'uniform2i(location, value[0], value[1])',
+    'bvec3':    'uniform3i(location, value[0], value[1], value[2])',
+    'bvec4':    'uniform4i(location, value[0], value[1], value[2], value[3])',
+
+    'mat2':     'uniformMatrix2fv(location, false, value)',
+    'mat3':     'uniformMatrix3fv(location, false, value)',
+    'mat4':     'uniformMatrix4fv(location, false, value)',
+
+    'sampler2D':'uniform1i(location, value)'
+};
+
+var GLSL_TO_ARRAY_SETTERS = {
+
+    'float':    'uniform1fv(location, value)',
+
+    'vec2':     'uniform2fv(location, value)',
+    'vec3':     'uniform3fv(location, value)',
+    'vec4':     'uniform4fv(location, value)',
+
+    'int':      'uniform1iv(location, value)',
+    'ivec2':    'uniform2iv(location, value)',
+    'ivec3':    'uniform3iv(location, value)',
+    'ivec4':    'uniform4iv(location, value)',
+
+    'bool':     'uniform1iv(location, value)',
+    'bvec2':    'uniform2iv(location, value)',
+    'bvec3':    'uniform3iv(location, value)',
+    'bvec4':    'uniform4iv(location, value)',
+
+    'sampler2D':'uniform1iv(location, value)'
+};
+
+module.exports = generateUniformAccessObject;
+
+},{}],19:[function(require,module,exports){
+module.exports = {
+    compileProgram: require('./compileProgram'),
+    defaultValue: require('./defaultValue'),
+    extractAttributes: require('./extractAttributes'),
+    extractUniforms: require('./extractUniforms'),
+    generateUniformAccessObject: require('./generateUniformAccessObject'),
+    mapSize: require('./mapSize'),
+    mapType: require('./mapType')  
+};
+},{"./compileProgram":14,"./defaultValue":15,"./extractAttributes":16,"./extractUniforms":17,"./generateUniformAccessObject":18,"./mapSize":20,"./mapType":21}],20:[function(require,module,exports){
+/**
+ * @class
+ * @memberof PIXI.glCore.shader
+ * @param type {String}
+ * @return {Number}
+ */
+var mapSize = function(type) 
+{ 
+    return GLSL_TO_SIZE[type];
+};
+
+
+var GLSL_TO_SIZE = {
+    'float':    1,
+    'vec2':     2,
+    'vec3':     3,
+    'vec4':     4,
+
+    'int':      1,
+    'ivec2':    2,
+    'ivec3':    3,
+    'ivec4':    4,
+
+    'bool':     1,
+    'bvec2':    2,
+    'bvec3':    3,
+    'bvec4':    4,
+
+    'mat2':     4,
+    'mat3':     9,
+    'mat4':     16,
+
+    'sampler2D':  1
+};
+
+module.exports = mapSize;
+
+},{}],21:[function(require,module,exports){
+
+
+var mapSize = function(gl, type) 
+{
+    if(!GL_TABLE) 
+    {
+        var typeNames = Object.keys(GL_TO_GLSL_TYPES);
+
+        GL_TABLE = {};
+
+        for(var i = 0; i < typeNames.length; ++i) 
+        {
+            var tn = typeNames[i];
+            GL_TABLE[ gl[tn] ] = GL_TO_GLSL_TYPES[tn];
+        }
+    }
+
+  return GL_TABLE[type];
+};
+
+var GL_TABLE = null;
+
+var GL_TO_GLSL_TYPES = {
+  'FLOAT':       'float',
+  'FLOAT_VEC2':  'vec2',
+  'FLOAT_VEC3':  'vec3',
+  'FLOAT_VEC4':  'vec4',
+
+  'INT':         'int',
+  'INT_VEC2':    'ivec2',
+  'INT_VEC3':    'ivec3',
+  'INT_VEC4':    'ivec4',
+  
+  'BOOL':        'bool',
+  'BOOL_VEC2':   'bvec2',
+  'BOOL_VEC3':   'bvec3',
+  'BOOL_VEC4':   'bvec4',
+  
+  'FLOAT_MAT2':  'mat2',
+  'FLOAT_MAT3':  'mat3',
+  'FLOAT_MAT4':  'mat4',
+  
+  'SAMPLER_2D':  'sampler2D'  
+};
+
+module.exports = mapSize;
+
+},{}],22:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -1831,1661 +3206,7 @@ var substr = 'ab'.substr(-1) === 'b'
 
 }).call(this,require('_process'))
 
-},{"_process":27}],10:[function(require,module,exports){
-var EMPTY_ARRAY_BUFFER = new ArrayBuffer(0);
-
-/**
- * Helper class to create a webGL buffer
- *
- * @class
- * @memberof PIXI.glCore
- * @param gl {WebGLRenderingContext} The current WebGL rendering context
- * @param type {gl.ARRAY_BUFFER | gl.ELEMENT_ARRAY_BUFFER} @mat
- * @param data {ArrayBuffer| SharedArrayBuffer|ArrayBufferView} an array of data
- * @param drawType {gl.STATIC_DRAW|gl.DYNAMIC_DRAW|gl.STREAM_DRAW}
- */
-var Buffer = function(gl, type, data, drawType)
-{
-
-	/**
-     * The current WebGL rendering context
-     *
-     * @member {WebGLRenderingContext}
-     */
-	this.gl = gl;
-
-	/**
-     * The WebGL buffer, created upon instantiation
-     *
-     * @member {WebGLBuffer}
-     */
-	this.buffer = gl.createBuffer();
-
-	/**
-     * The type of the buffer
-     *
-     * @member {gl.ARRAY_BUFFER|gl.ELEMENT_ARRAY_BUFFER}
-     */
-	this.type = type || gl.ARRAY_BUFFER;
-
-	/**
-     * The draw type of the buffer
-     *
-     * @member {gl.STATIC_DRAW|gl.DYNAMIC_DRAW|gl.STREAM_DRAW}
-     */
-	this.drawType = drawType || gl.STATIC_DRAW;
-
-	/**
-     * The data in the buffer, as a typed array
-     *
-     * @member {ArrayBuffer| SharedArrayBuffer|ArrayBufferView}
-     */
-	this.data = EMPTY_ARRAY_BUFFER;
-
-	if(data)
-	{
-		this.upload(data);
-	}
-
-	this._updateID = 0;
-};
-
-/**
- * Uploads the buffer to the GPU
- * @param data {ArrayBuffer| SharedArrayBuffer|ArrayBufferView} an array of data to upload
- * @param offset {Number} if only a subset of the data should be uploaded, this is the amount of data to subtract
- * @param dontBind {Boolean} whether to bind the buffer before uploading it
- */
-Buffer.prototype.upload = function(data, offset, dontBind)
-{
-	// todo - needed?
-	if(!dontBind) this.bind();
-
-	var gl = this.gl;
-
-	data = data || this.data;
-	offset = offset || 0;
-
-	if(this.data.byteLength >= data.byteLength)
-	{
-		gl.bufferSubData(this.type, offset, data);
-	}
-	else
-	{
-		gl.bufferData(this.type, data, this.drawType);
-	}
-
-	this.data = data;
-};
-/**
- * Binds the buffer
- *
- */
-Buffer.prototype.bind = function()
-{
-	var gl = this.gl;
-	gl.bindBuffer(this.type, this.buffer);
-};
-
-Buffer.createVertexBuffer = function(gl, data, drawType)
-{
-	return new Buffer(gl, gl.ARRAY_BUFFER, data, drawType);
-};
-
-Buffer.createIndexBuffer = function(gl, data, drawType)
-{
-	return new Buffer(gl, gl.ELEMENT_ARRAY_BUFFER, data, drawType);
-};
-
-Buffer.create = function(gl, type, data, drawType)
-{
-	return new Buffer(gl, type, data, drawType);
-};
-
-/**
- * Destroys the buffer
- *
- */
-Buffer.prototype.destroy = function(){
-	this.gl.deleteBuffer(this.buffer);
-};
-
-module.exports = Buffer;
-
-},{}],11:[function(require,module,exports){
-
-var Texture = require('./GLTexture');
-
-/**
- * Helper class to create a webGL Framebuffer
- *
- * @class
- * @memberof PIXI.glCore
- * @param gl {WebGLRenderingContext} The current WebGL rendering context
- * @param width {Number} the width of the drawing area of the frame buffer
- * @param height {Number} the height of the drawing area of the frame buffer
- */
-var Framebuffer = function(gl, width, height)
-{
-    /**
-     * The current WebGL rendering context
-     *
-     * @member {WebGLRenderingContext}
-     */
-    this.gl = gl;
-
-    /**
-     * The frame buffer
-     *
-     * @member {WebGLFramebuffer}
-     */
-    this.framebuffer = gl.createFramebuffer();
-
-    /**
-     * The stencil buffer
-     *
-     * @member {WebGLRenderbuffer}
-     */
-    this.stencil = null;
-
-    /**
-     * The stencil buffer
-     *
-     * @member {PIXI.glCore.GLTexture}
-     */
-    this.texture = null;
-
-    /**
-     * The width of the drawing area of the buffer
-     *
-     * @member {Number}
-     */
-    this.width = width || 100;
-    /**
-     * The height of the drawing area of the buffer
-     *
-     * @member {Number}
-     */
-    this.height = height || 100;
-};
-
-/**
- * Adds a texture to the frame buffer
- * @param texture {PIXI.glCore.GLTexture}
- */
-Framebuffer.prototype.enableTexture = function(texture)
-{
-    var gl = this.gl;
-
-    this.texture = texture || new Texture(gl);
-
-    this.texture.bind();
-
-    //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,  this.width, this.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-
-    this.bind();
-
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.texture.texture, 0);
-};
-
-/**
- * Initialises the stencil buffer
- */
-Framebuffer.prototype.enableStencil = function()
-{
-    if(this.stencil)return;
-
-    var gl = this.gl;
-
-    this.stencil = gl.createRenderbuffer();
-
-    gl.bindRenderbuffer(gl.RENDERBUFFER, this.stencil);
-
-    // TODO.. this is depth AND stencil?
-    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, this.stencil);
-    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL,  this.width  , this.height );
-
-
-};
-
-/**
- * Erases the drawing area and fills it with a colour
- * @param  r {Number} the red value of the clearing colour
- * @param  g {Number} the green value of the clearing colour
- * @param  b {Number} the blue value of the clearing colour
- * @param  a {Number} the alpha value of the clearing colour
- */
-Framebuffer.prototype.clear = function( r, g, b, a )
-{
-    this.bind();
-
-    var gl = this.gl;
-
-    gl.clearColor(r, g, b, a);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-};
-
-/**
- * Binds the frame buffer to the WebGL context
- */
-Framebuffer.prototype.bind = function()
-{
-    var gl = this.gl;
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer );
-};
-
-/**
- * Unbinds the frame buffer to the WebGL context
- */
-Framebuffer.prototype.unbind = function()
-{
-    var gl = this.gl;
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null );
-};
-/**
- * Resizes the drawing area of the buffer to the given width and height
- * @param  width  {Number} the new width
- * @param  height {Number} the new height
- */
-Framebuffer.prototype.resize = function(width, height)
-{
-    var gl = this.gl;
-
-    this.width = width;
-    this.height = height;
-
-    if ( this.texture )
-    {
-        this.texture.uploadData(null, width, height);
-    }
-
-    if ( this.stencil )
-    {
-        // update the stencil buffer width and height
-        gl.bindRenderbuffer(gl.RENDERBUFFER, this.stencil);
-        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, width, height);
-    }
-};
-
-/**
- * Destroys this buffer
- */
-Framebuffer.prototype.destroy = function()
-{
-    var gl = this.gl;
-
-    //TODO
-    if(this.texture)
-    {
-        this.texture.destroy();
-    }
-
-    gl.deleteFramebuffer(this.framebuffer);
-
-    this.gl = null;
-
-    this.stencil = null;
-    this.texture = null;
-};
-
-/**
- * Creates a frame buffer with a texture containing the given data
- * @static
- * @param gl {WebGLRenderingContext} The current WebGL rendering context
- * @param width {Number} the width of the drawing area of the frame buffer
- * @param height {Number} the height of the drawing area of the frame buffer
- * @param data {ArrayBuffer| SharedArrayBuffer|ArrayBufferView} an array of data
- */
-Framebuffer.createRGBA = function(gl, width, height, data)
-{
-    var texture = Texture.fromData(gl, null, width, height);
-    texture.enableNearestScaling();
-    texture.enableWrapClamp();
-
-    //now create the framebuffer object and attach the texture to it.
-    var fbo = new Framebuffer(gl, width, height);
-    fbo.enableTexture(texture);
-
-    //fbo.enableStencil(); // get this back on soon!
-
-    fbo.unbind();
-
-    return fbo;
-};
-
-/**
- * Creates a frame buffer with a texture containing the given data
- * @static
- * @param gl {WebGLRenderingContext} The current WebGL rendering context
- * @param width {Number} the width of the drawing area of the frame buffer
- * @param height {Number} the height of the drawing area of the frame buffer
- * @param data {ArrayBuffer| SharedArrayBuffer|ArrayBufferView} an array of data
- */
-Framebuffer.createFloat32 = function(gl, width, height, data)
-{
-    // create a new texture..
-    var texture = new Texture.fromData(gl, data, width, height);
-    texture.enableNearestScaling();
-    texture.enableWrapClamp();
-
-    //now create the framebuffer object and attach the texture to it.
-    var fbo = new Framebuffer(gl, width, height);
-    fbo.enableTexture(texture);
-
-    fbo.unbind();
-
-    return fbo;
-};
-
-module.exports = Framebuffer;
-
-},{"./GLTexture":13}],12:[function(require,module,exports){
-
-var compileProgram = require('./shader/compileProgram'),
-	extractAttributes = require('./shader/extractAttributes'),
-	extractUniforms = require('./shader/extractUniforms'),
-	setPrecision = require('./shader/setPrecision'),
-	generateUniformAccessObject = require('./shader/generateUniformAccessObject');
-
-/**
- * Helper class to create a webGL Shader
- *
- * @class
- * @memberof PIXI.glCore
- * @param gl {WebGLRenderingContext}
- * @param vertexSrc {string|string[]} The vertex shader source as an array of strings.
- * @param fragmentSrc {string|string[]} The fragment shader source as an array of strings.
- * @param precision {precision]} The float precision of the shader. Options are 'lowp', 'mediump' or 'highp'.
- * @param attributeLocations {object} A key value pair showing which location eact attribute should sit eg {position:0, uvs:1}
- */
-var Shader = function(gl, vertexSrc, fragmentSrc, precision, attributeLocations)
-{
-	/**
-	 * The current WebGL rendering context
-	 *
-	 * @member {WebGLRenderingContext}
-	 */
-	this.gl = gl;
-
-	if(precision)
-	{
-		vertexSrc = setPrecision(vertexSrc, precision);
-		fragmentSrc = setPrecision(fragmentSrc, precision);
-	}
-
-	/**
-	 * The shader program
-	 *
-	 * @member {WebGLProgram}
-	 */
-	// First compile the program..
-	this.program = compileProgram(gl, vertexSrc, fragmentSrc, attributeLocations);
-
-	/**
-	 * The attributes of the shader as an object containing the following properties
-	 * {
-	 * 	type,
-	 * 	size,
-	 * 	location,
-	 * 	pointer
-	 * }
-	 * @member {Object}
-	 */
-	// next extract the attributes
-	this.attributes = extractAttributes(gl, this.program);
-
-    this.uniformData = extractUniforms(gl, this.program);
-
-	/**
-	 * The uniforms of the shader as an object containing the following properties
-	 * {
-	 * 	gl,
-	 * 	data
-	 * }
-	 * @member {Object}
-	 */
-	this.uniforms = generateUniformAccessObject( gl, this.uniformData );
-
-};
-/**
- * Uses this shader
- */
-Shader.prototype.bind = function()
-{
-	this.gl.useProgram(this.program);
-};
-
-/**
- * Destroys this shader
- * TODO
- */
-Shader.prototype.destroy = function()
-{
-	this.attributes = null;
-	this.uniformData = null;
-	this.uniforms = null;
-
-	var gl = this.gl;
-	gl.deleteProgram(this.program);
-};
-
-
-module.exports = Shader;
-
-},{"./shader/compileProgram":18,"./shader/extractAttributes":20,"./shader/extractUniforms":21,"./shader/generateUniformAccessObject":22,"./shader/setPrecision":26}],13:[function(require,module,exports){
-
-/**
- * Helper class to create a WebGL Texture
- *
- * @class
- * @memberof PIXI.glCore
- * @param gl {WebGLRenderingContext} The current WebGL context
- * @param width {number} the width of the texture
- * @param height {number} the height of the texture
- * @param format {number} the pixel format of the texture. defaults to gl.RGBA
- * @param type {number} the gl type of the texture. defaults to gl.UNSIGNED_BYTE
- */
-var Texture = function(gl, width, height, format, type)
-{
-	/**
-	 * The current WebGL rendering context
-	 *
-	 * @member {WebGLRenderingContext}
-	 */
-	this.gl = gl;
-
-
-	/**
-	 * The WebGL texture
-	 *
-	 * @member {WebGLTexture}
-	 */
-	this.texture = gl.createTexture();
-
-	/**
-	 * If mipmapping was used for this texture, enable and disable with enableMipmap()
-	 *
-	 * @member {Boolean}
-	 */
-	// some settings..
-	this.mipmap = false;
-
-
-	/**
-	 * Set to true to enable pre-multiplied alpha
-	 *
-	 * @member {Boolean}
-	 */
-	this.premultiplyAlpha = false;
-
-	/**
-	 * The width of texture
-	 *
-	 * @member {Number}
-	 */
-	this.width = width || -1;
-	/**
-	 * The height of texture
-	 *
-	 * @member {Number}
-	 */
-	this.height = height || -1;
-
-	/**
-	 * The pixel format of the texture. defaults to gl.RGBA
-	 *
-	 * @member {Number}
-	 */
-	this.format = format || gl.RGBA;
-
-	/**
-	 * The gl type of the texture. defaults to gl.UNSIGNED_BYTE
-	 *
-	 * @member {Number}
-	 */
-	this.type = type || gl.UNSIGNED_BYTE;
-
-
-};
-
-/**
- * Uploads this texture to the GPU
- * @param source {HTMLImageElement|ImageData|HTMLVideoElement} the source image of the texture
- */
-Texture.prototype.upload = function(source)
-{
-	this.bind();
-
-	var gl = this.gl;
-
-
-	gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha);
-
-	var newWidth = source.videoWidth || source.width;
-	var newHeight = source.videoHeight || source.height;
-
-	if(newHeight !== this.height || newWidth !== this.width)
-	{
-		gl.texImage2D(gl.TEXTURE_2D, 0, this.format, this.format, this.type, source);
-	}
-	else
-	{
-    	gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, this.format, this.type, source);
-	}
-
-	// if the source is a video, we need to use the videoWidth / videoHeight properties as width / height will be incorrect.
-	this.width = newWidth;
-	this.height = newHeight;
-
-};
-
-var FLOATING_POINT_AVAILABLE = false;
-
-/**
- * Use a data source and uploads this texture to the GPU
- * @param data {TypedArray} the data to upload to the texture
- * @param width {number} the new width of the texture
- * @param height {number} the new height of the texture
- */
-Texture.prototype.uploadData = function(data, width, height)
-{
-	this.bind();
-
-	var gl = this.gl;
-
-
-	if(data instanceof Float32Array)
-	{
-		if(!FLOATING_POINT_AVAILABLE)
-		{
-			var ext = gl.getExtension("OES_texture_float");
-
-			if(ext)
-			{
-				FLOATING_POINT_AVAILABLE = true;
-			}
-			else
-			{
-				throw new Error('floating point textures not available');
-			}
-		}
-
-		this.type = gl.FLOAT;
-	}
-	else
-	{
-		// TODO support for other types
-		this.type = this.type || gl.UNSIGNED_BYTE;
-	}
-
-	// what type of data?
-	gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha);
-
-
-	if(width !== this.width || height !== this.height)
-	{
-		gl.texImage2D(gl.TEXTURE_2D, 0, this.format,  width, height, 0, this.format, this.type, data || null);
-	}
-	else
-	{
-		gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, this.format, this.type, data || null);
-	}
-
-	this.width = width;
-	this.height = height;
-
-
-//	texSubImage2D
-};
-
-/**
- * Binds the texture
- * @param  location
- */
-Texture.prototype.bind = function(location)
-{
-	var gl = this.gl;
-
-	if(location !== undefined)
-	{
-		gl.activeTexture(gl.TEXTURE0 + location);
-	}
-
-	gl.bindTexture(gl.TEXTURE_2D, this.texture);
-};
-
-/**
- * Unbinds the texture
- */
-Texture.prototype.unbind = function()
-{
-	var gl = this.gl;
-	gl.bindTexture(gl.TEXTURE_2D, null);
-};
-
-/**
- * @param linear {Boolean} if we want to use linear filtering or nearest neighbour interpolation
- */
-Texture.prototype.minFilter = function( linear )
-{
-	var gl = this.gl;
-
-	this.bind();
-
-	if(this.mipmap)
-	{
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, linear ? gl.LINEAR_MIPMAP_LINEAR : gl.NEAREST_MIPMAP_NEAREST);
-	}
-	else
-	{
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, linear ? gl.LINEAR : gl.NEAREST);
-	}
-};
-
-/**
- * @param linear {Boolean} if we want to use linear filtering or nearest neighbour interpolation
- */
-Texture.prototype.magFilter = function( linear )
-{
-	var gl = this.gl;
-
-	this.bind();
-
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, linear ? gl.LINEAR : gl.NEAREST);
-};
-
-/**
- * Enables mipmapping
- */
-Texture.prototype.enableMipmap = function()
-{
-	var gl = this.gl;
-
-	this.bind();
-
-	this.mipmap = true;
-
-	gl.generateMipmap(gl.TEXTURE_2D);
-};
-
-/**
- * Enables linear filtering
- */
-Texture.prototype.enableLinearScaling = function()
-{
-	this.minFilter(true);
-	this.magFilter(true);
-};
-
-/**
- * Enables nearest neighbour interpolation
- */
-Texture.prototype.enableNearestScaling = function()
-{
-	this.minFilter(false);
-	this.magFilter(false);
-};
-
-/**
- * Enables clamping on the texture so WebGL will not repeat it
- */
-Texture.prototype.enableWrapClamp = function()
-{
-	var gl = this.gl;
-
-	this.bind();
-
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-};
-
-/**
- * Enable tiling on the texture
- */
-Texture.prototype.enableWrapRepeat = function()
-{
-	var gl = this.gl;
-
-	this.bind();
-
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-};
-
-Texture.prototype.enableWrapMirrorRepeat = function()
-{
-	var gl = this.gl;
-
-	this.bind();
-
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
-};
-
-
-/**
- * Destroys this texture
- */
-Texture.prototype.destroy = function()
-{
-	var gl = this.gl;
-	//TODO
-	gl.deleteTexture(this.texture);
-};
-
-/**
- * @static
- * @param gl {WebGLRenderingContext} The current WebGL context
- * @param source {HTMLImageElement|ImageData} the source image of the texture
- * @param premultiplyAlpha {Boolean} If we want to use pre-multiplied alpha
- */
-Texture.fromSource = function(gl, source, premultiplyAlpha)
-{
-	var texture = new Texture(gl);
-	texture.premultiplyAlpha = premultiplyAlpha || false;
-	texture.upload(source);
-
-	return texture;
-};
-
-/**
- * @static
- * @param gl {WebGLRenderingContext} The current WebGL context
- * @param data {TypedArray} the data to upload to the texture
- * @param width {number} the new width of the texture
- * @param height {number} the new height of the texture
- */
-Texture.fromData = function(gl, data, width, height)
-{
-	//console.log(data, width, height);
-	var texture = new Texture(gl);
-	texture.uploadData(data, width, height);
-
-	return texture;
-};
-
-
-module.exports = Texture;
-
-},{}],14:[function(require,module,exports){
-
-// state object//
-var setVertexAttribArrays = require( './setVertexAttribArrays' );
-
-/**
- * Helper class to work with WebGL VertexArrayObjects (vaos)
- * Only works if WebGL extensions are enabled (they usually are)
- *
- * @class
- * @memberof PIXI.glCore
- * @param gl {WebGLRenderingContext} The current WebGL rendering context
- */
-function VertexArrayObject(gl, state)
-{
-    this.nativeVaoExtension = null;
-
-    if(!VertexArrayObject.FORCE_NATIVE)
-    {
-        this.nativeVaoExtension = gl.getExtension('OES_vertex_array_object') ||
-                                  gl.getExtension('MOZ_OES_vertex_array_object') ||
-                                  gl.getExtension('WEBKIT_OES_vertex_array_object');
-    }
-
-    this.nativeState = state;
-
-    if(this.nativeVaoExtension)
-    {
-        this.nativeVao = this.nativeVaoExtension.createVertexArrayOES();
-
-        var maxAttribs = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
-
-        // VAO - overwrite the state..
-        this.nativeState = {
-            tempAttribState: new Array(maxAttribs),
-            attribState: new Array(maxAttribs)
-        };
-    }
-
-    /**
-     * The current WebGL rendering context
-     *
-     * @member {WebGLRenderingContext}
-     */
-    this.gl = gl;
-
-    /**
-     * An array of attributes
-     *
-     * @member {Array}
-     */
-    this.attributes = [];
-
-    /**
-     * @member {PIXI.glCore.GLBuffer}
-     */
-    this.indexBuffer = null;
-
-    /**
-     * A boolean flag
-     *
-     * @member {Boolean}
-     */
-    this.dirty = false;
-}
-
-VertexArrayObject.prototype.constructor = VertexArrayObject;
-module.exports = VertexArrayObject;
-
-/**
-* Some devices behave a bit funny when using the newer extensions (im looking at you ipad 2!)
-* If you find on older devices that things have gone a bit weird then set this to true.
-*/
-/**
- * Lets the VAO know if you should use the WebGL extension or the native methods.
- * Some devices behave a bit funny when using the newer extensions (im looking at you ipad 2!)
- * If you find on older devices that things have gone a bit weird then set this to true.
- * @static
- * @property {Boolean} FORCE_NATIVE
- */
-VertexArrayObject.FORCE_NATIVE = false;
-
-/**
- * Binds the buffer
- */
-VertexArrayObject.prototype.bind = function()
-{
-    if(this.nativeVao)
-    {
-        this.nativeVaoExtension.bindVertexArrayOES(this.nativeVao);
-
-        if(this.dirty)
-        {
-            this.dirty = false;
-            this.activate();
-        }
-    }
-    else
-    {
-
-        this.activate();
-    }
-
-    return this;
-};
-
-/**
- * Unbinds the buffer
- */
-VertexArrayObject.prototype.unbind = function()
-{
-    if(this.nativeVao)
-    {
-        this.nativeVaoExtension.bindVertexArrayOES(null);
-    }
-
-    return this;
-};
-
-/**
- * Uses this vao
- */
-VertexArrayObject.prototype.activate = function()
-{
-
-    var gl = this.gl;
-    var lastBuffer = null;
-
-    for (var i = 0; i < this.attributes.length; i++)
-    {
-        var attrib = this.attributes[i];
-
-        if(lastBuffer !== attrib.buffer)
-        {
-            attrib.buffer.bind();
-            lastBuffer = attrib.buffer;
-        }
-
-        gl.vertexAttribPointer(attrib.attribute.location,
-                               attrib.attribute.size,
-                               attrib.type || gl.FLOAT,
-                               attrib.normalized || false,
-                               attrib.stride || 0,
-                               attrib.start || 0);
-    }
-
-    setVertexAttribArrays(gl, this.attributes, this.nativeState);
-
-    if(this.indexBuffer)
-    {
-        this.indexBuffer.bind();
-    }
-
-    return this;
-};
-
-/**
- *
- * @param buffer     {PIXI.gl.GLBuffer}
- * @param attribute  {*}
- * @param type       {String}
- * @param normalized {Boolean}
- * @param stride     {Number}
- * @param start      {Number}
- */
-VertexArrayObject.prototype.addAttribute = function(buffer, attribute, type, normalized, stride, start)
-{
-    this.attributes.push({
-        buffer:     buffer,
-        attribute:  attribute,
-
-        location:   attribute.location,
-        type:       type || this.gl.FLOAT,
-        normalized: normalized || false,
-        stride:     stride || 0,
-        start:      start || 0
-    });
-
-    this.dirty = true;
-
-    return this;
-};
-
-/**
- *
- * @param buffer   {PIXI.gl.GLBuffer}
- */
-VertexArrayObject.prototype.addIndex = function(buffer/*, options*/)
-{
-    this.indexBuffer = buffer;
-
-    this.dirty = true;
-
-    return this;
-};
-
-/**
- * Unbinds this vao and disables it
- */
-VertexArrayObject.prototype.clear = function()
-{
-    // var gl = this.gl;
-
-    // TODO - should this function unbind after clear?
-    // for now, no but lets see what happens in the real world!
-    if(this.nativeVao)
-    {
-        this.nativeVaoExtension.bindVertexArrayOES(this.nativeVao);
-    }
-
-    this.attributes.length = 0;
-    this.indexBuffer = null;
-
-    return this;
-};
-
-/**
- * @param type  {Number}
- * @param size  {Number}
- * @param start {Number}
- */
-VertexArrayObject.prototype.draw = function(type, size, start)
-{
-    var gl = this.gl;
-
-    if(this.indexBuffer)
-    {
-        gl.drawElements(type, size || this.indexBuffer.data.length, gl.UNSIGNED_SHORT, (start || 0) * 2 );
-    }
-    else
-    {
-        // TODO need a better way to calculate size..
-        gl.drawArrays(type, start, size || this.getSize());
-    }
-
-    return this;
-};
-
-/**
- * Destroy this vao
- */
-VertexArrayObject.prototype.destroy = function()
-{
-    // lose references
-    this.gl = null;
-    this.indexBuffer = null;
-    this.attributes = null;
-    this.nativeState = null;
-
-    if(this.nativeVao)
-    {
-        this.nativeVaoExtension.deleteVertexArrayOES(this.nativeVao);
-    }
-
-    this.nativeVaoExtension = null;
-    this.nativeVao = null;
-};
-
-VertexArrayObject.prototype.getSize = function()
-{
-    var attrib = this.attributes[0];
-    return attrib.buffer.data.length / (( attrib.stride/4 ) || attrib.attribute.size);
-};
-
-},{"./setVertexAttribArrays":17}],15:[function(require,module,exports){
-
-/**
- * Helper class to create a webGL Context
- *
- * @class
- * @memberof PIXI.glCore
- * @param canvas {HTMLCanvasElement} the canvas element that we will get the context from
- * @param options {Object} An options object that gets passed in to the canvas element containing the context attributes,
- *                         see https://developer.mozilla.org/en/docs/Web/API/HTMLCanvasElement/getContext for the options available
- * @return {WebGLRenderingContext} the WebGL context
- */
-var createContext = function(canvas, options)
-{
-    var gl = canvas.getContext('webgl', options) || 
-         canvas.getContext('experimental-webgl', options);
-
-    if (!gl)
-    {
-        // fail, not able to get a context
-        throw new Error('This browser does not support webGL. Try using the canvas renderer');
-    }
-
-    return gl;
-};
-
-module.exports = createContext;
-
-},{}],16:[function(require,module,exports){
-var gl = {
-    createContext:          require('./createContext'),
-    setVertexAttribArrays:  require('./setVertexAttribArrays'),
-    GLBuffer:               require('./GLBuffer'),
-    GLFramebuffer:          require('./GLFramebuffer'),
-    GLShader:               require('./GLShader'),
-    GLTexture:              require('./GLTexture'),
-    VertexArrayObject:      require('./VertexArrayObject'),
-    shader:                 require('./shader')
-};
-
-// Export for Node-compatible environments
-if (typeof module !== 'undefined' && module.exports)
-{
-    // Export the module
-    module.exports = gl;
-}
-
-// Add to the browser window pixi.gl
-if (typeof window !== 'undefined')
-{
-    // add the window object
-    window.PIXI = window.PIXI || {};
-    window.PIXI.glCore = gl;
-}
-
-},{"./GLBuffer":10,"./GLFramebuffer":11,"./GLShader":12,"./GLTexture":13,"./VertexArrayObject":14,"./createContext":15,"./setVertexAttribArrays":17,"./shader":23}],17:[function(require,module,exports){
-// var GL_MAP = {};
-
-/**
- * @param gl {WebGLRenderingContext} The current WebGL context
- * @param attribs {*}
- * @param state {*}
- */
-var setVertexAttribArrays = function (gl, attribs, state)
-{
-    var i;
-    if(state)
-    {
-        var tempAttribState = state.tempAttribState,
-            attribState = state.attribState;
-
-        for (i = 0; i < tempAttribState.length; i++)
-        {
-            tempAttribState[i] = false;
-        }
-
-        // set the new attribs
-        for (i = 0; i < attribs.length; i++)
-        {
-            tempAttribState[attribs[i].attribute.location] = true;
-        }
-
-        for (i = 0; i < attribState.length; i++)
-        {
-            if (attribState[i] !== tempAttribState[i])
-            {
-                attribState[i] = tempAttribState[i];
-
-                if (state.attribState[i])
-                {
-                    gl.enableVertexAttribArray(i);
-                }
-                else
-                {
-                    gl.disableVertexAttribArray(i);
-                }
-            }
-        }
-
-    }
-    else
-    {
-        for (i = 0; i < attribs.length; i++)
-        {
-            var attrib = attribs[i];
-            gl.enableVertexAttribArray(attrib.attribute.location);
-        }
-    }
-};
-
-module.exports = setVertexAttribArrays;
-
-},{}],18:[function(require,module,exports){
-
-/**
- * @class
- * @memberof PIXI.glCore.shader
- * @param gl {WebGLRenderingContext} The current WebGL context {WebGLProgram}
- * @param vertexSrc {string|string[]} The vertex shader source as an array of strings.
- * @param fragmentSrc {string|string[]} The fragment shader source as an array of strings.
- * @param attributeLocations {Object} An attribute location map that lets you manually set the attribute locations
- * @return {WebGLProgram} the shader program
- */
-var compileProgram = function(gl, vertexSrc, fragmentSrc, attributeLocations)
-{
-    var glVertShader = compileShader(gl, gl.VERTEX_SHADER, vertexSrc);
-    var glFragShader = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSrc);
-
-    var program = gl.createProgram();
-
-    gl.attachShader(program, glVertShader);
-    gl.attachShader(program, glFragShader);
-
-    // optionally, set the attributes manually for the program rather than letting WebGL decide..
-    if(attributeLocations)
-    {
-        for(var i in attributeLocations)
-        {
-            gl.bindAttribLocation(program, attributeLocations[i], i);
-        }
-    }
-
-
-    gl.linkProgram(program);
-
-    // if linking fails, then log and cleanup
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS))
-    {
-        console.error('Pixi.js Error: Could not initialize shader.');
-        console.error('gl.VALIDATE_STATUS', gl.getProgramParameter(program, gl.VALIDATE_STATUS));
-        console.error('gl.getError()', gl.getError());
-
-        // if there is a program info log, log it
-        if (gl.getProgramInfoLog(program) !== '')
-        {
-            console.warn('Pixi.js Warning: gl.getProgramInfoLog()', gl.getProgramInfoLog(program));
-        }
-
-        gl.deleteProgram(program);
-        program = null;
-    }
-
-    // clean up some shaders
-    gl.deleteShader(glVertShader);
-    gl.deleteShader(glFragShader);
-
-    return program;
-};
-
-/**
- * @private
- * @param gl {WebGLRenderingContext} The current WebGL context {WebGLProgram}
- * @param type {Number} the type, can be either VERTEX_SHADER or FRAGMENT_SHADER
- * @param vertexSrc {string|string[]} The vertex shader source as an array of strings.
- * @return {WebGLShader} the shader
- */
-var compileShader = function (gl, type, src)
-{
-    var shader = gl.createShader(type);
-
-    gl.shaderSource(shader, src);
-    gl.compileShader(shader);
-
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
-    {
-        console.log(gl.getShaderInfoLog(shader));
-        return null;
-    }
-
-    return shader;
-};
-
-module.exports = compileProgram;
-
-},{}],19:[function(require,module,exports){
-/**
- * @class
- * @memberof PIXI.glCore.shader
- * @param type {String} Type of value
- * @param size {Number}
- */
-var defaultValue = function(type, size) 
-{
-    switch (type)
-    {
-        case 'float':
-            return 0;
-
-        case 'vec2': 
-            return new Float32Array(2 * size);
-
-        case 'vec3':
-            return new Float32Array(3 * size);
-
-        case 'vec4':     
-            return new Float32Array(4 * size);
-            
-        case 'int':
-        case 'sampler2D':
-            return 0;
-
-        case 'ivec2':   
-            return new Int32Array(2 * size);
-
-        case 'ivec3':
-            return new Int32Array(3 * size);
-
-        case 'ivec4': 
-            return new Int32Array(4 * size);
-
-        case 'bool':     
-            return false;
-
-        case 'bvec2':
-
-            return booleanArray( 2 * size);
-
-        case 'bvec3':
-            return booleanArray(3 * size);
-
-        case 'bvec4':
-            return booleanArray(4 * size);
-
-        case 'mat2':
-            return new Float32Array([1, 0,
-                                     0, 1]);
-
-        case 'mat3': 
-            return new Float32Array([1, 0, 0,
-                                     0, 1, 0,
-                                     0, 0, 1]);
-
-        case 'mat4':
-            return new Float32Array([1, 0, 0, 0,
-                                     0, 1, 0, 0,
-                                     0, 0, 1, 0,
-                                     0, 0, 0, 1]);
-    }
-};
-
-var booleanArray = function(size)
-{
-    var array = new Array(size);
-
-    for (var i = 0; i < array.length; i++) 
-    {
-        array[i] = false;
-    }
-
-    return array;
-};
-
-module.exports = defaultValue;
-
-},{}],20:[function(require,module,exports){
-
-var mapType = require('./mapType');
-var mapSize = require('./mapSize');
-
-/**
- * Extracts the attributes
- * @class
- * @memberof PIXI.glCore.shader
- * @param gl {WebGLRenderingContext} The current WebGL rendering context
- * @param program {WebGLProgram} The shader program to get the attributes from
- * @return attributes {Object}
- */
-var extractAttributes = function(gl, program)
-{
-    var attributes = {};
-
-    var totalAttributes = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
-
-    for (var i = 0; i < totalAttributes; i++)
-    {
-        var attribData = gl.getActiveAttrib(program, i);
-        var type = mapType(gl, attribData.type);
-
-        attributes[attribData.name] = {
-            type:type,
-            size:mapSize(type),
-            location:gl.getAttribLocation(program, attribData.name),
-            //TODO - make an attribute object
-            pointer: pointer
-        };
-    }
-
-    return attributes;
-};
-
-var pointer = function(type, normalized, stride, start){
-    // console.log(this.location)
-    gl.vertexAttribPointer(this.location,this.size, type || gl.FLOAT, normalized || false, stride || 0, start || 0);
-};
-
-module.exports = extractAttributes;
-
-},{"./mapSize":24,"./mapType":25}],21:[function(require,module,exports){
-var mapType = require('./mapType');
-var defaultValue = require('./defaultValue');
-
-/**
- * Extracts the uniforms
- * @class
- * @memberof PIXI.glCore.shader
- * @param gl {WebGLRenderingContext} The current WebGL rendering context
- * @param program {WebGLProgram} The shader program to get the uniforms from
- * @return uniforms {Object}
- */
-var extractUniforms = function(gl, program)
-{
-	var uniforms = {};
-
-    var totalUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
-
-    for (var i = 0; i < totalUniforms; i++)
-    {
-    	var uniformData = gl.getActiveUniform(program, i);
-    	var name = uniformData.name.replace(/\[.*?\]/, "");
-        var type = mapType(gl, uniformData.type );
-
-    	uniforms[name] = {
-    		type:type,
-    		size:uniformData.size,
-    		location:gl.getUniformLocation(program, name),
-    		value:defaultValue(type, uniformData.size)
-    	};
-    }
-
-	return uniforms;
-};
-
-module.exports = extractUniforms;
-
-},{"./defaultValue":19,"./mapType":25}],22:[function(require,module,exports){
-/**
- * Extracts the attributes
- * @class
- * @memberof PIXI.glCore.shader
- * @param gl {WebGLRenderingContext} The current WebGL rendering context
- * @param uniforms {Array} @mat ?
- * @return attributes {Object}
- */
-var generateUniformAccessObject = function(gl, uniformData)
-{
-    // this is the object we will be sending back.
-    // an object hierachy will be created for structs
-    var uniforms = {data:{}};
-
-    uniforms.gl = gl;
-
-    var uniformKeys= Object.keys(uniformData);
-
-    for (var i = 0; i < uniformKeys.length; i++)
-    {
-        var fullName = uniformKeys[i];
-
-        var nameTokens = fullName.split('.');
-        var name = nameTokens[nameTokens.length - 1];
-
-
-        var uniformGroup = getUniformGroup(nameTokens, uniforms);
-
-        var uniform =  uniformData[fullName];
-        uniformGroup.data[name] = uniform;
-
-        uniformGroup.gl = gl;
-
-        Object.defineProperty(uniformGroup, name, {
-            get: generateGetter(name),
-            set: generateSetter(name, uniform)
-        });
-    }
-
-    return uniforms;
-};
-
-var generateGetter = function(name)
-{
-	var template = getterTemplate.replace('%%', name);
-	return new Function(template); // jshint ignore:line
-};
-
-var generateSetter = function(name, uniform)
-{
-    var template = setterTemplate.replace(/%%/g, name);
-    var setTemplate;
-
-    if(uniform.size === 1)
-    {
-        setTemplate = GLSL_TO_SINGLE_SETTERS[uniform.type];
-    }
-    else
-    {
-        setTemplate = GLSL_TO_ARRAY_SETTERS[uniform.type];
-    }
-
-    if(setTemplate)
-    {
-        template += "\nthis.gl." + setTemplate + ";";
-    }
-
-  	return new Function('value', template); // jshint ignore:line
-};
-
-var getUniformGroup = function(nameTokens, uniform)
-{
-    var cur = uniform;
-
-    for (var i = 0; i < nameTokens.length - 1; i++)
-    {
-        var o = cur[nameTokens[i]] || {data:{}};
-        cur[nameTokens[i]] = o;
-        cur = o;
-    }
-
-    return cur;
-};
-
-var getterTemplate = [
-    'return this.data.%%.value;',
-].join('\n');
-
-var setterTemplate = [
-    'this.data.%%.value = value;',
-    'var location = this.data.%%.location;'
-].join('\n');
-
-
-var GLSL_TO_SINGLE_SETTERS = {
-
-    'float':    'uniform1f(location, value)',
-
-    'vec2':     'uniform2f(location, value[0], value[1])',
-    'vec3':     'uniform3f(location, value[0], value[1], value[2])',
-    'vec4':     'uniform4f(location, value[0], value[1], value[2], value[3])',
-
-    'int':      'uniform1i(location, value)',
-    'ivec2':    'uniform2i(location, value[0], value[1])',
-    'ivec3':    'uniform3i(location, value[0], value[1], value[2])',
-    'ivec4':    'uniform4i(location, value[0], value[1], value[2], value[3])',
-
-    'bool':     'uniform1i(location, value)',
-    'bvec2':    'uniform2i(location, value[0], value[1])',
-    'bvec3':    'uniform3i(location, value[0], value[1], value[2])',
-    'bvec4':    'uniform4i(location, value[0], value[1], value[2], value[3])',
-
-    'mat2':     'uniformMatrix2fv(location, false, value)',
-    'mat3':     'uniformMatrix3fv(location, false, value)',
-    'mat4':     'uniformMatrix4fv(location, false, value)',
-
-    'sampler2D':'uniform1i(location, value)'
-};
-
-var GLSL_TO_ARRAY_SETTERS = {
-
-    'float':    'uniform1fv(location, value)',
-
-    'vec2':     'uniform2fv(location, value)',
-    'vec3':     'uniform3fv(location, value)',
-    'vec4':     'uniform4fv(location, value)',
-
-    'int':      'uniform1iv(location, value)',
-    'ivec2':    'uniform2iv(location, value)',
-    'ivec3':    'uniform3iv(location, value)',
-    'ivec4':    'uniform4iv(location, value)',
-
-    'bool':     'uniform1iv(location, value)',
-    'bvec2':    'uniform2iv(location, value)',
-    'bvec3':    'uniform3iv(location, value)',
-    'bvec4':    'uniform4iv(location, value)',
-
-    'sampler2D':'uniform1iv(location, value)'
-};
-
-module.exports = generateUniformAccessObject;
-
-},{}],23:[function(require,module,exports){
-module.exports = {
-    compileProgram: require('./compileProgram'),
-    defaultValue: require('./defaultValue'),
-    extractAttributes: require('./extractAttributes'),
-    extractUniforms: require('./extractUniforms'),
-    generateUniformAccessObject: require('./generateUniformAccessObject'),
-    setPrecision: require('./setPrecision'),
-    mapSize: require('./mapSize'),
-    mapType: require('./mapType')
-};
-},{"./compileProgram":18,"./defaultValue":19,"./extractAttributes":20,"./extractUniforms":21,"./generateUniformAccessObject":22,"./mapSize":24,"./mapType":25,"./setPrecision":26}],24:[function(require,module,exports){
-/**
- * @class
- * @memberof PIXI.glCore.shader
- * @param type {String}
- * @return {Number}
- */
-var mapSize = function(type) 
-{ 
-    return GLSL_TO_SIZE[type];
-};
-
-
-var GLSL_TO_SIZE = {
-    'float':    1,
-    'vec2':     2,
-    'vec3':     3,
-    'vec4':     4,
-
-    'int':      1,
-    'ivec2':    2,
-    'ivec3':    3,
-    'ivec4':    4,
-
-    'bool':     1,
-    'bvec2':    2,
-    'bvec3':    3,
-    'bvec4':    4,
-
-    'mat2':     4,
-    'mat3':     9,
-    'mat4':     16,
-
-    'sampler2D':  1
-};
-
-module.exports = mapSize;
-
-},{}],25:[function(require,module,exports){
-
-
-var mapSize = function(gl, type) 
-{
-    if(!GL_TABLE) 
-    {
-        var typeNames = Object.keys(GL_TO_GLSL_TYPES);
-
-        GL_TABLE = {};
-
-        for(var i = 0; i < typeNames.length; ++i) 
-        {
-            var tn = typeNames[i];
-            GL_TABLE[ gl[tn] ] = GL_TO_GLSL_TYPES[tn];
-        }
-    }
-
-  return GL_TABLE[type];
-};
-
-var GL_TABLE = null;
-
-var GL_TO_GLSL_TYPES = {
-  'FLOAT':       'float',
-  'FLOAT_VEC2':  'vec2',
-  'FLOAT_VEC3':  'vec3',
-  'FLOAT_VEC4':  'vec4',
-
-  'INT':         'int',
-  'INT_VEC2':    'ivec2',
-  'INT_VEC3':    'ivec3',
-  'INT_VEC4':    'ivec4',
-  
-  'BOOL':        'bool',
-  'BOOL_VEC2':   'bvec2',
-  'BOOL_VEC3':   'bvec3',
-  'BOOL_VEC4':   'bvec4',
-  
-  'FLOAT_MAT2':  'mat2',
-  'FLOAT_MAT3':  'mat3',
-  'FLOAT_MAT4':  'mat4',
-  
-  'SAMPLER_2D':  'sampler2D'  
-};
-
-module.exports = mapSize;
-
-},{}],26:[function(require,module,exports){
-/**
- * Sets the float precision on the shader. If the precision is already present this function will do nothing
- * @param {string} src       the shader source
- * @param {string} precision The float precision of the shader. Options are 'lowp', 'mediump' or 'highp'.
- *
- * @return {string} modified shader source
- */
-var setPrecision = function(src, precision)
-{
-    if(src.substring(0, 9) !== 'precision')
-    {
-        return 'precision ' + precision + ' float;\n' + src;
-    }
-
-    return src;
-};
-
-module.exports = setPrecision;
-
-},{}],27:[function(require,module,exports){
+},{"_process":23}],23:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -3656,10 +3377,6 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -3671,7 +3388,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],28:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -4209,7 +3926,7 @@ process.umask = function() { return 0; };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],29:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4295,7 +4012,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],30:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4382,2170 +4099,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],31:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":29,"./encode":30}],32:[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _miniSignals = require('mini-signals');
-
-var _miniSignals2 = _interopRequireDefault(_miniSignals);
-
-var _parseUri = require('parse-uri');
-
-var _parseUri2 = _interopRequireDefault(_parseUri);
-
-var _async = require('./async');
-
-var async = _interopRequireWildcard(_async);
-
-var _Resource = require('./Resource');
-
-var _Resource2 = _interopRequireDefault(_Resource);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-// some constants
-var MAX_PROGRESS = 100;
-var rgxExtractUrlHash = /(#[\w-]+)?$/;
-
-/**
- * Manages the state and loading of multiple resources to load.
- *
- * @class
- */
-
-var Loader = function () {
-    /**
-     * @param {string} [baseUrl=''] - The base url for all resources loaded by this loader.
-     * @param {number} [concurrency=10] - The number of resources to load concurrently.
-     */
-    function Loader() {
-        var _this = this;
-
-        var baseUrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-        var concurrency = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
-
-        _classCallCheck(this, Loader);
-
-        /**
-         * The base url for all resources loaded by this loader.
-         *
-         * @member {string}
-         */
-        this.baseUrl = baseUrl;
-
-        /**
-         * The progress percent of the loader going through the queue.
-         *
-         * @member {number}
-         */
-        this.progress = 0;
-
-        /**
-         * Loading state of the loader, true if it is currently loading resources.
-         *
-         * @member {boolean}
-         */
-        this.loading = false;
-
-        /**
-         * A querystring to append to every URL added to the loader.
-         *
-         * This should be a valid query string *without* the question-mark (`?`). The loader will
-         * also *not* escape values for you. Make sure to escape your parameters with
-         * [`encodeURIComponent`](https://mdn.io/encodeURIComponent) before assigning this property.
-         *
-         * @example
-         * const loader = new Loader();
-         *
-         * loader.defaultQueryString = 'user=me&password=secret';
-         *
-         * // This will request 'image.png?user=me&password=secret'
-         * loader.add('image.png').load();
-         *
-         * loader.reset();
-         *
-         * // This will request 'image.png?v=1&user=me&password=secret'
-         * loader.add('iamge.png?v=1').load();
-         */
-        this.defaultQueryString = '';
-
-        /**
-         * The middleware to run before loading each resource.
-         *
-         * @member {function[]}
-         */
-        this._beforeMiddleware = [];
-
-        /**
-         * The middleware to run after loading each resource.
-         *
-         * @member {function[]}
-         */
-        this._afterMiddleware = [];
-
-        /**
-         * The tracks the resources we are currently completing parsing for.
-         *
-         * @member {Resource[]}
-         */
-        this._resourcesParsing = [];
-
-        /**
-         * The `_loadResource` function bound with this object context.
-         *
-         * @private
-         * @member {function}
-         * @param {Resource} r - The resource to load
-         * @param {Function} d - The dequeue function
-         * @return {undefined}
-         */
-        this._boundLoadResource = function (r, d) {
-            return _this._loadResource(r, d);
-        };
-
-        /**
-         * The resources waiting to be loaded.
-         *
-         * @private
-         * @member {Resource[]}
-         */
-        this._queue = async.queue(this._boundLoadResource, concurrency);
-
-        this._queue.pause();
-
-        /**
-         * All the resources for this loader keyed by name.
-         *
-         * @member {object<string, Resource>}
-         */
-        this.resources = {};
-
-        /**
-         * Dispatched once per loaded or errored resource.
-         *
-         * The callback looks like {@link Loader.OnProgressSignal}.
-         *
-         * @member {Signal}
-         */
-        this.onProgress = new _miniSignals2.default();
-
-        /**
-         * Dispatched once per errored resource.
-         *
-         * The callback looks like {@link Loader.OnErrorSignal}.
-         *
-         * @member {Signal}
-         */
-        this.onError = new _miniSignals2.default();
-
-        /**
-         * Dispatched once per loaded resource.
-         *
-         * The callback looks like {@link Loader.OnLoadSignal}.
-         *
-         * @member {Signal}
-         */
-        this.onLoad = new _miniSignals2.default();
-
-        /**
-         * Dispatched when the loader begins to process the queue.
-         *
-         * The callback looks like {@link Loader.OnStartSignal}.
-         *
-         * @member {Signal}
-         */
-        this.onStart = new _miniSignals2.default();
-
-        /**
-         * Dispatched when the queued resources all load.
-         *
-         * The callback looks like {@link Loader.OnCompleteSignal}.
-         *
-         * @member {Signal}
-         */
-        this.onComplete = new _miniSignals2.default();
-
-        /**
-         * When the progress changes the loader and resource are disaptched.
-         *
-         * @memberof Loader
-         * @callback OnProgressSignal
-         * @param {Loader} loader - The loader the progress is advancing on.
-         * @param {Resource} resource - The resource that has completed or failed to cause the progress to advance.
-         */
-
-        /**
-         * When an error occurrs the loader and resource are disaptched.
-         *
-         * @memberof Loader
-         * @callback OnErrorSignal
-         * @param {Loader} loader - The loader the error happened in.
-         * @param {Resource} resource - The resource that caused the error.
-         */
-
-        /**
-         * When a load completes the loader and resource are disaptched.
-         *
-         * @memberof Loader
-         * @callback OnLoadSignal
-         * @param {Loader} loader - The loader that laoded the resource.
-         * @param {Resource} resource - The resource that has completed loading.
-         */
-
-        /**
-         * When the loader starts loading resources it dispatches this callback.
-         *
-         * @memberof Loader
-         * @callback OnStartSignal
-         * @param {Loader} loader - The loader that has started loading resources.
-         */
-
-        /**
-         * When the loader completes loading resources it dispatches this callback.
-         *
-         * @memberof Loader
-         * @callback OnCompleteSignal
-         * @param {Loader} loader - The loader that has finished loading resources.
-         */
-    }
-
-    /**
-     * Adds a resource (or multiple resources) to the loader queue.
-     *
-     * This function can take a wide variety of different parameters. The only thing that is always
-     * required the url to load. All the following will work:
-     *
-     * ```js
-     * loader
-     *     // normal param syntax
-     *     .add('key', 'http://...', function () {})
-     *     .add('http://...', function () {})
-     *     .add('http://...')
-     *
-     *     // object syntax
-     *     .add({
-     *         name: 'key2',
-     *         url: 'http://...'
-     *     }, function () {})
-     *     .add({
-     *         url: 'http://...'
-     *     }, function () {})
-     *     .add({
-     *         name: 'key3',
-     *         url: 'http://...'
-     *         onComplete: function () {}
-     *     })
-     *     .add({
-     *         url: 'https://...',
-     *         onComplete: function () {},
-     *         crossOrigin: true
-     *     })
-     *
-     *     // you can also pass an array of objects or urls or both
-     *     .add([
-     *         { name: 'key4', url: 'http://...', onComplete: function () {} },
-     *         { url: 'http://...', onComplete: function () {} },
-     *         'http://...'
-     *     ])
-     *
-     *     // and you can use both params and options
-     *     .add('key', 'http://...', { crossOrigin: true }, function () {})
-     *     .add('http://...', { crossOrigin: true }, function () {});
-     * ```
-     *
-     * @param {string} [name] - The name of the resource to load, if not passed the url is used.
-     * @param {string} [url] - The url for this resource, relative to the baseUrl of this loader.
-     * @param {object} [options] - The options for the load.
-     * @param {boolean} [options.crossOrigin] - Is this request cross-origin? Default is to determine automatically.
-     * @param {Resource.LOAD_TYPE} [options.loadType=Resource.LOAD_TYPE.XHR] - How should this resource be loaded?
-     * @param {Resource.XHR_RESPONSE_TYPE} [options.xhrType=Resource.XHR_RESPONSE_TYPE.DEFAULT] - How should
-     *      the data being loaded be interpreted when using XHR?
-     * @param {object} [options.metadata] - Extra configuration for middleware and the Resource object.
-     * @param {HTMLImageElement|HTMLAudioElement|HTMLVideoElement} [options.metadata.loadElement=null] - The
-     *      element to use for loading, instead of creating one.
-     * @param {boolean} [options.metadata.skipSource=false] - Skips adding source(s) to the load element. This
-     *      is useful if you want to pass in a `loadElement` that you already added load sources to.
-     * @param {function} [cb] - Function to call when this specific resource completes loading.
-     * @return {Loader} Returns itself.
-     */
-
-
-    Loader.prototype.add = function add(name, url, options, cb) {
-        // special case of an array of objects or urls
-        if (Array.isArray(name)) {
-            for (var i = 0; i < name.length; ++i) {
-                this.add(name[i]);
-            }
-
-            return this;
-        }
-
-        // if an object is passed instead of params
-        if ((typeof name === 'undefined' ? 'undefined' : _typeof(name)) === 'object') {
-            cb = url || name.callback || name.onComplete;
-            options = name;
-            url = name.url;
-            name = name.name || name.key || name.url;
-        }
-
-        // case where no name is passed shift all args over by one.
-        if (typeof url !== 'string') {
-            cb = options;
-            options = url;
-            url = name;
-        }
-
-        // now that we shifted make sure we have a proper url.
-        if (typeof url !== 'string') {
-            throw new Error('No url passed to add resource to loader.');
-        }
-
-        // options are optional so people might pass a function and no options
-        if (typeof options === 'function') {
-            cb = options;
-            options = null;
-        }
-
-        // if loading already you can only add resources that have a parent.
-        if (this.loading && (!options || !options.parentResource)) {
-            throw new Error('Cannot add resources while the loader is running.');
-        }
-
-        // check if resource already exists.
-        if (this.resources[name]) {
-            throw new Error('Resource named "' + name + '" already exists.');
-        }
-
-        // add base url if this isn't an absolute url
-        url = this._prepareUrl(url);
-
-        // create the store the resource
-        this.resources[name] = new _Resource2.default(name, url, options);
-
-        if (typeof cb === 'function') {
-            this.resources[name].onAfterMiddleware.once(cb);
-        }
-
-        // if actively loading, make sure to adjust progress chunks for that parent and its children
-        if (this.loading) {
-            var parent = options.parentResource;
-            var incompleteChildren = [];
-
-            for (var _i = 0; _i < parent.children.length; ++_i) {
-                if (!parent.children[_i].isComplete) {
-                    incompleteChildren.push(parent.children[_i]);
-                }
-            }
-
-            var fullChunk = parent.progressChunk * (incompleteChildren.length + 1); // +1 for parent
-            var eachChunk = fullChunk / (incompleteChildren.length + 2); // +2 for parent & new child
-
-            parent.children.push(this.resources[name]);
-            parent.progressChunk = eachChunk;
-
-            for (var _i2 = 0; _i2 < incompleteChildren.length; ++_i2) {
-                incompleteChildren[_i2].progressChunk = eachChunk;
-            }
-
-            this.resources[name].progressChunk = eachChunk;
-        }
-
-        // add the resource to the queue
-        this._queue.push(this.resources[name]);
-
-        return this;
-    };
-
-    /**
-     * Sets up a middleware function that will run *before* the
-     * resource is loaded.
-     *
-     * @method before
-     * @param {function} fn - The middleware function to register.
-     * @return {Loader} Returns itself.
-     */
-
-
-    Loader.prototype.pre = function pre(fn) {
-        this._beforeMiddleware.push(fn);
-
-        return this;
-    };
-
-    /**
-     * Sets up a middleware function that will run *after* the
-     * resource is loaded.
-     *
-     * @alias use
-     * @method after
-     * @param {function} fn - The middleware function to register.
-     * @return {Loader} Returns itself.
-     */
-
-
-    Loader.prototype.use = function use(fn) {
-        this._afterMiddleware.push(fn);
-
-        return this;
-    };
-
-    /**
-     * Resets the queue of the loader to prepare for a new load.
-     *
-     * @return {Loader} Returns itself.
-     */
-
-
-    Loader.prototype.reset = function reset() {
-        this.progress = 0;
-        this.loading = false;
-
-        this._queue.kill();
-        this._queue.pause();
-
-        // abort all resource loads
-        for (var k in this.resources) {
-            var res = this.resources[k];
-
-            if (res._onLoadBinding) {
-                res._onLoadBinding.detach();
-            }
-
-            if (res.isLoading) {
-                res.abort();
-            }
-        }
-
-        this.resources = {};
-
-        return this;
-    };
-
-    /**
-     * Starts loading the queued resources.
-     *
-     * @param {function} [cb] - Optional callback that will be bound to the `complete` event.
-     * @return {Loader} Returns itself.
-     */
-
-
-    Loader.prototype.load = function load(cb) {
-        // register complete callback if they pass one
-        if (typeof cb === 'function') {
-            this.onComplete.once(cb);
-        }
-
-        // if the queue has already started we are done here
-        if (this.loading) {
-            return this;
-        }
-
-        // distribute progress chunks
-        var chunk = 100 / this._queue._tasks.length;
-
-        for (var i = 0; i < this._queue._tasks.length; ++i) {
-            this._queue._tasks[i].data.progressChunk = chunk;
-        }
-
-        // update loading state
-        this.loading = true;
-
-        // notify of start
-        this.onStart.dispatch(this);
-
-        // start loading
-        this._queue.resume();
-
-        return this;
-    };
-
-    /**
-     * Prepares a url for usage based on the configuration of this object
-     *
-     * @private
-     * @param {string} url - The url to prepare.
-     * @return {string} The prepared url.
-     */
-
-
-    Loader.prototype._prepareUrl = function _prepareUrl(url) {
-        var parsedUrl = (0, _parseUri2.default)(url, { strictMode: true });
-        var result = void 0;
-
-        // absolute url, just use it as is.
-        if (parsedUrl.protocol || !parsedUrl.path || url.indexOf('//') === 0) {
-            result = url;
-        }
-        // if baseUrl doesn't end in slash and url doesn't start with slash, then add a slash inbetween
-        else if (this.baseUrl.length && this.baseUrl.lastIndexOf('/') !== this.baseUrl.length - 1 && url.charAt(0) !== '/') {
-                result = this.baseUrl + '/' + url;
-            } else {
-                result = this.baseUrl + url;
-            }
-
-        // if we need to add a default querystring, there is a bit more work
-        if (this.defaultQueryString) {
-            var hash = rgxExtractUrlHash.exec(result)[0];
-
-            result = result.substr(0, result.length - hash.length);
-
-            if (result.indexOf('?') !== -1) {
-                result += '&' + this.defaultQueryString;
-            } else {
-                result += '?' + this.defaultQueryString;
-            }
-
-            result += hash;
-        }
-
-        return result;
-    };
-
-    /**
-     * Loads a single resource.
-     *
-     * @private
-     * @param {Resource} resource - The resource to load.
-     * @param {function} dequeue - The function to call when we need to dequeue this item.
-     */
-
-
-    Loader.prototype._loadResource = function _loadResource(resource, dequeue) {
-        var _this2 = this;
-
-        resource._dequeue = dequeue;
-
-        // run before middleware
-        async.eachSeries(this._beforeMiddleware, function (fn, next) {
-            fn.call(_this2, resource, function () {
-                // if the before middleware marks the resource as complete,
-                // break and don't process any more before middleware
-                next(resource.isComplete ? {} : null);
-            });
-        }, function () {
-            if (resource.isComplete) {
-                _this2._onLoad(resource);
-            } else {
-                resource._onLoadBinding = resource.onComplete.once(_this2._onLoad, _this2);
-                resource.load();
-            }
-        }, true);
-    };
-
-    /**
-     * Called once each resource has loaded.
-     *
-     * @private
-     */
-
-
-    Loader.prototype._onComplete = function _onComplete() {
-        this.loading = false;
-
-        this.onComplete.dispatch(this, this.resources);
-    };
-
-    /**
-     * Called each time a resources is loaded.
-     *
-     * @private
-     * @param {Resource} resource - The resource that was loaded
-     */
-
-
-    Loader.prototype._onLoad = function _onLoad(resource) {
-        var _this3 = this;
-
-        resource._onLoadBinding = null;
-
-        // remove this resource from the async queue, and add it to our list of resources that are being parsed
-        this._resourcesParsing.push(resource);
-        resource._dequeue();
-
-        // run all the after middleware for this resource
-        async.eachSeries(this._afterMiddleware, function (fn, next) {
-            fn.call(_this3, resource, next);
-        }, function () {
-            resource.onAfterMiddleware.dispatch(resource);
-
-            _this3.progress += resource.progressChunk;
-            _this3.onProgress.dispatch(_this3, resource);
-
-            if (resource.error) {
-                _this3.onError.dispatch(resource.error, _this3, resource);
-            } else {
-                _this3.onLoad.dispatch(_this3, resource);
-            }
-
-            _this3._resourcesParsing.splice(_this3._resourcesParsing.indexOf(resource), 1);
-
-            // do completion check
-            if (_this3._queue.idle() && _this3._resourcesParsing.length === 0) {
-                _this3.progress = MAX_PROGRESS;
-                _this3._onComplete();
-            }
-        }, true);
-    };
-
-    return Loader;
-}();
-
-exports.default = Loader;
-
-},{"./Resource":33,"./async":34,"mini-signals":6,"parse-uri":8}],33:[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _parseUri = require('parse-uri');
-
-var _parseUri2 = _interopRequireDefault(_parseUri);
-
-var _miniSignals = require('mini-signals');
-
-var _miniSignals2 = _interopRequireDefault(_miniSignals);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-// tests is CORS is supported in XHR, if not we need to use XDR
-var useXdr = !!(window.XDomainRequest && !('withCredentials' in new XMLHttpRequest()));
-var tempAnchor = null;
-
-// some status constants
-var STATUS_NONE = 0;
-var STATUS_OK = 200;
-var STATUS_EMPTY = 204;
-var STATUS_IE_BUG_EMPTY = 1223;
-var STATUS_TYPE_OK = 2;
-
-// noop
-function _noop() {} /* empty */
-
-/**
- * Manages the state and loading of a resource and all child resources.
- *
- * @class
- */
-
-var Resource = function () {
-    /**
-     * Sets the load type to be used for a specific extension.
-     *
-     * @static
-     * @param {string} extname - The extension to set the type for, e.g. "png" or "fnt"
-     * @param {Resource.LOAD_TYPE} loadType - The load type to set it to.
-     */
-    Resource.setExtensionLoadType = function setExtensionLoadType(extname, loadType) {
-        setExtMap(Resource._loadTypeMap, extname, loadType);
-    };
-
-    /**
-     * Sets the load type to be used for a specific extension.
-     *
-     * @static
-     * @param {string} extname - The extension to set the type for, e.g. "png" or "fnt"
-     * @param {Resource.XHR_RESPONSE_TYPE} xhrType - The xhr type to set it to.
-     */
-
-
-    Resource.setExtensionXhrType = function setExtensionXhrType(extname, xhrType) {
-        setExtMap(Resource._xhrTypeMap, extname, xhrType);
-    };
-
-    /**
-     * @param {string} name - The name of the resource to load.
-     * @param {string|string[]} url - The url for this resource, for audio/video loads you can pass
-     *      an array of sources.
-     * @param {object} [options] - The options for the load.
-     * @param {string|boolean} [options.crossOrigin] - Is this request cross-origin? Default is to
-     *      determine automatically.
-     * @param {Resource.LOAD_TYPE} [options.loadType=Resource.LOAD_TYPE.XHR] - How should this resource
-     *      be loaded?
-     * @param {Resource.XHR_RESPONSE_TYPE} [options.xhrType=Resource.XHR_RESPONSE_TYPE.DEFAULT] - How
-     *      should the data being loaded be interpreted when using XHR?
-     * @param {object} [options.metadata] - Extra configuration for middleware and the Resource object.
-     * @param {HTMLImageElement|HTMLAudioElement|HTMLVideoElement} [options.metadata.loadElement=null] - The
-     *      element to use for loading, instead of creating one.
-     * @param {boolean} [options.metadata.skipSource=false] - Skips adding source(s) to the load element. This
-     *      is useful if you want to pass in a `loadElement` that you already added load sources to.
-     */
-
-
-    function Resource(name, url, options) {
-        _classCallCheck(this, Resource);
-
-        if (typeof name !== 'string' || typeof url !== 'string') {
-            throw new Error('Both name and url are required for constructing a resource.');
-        }
-
-        options = options || {};
-
-        /**
-         * The state flags of this resource.
-         *
-         * @member {number}
-         */
-        this._flags = 0;
-
-        // set data url flag, needs to be set early for some _determineX checks to work.
-        this._setFlag(Resource.STATUS_FLAGS.DATA_URL, url.indexOf('data:') === 0);
-
-        /**
-         * The name of this resource.
-         *
-         * @member {string}
-         * @readonly
-         */
-        this.name = name;
-
-        /**
-         * The url used to load this resource.
-         *
-         * @member {string}
-         * @readonly
-         */
-        this.url = url;
-
-        /**
-         * The extension used to load this resource.
-         *
-         * @member {string}
-         * @readonly
-         */
-        this.extension = this._getExtension();
-
-        /**
-         * The data that was loaded by the resource.
-         *
-         * @member {any}
-         */
-        this.data = null;
-
-        /**
-         * Is this request cross-origin? If unset, determined automatically.
-         *
-         * @member {string}
-         */
-        this.crossOrigin = options.crossOrigin === true ? 'anonymous' : options.crossOrigin;
-
-        /**
-         * The method of loading to use for this resource.
-         *
-         * @member {Resource.LOAD_TYPE}
-         */
-        this.loadType = options.loadType || this._determineLoadType();
-
-        /**
-         * The type used to load the resource via XHR. If unset, determined automatically.
-         *
-         * @member {string}
-         */
-        this.xhrType = options.xhrType;
-
-        /**
-         * Extra info for middleware, and controlling specifics about how the resource loads.
-         *
-         * Note that if you pass in a `loadElement`, the Resource class takes ownership of it.
-         * Meaning it will modify it as it sees fit.
-         *
-         * @member {object}
-         * @property {HTMLImageElement|HTMLAudioElement|HTMLVideoElement} [loadElement=null] - The
-         *  element to use for loading, instead of creating one.
-         * @property {boolean} [skipSource=false] - Skips adding source(s) to the load element. This
-         *  is useful if you want to pass in a `loadElement` that you already added load sources
-         *  to.
-         */
-        this.metadata = options.metadata || {};
-
-        /**
-         * The error that occurred while loading (if any).
-         *
-         * @member {Error}
-         * @readonly
-         */
-        this.error = null;
-
-        /**
-         * The XHR object that was used to load this resource. This is only set
-         * when `loadType` is `Resource.LOAD_TYPE.XHR`.
-         *
-         * @member {XMLHttpRequest}
-         * @readonly
-         */
-        this.xhr = null;
-
-        /**
-         * The child resources this resource owns.
-         *
-         * @member {Resource[]}
-         * @readonly
-         */
-        this.children = [];
-
-        /**
-         * The resource type.
-         *
-         * @member {Resource.TYPE}
-         * @readonly
-         */
-        this.type = Resource.TYPE.UNKNOWN;
-
-        /**
-         * The progress chunk owned by this resource.
-         *
-         * @member {number}
-         * @readonly
-         */
-        this.progressChunk = 0;
-
-        /**
-         * The `dequeue` method that will be used a storage place for the async queue dequeue method
-         * used privately by the loader.
-         *
-         * @private
-         * @member {function}
-         */
-        this._dequeue = _noop;
-
-        /**
-         * Used a storage place for the on load binding used privately by the loader.
-         *
-         * @private
-         * @member {function}
-         */
-        this._onLoadBinding = null;
-
-        /**
-         * The `complete` function bound to this resource's context.
-         *
-         * @private
-         * @member {function}
-         */
-        this._boundComplete = this.complete.bind(this);
-
-        /**
-         * The `_onError` function bound to this resource's context.
-         *
-         * @private
-         * @member {function}
-         */
-        this._boundOnError = this._onError.bind(this);
-
-        /**
-         * The `_onProgress` function bound to this resource's context.
-         *
-         * @private
-         * @member {function}
-         */
-        this._boundOnProgress = this._onProgress.bind(this);
-
-        // xhr callbacks
-        this._boundXhrOnError = this._xhrOnError.bind(this);
-        this._boundXhrOnAbort = this._xhrOnAbort.bind(this);
-        this._boundXhrOnLoad = this._xhrOnLoad.bind(this);
-        this._boundXdrOnTimeout = this._xdrOnTimeout.bind(this);
-
-        /**
-         * Dispatched when the resource beings to load.
-         *
-         * The callback looks like {@link Resource.OnStartSignal}.
-         *
-         * @member {Signal}
-         */
-        this.onStart = new _miniSignals2.default();
-
-        /**
-         * Dispatched each time progress of this resource load updates.
-         * Not all resources types and loader systems can support this event
-         * so sometimes it may not be available. If the resource
-         * is being loaded on a modern browser, using XHR, and the remote server
-         * properly sets Content-Length headers, then this will be available.
-         *
-         * The callback looks like {@link Resource.OnProgressSignal}.
-         *
-         * @member {Signal}
-         */
-        this.onProgress = new _miniSignals2.default();
-
-        /**
-         * Dispatched once this resource has loaded, if there was an error it will
-         * be in the `error` property.
-         *
-         * The callback looks like {@link Resource.OnCompleteSignal}.
-         *
-         * @member {Signal}
-         */
-        this.onComplete = new _miniSignals2.default();
-
-        /**
-         * Dispatched after this resource has had all the *after* middleware run on it.
-         *
-         * The callback looks like {@link Resource.OnCompleteSignal}.
-         *
-         * @member {Signal}
-         */
-        this.onAfterMiddleware = new _miniSignals2.default();
-
-        /**
-         * When the resource starts to load.
-         *
-         * @memberof Resource
-         * @callback OnStartSignal
-         * @param {Resource} resource - The resource that the event happened on.
-         */
-
-        /**
-         * When the resource reports loading progress.
-         *
-         * @memberof Resource
-         * @callback OnProgressSignal
-         * @param {Resource} resource - The resource that the event happened on.
-         * @param {number} percentage - The progress of the load in the range [0, 1].
-         */
-
-        /**
-         * When the resource finishes loading.
-         *
-         * @memberof Resource
-         * @callback OnCompleteSignal
-         * @param {Resource} resource - The resource that the event happened on.
-         */
-    }
-
-    /**
-     * Stores whether or not this url is a data url.
-     *
-     * @member {boolean}
-     * @readonly
-     */
-
-
-    /**
-     * Marks the resource as complete.
-     *
-     */
-    Resource.prototype.complete = function complete() {
-        // TODO: Clean this up in a wrapper or something...gross....
-        if (this.data && this.data.removeEventListener) {
-            this.data.removeEventListener('error', this._boundOnError, false);
-            this.data.removeEventListener('load', this._boundComplete, false);
-            this.data.removeEventListener('progress', this._boundOnProgress, false);
-            this.data.removeEventListener('canplaythrough', this._boundComplete, false);
-        }
-
-        if (this.xhr) {
-            if (this.xhr.removeEventListener) {
-                this.xhr.removeEventListener('error', this._boundXhrOnError, false);
-                this.xhr.removeEventListener('abort', this._boundXhrOnAbort, false);
-                this.xhr.removeEventListener('progress', this._boundOnProgress, false);
-                this.xhr.removeEventListener('load', this._boundXhrOnLoad, false);
-            } else {
-                this.xhr.onerror = null;
-                this.xhr.ontimeout = null;
-                this.xhr.onprogress = null;
-                this.xhr.onload = null;
-            }
-        }
-
-        if (this.isComplete) {
-            throw new Error('Complete called again for an already completed resource.');
-        }
-
-        this._setFlag(Resource.STATUS_FLAGS.COMPLETE, true);
-        this._setFlag(Resource.STATUS_FLAGS.LOADING, false);
-
-        this.onComplete.dispatch(this);
-    };
-
-    /**
-     * Aborts the loading of this resource, with an optional message.
-     *
-     * @param {string} message - The message to use for the error
-     */
-
-
-    Resource.prototype.abort = function abort(message) {
-        // abort can be called multiple times, ignore subsequent calls.
-        if (this.error) {
-            return;
-        }
-
-        // store error
-        this.error = new Error(message);
-
-        // abort the actual loading
-        if (this.xhr) {
-            this.xhr.abort();
-        } else if (this.xdr) {
-            this.xdr.abort();
-        } else if (this.data) {
-            // single source
-            if (this.data.src) {
-                this.data.src = Resource.EMPTY_GIF;
-            }
-            // multi-source
-            else {
-                    while (this.data.firstChild) {
-                        this.data.removeChild(this.data.firstChild);
-                    }
-                }
-        }
-
-        // done now.
-        this.complete();
-    };
-
-    /**
-     * Kicks off loading of this resource. This method is asynchronous.
-     *
-     * @param {function} [cb] - Optional callback to call once the resource is loaded.
-     */
-
-
-    Resource.prototype.load = function load(cb) {
-        var _this = this;
-
-        if (this.isLoading) {
-            return;
-        }
-
-        if (this.isComplete) {
-            if (cb) {
-                setTimeout(function () {
-                    return cb(_this);
-                }, 1);
-            }
-
-            return;
-        } else if (cb) {
-            this.onComplete.once(cb);
-        }
-
-        this._setFlag(Resource.STATUS_FLAGS.LOADING, true);
-
-        this.onStart.dispatch(this);
-
-        // if unset, determine the value
-        if (this.crossOrigin === false || typeof this.crossOrigin !== 'string') {
-            this.crossOrigin = this._determineCrossOrigin(this.url);
-        }
-
-        switch (this.loadType) {
-            case Resource.LOAD_TYPE.IMAGE:
-                this.type = Resource.TYPE.IMAGE;
-                this._loadElement('image');
-                break;
-
-            case Resource.LOAD_TYPE.AUDIO:
-                this.type = Resource.TYPE.AUDIO;
-                this._loadSourceElement('audio');
-                break;
-
-            case Resource.LOAD_TYPE.VIDEO:
-                this.type = Resource.TYPE.VIDEO;
-                this._loadSourceElement('video');
-                break;
-
-            case Resource.LOAD_TYPE.XHR:
-            /* falls through */
-            default:
-                if (useXdr && this.crossOrigin) {
-                    this._loadXdr();
-                } else {
-                    this._loadXhr();
-                }
-                break;
-        }
-    };
-
-    /**
-     * Checks if the flag is set.
-     *
-     * @private
-     * @param {number} flag - The flag to check.
-     * @return {boolean} True if the flag is set.
-     */
-
-
-    Resource.prototype._hasFlag = function _hasFlag(flag) {
-        return !!(this._flags & flag);
-    };
-
-    /**
-     * (Un)Sets the flag.
-     *
-     * @private
-     * @param {number} flag - The flag to (un)set.
-     * @param {boolean} value - Whether to set or (un)set the flag.
-     */
-
-
-    Resource.prototype._setFlag = function _setFlag(flag, value) {
-        this._flags = value ? this._flags | flag : this._flags & ~flag;
-    };
-
-    /**
-     * Loads this resources using an element that has a single source,
-     * like an HTMLImageElement.
-     *
-     * @private
-     * @param {string} type - The type of element to use.
-     */
-
-
-    Resource.prototype._loadElement = function _loadElement(type) {
-        if (this.metadata.loadElement) {
-            this.data = this.metadata.loadElement;
-        } else if (type === 'image' && typeof window.Image !== 'undefined') {
-            this.data = new Image();
-        } else {
-            this.data = document.createElement(type);
-        }
-
-        if (this.crossOrigin) {
-            this.data.crossOrigin = this.crossOrigin;
-        }
-
-        if (!this.metadata.skipSource) {
-            this.data.src = this.url;
-        }
-
-        this.data.addEventListener('error', this._boundOnError, false);
-        this.data.addEventListener('load', this._boundComplete, false);
-        this.data.addEventListener('progress', this._boundOnProgress, false);
-    };
-
-    /**
-     * Loads this resources using an element that has multiple sources,
-     * like an HTMLAudioElement or HTMLVideoElement.
-     *
-     * @private
-     * @param {string} type - The type of element to use.
-     */
-
-
-    Resource.prototype._loadSourceElement = function _loadSourceElement(type) {
-        if (this.metadata.loadElement) {
-            this.data = this.metadata.loadElement;
-        } else if (type === 'audio' && typeof window.Audio !== 'undefined') {
-            this.data = new Audio();
-        } else {
-            this.data = document.createElement(type);
-        }
-
-        if (this.data === null) {
-            this.abort('Unsupported element: ' + type);
-
-            return;
-        }
-
-        if (!this.metadata.skipSource) {
-            // support for CocoonJS Canvas+ runtime, lacks document.createElement('source')
-            if (navigator.isCocoonJS) {
-                this.data.src = Array.isArray(this.url) ? this.url[0] : this.url;
-            } else if (Array.isArray(this.url)) {
-                for (var i = 0; i < this.url.length; ++i) {
-                    this.data.appendChild(this._createSource(type, this.url[i]));
-                }
-            } else {
-                this.data.appendChild(this._createSource(type, this.url));
-            }
-        }
-
-        this.data.addEventListener('error', this._boundOnError, false);
-        this.data.addEventListener('load', this._boundComplete, false);
-        this.data.addEventListener('progress', this._boundOnProgress, false);
-        this.data.addEventListener('canplaythrough', this._boundComplete, false);
-
-        this.data.load();
-    };
-
-    /**
-     * Loads this resources using an XMLHttpRequest.
-     *
-     * @private
-     */
-
-
-    Resource.prototype._loadXhr = function _loadXhr() {
-        // if unset, determine the value
-        if (typeof this.xhrType !== 'string') {
-            this.xhrType = this._determineXhrType();
-        }
-
-        var xhr = this.xhr = new XMLHttpRequest();
-
-        // set the request type and url
-        xhr.open('GET', this.url, true);
-
-        // load json as text and parse it ourselves. We do this because some browsers
-        // *cough* safari *cough* can't deal with it.
-        if (this.xhrType === Resource.XHR_RESPONSE_TYPE.JSON || this.xhrType === Resource.XHR_RESPONSE_TYPE.DOCUMENT) {
-            xhr.responseType = Resource.XHR_RESPONSE_TYPE.TEXT;
-        } else {
-            xhr.responseType = this.xhrType;
-        }
-
-        xhr.addEventListener('error', this._boundXhrOnError, false);
-        xhr.addEventListener('abort', this._boundXhrOnAbort, false);
-        xhr.addEventListener('progress', this._boundOnProgress, false);
-        xhr.addEventListener('load', this._boundXhrOnLoad, false);
-
-        xhr.send();
-    };
-
-    /**
-     * Loads this resources using an XDomainRequest. This is here because we need to support IE9 (gross).
-     *
-     * @private
-     */
-
-
-    Resource.prototype._loadXdr = function _loadXdr() {
-        // if unset, determine the value
-        if (typeof this.xhrType !== 'string') {
-            this.xhrType = this._determineXhrType();
-        }
-
-        var xdr = this.xhr = new XDomainRequest();
-
-        // XDomainRequest has a few quirks. Occasionally it will abort requests
-        // A way to avoid this is to make sure ALL callbacks are set even if not used
-        // More info here: http://stackoverflow.com/questions/15786966/xdomainrequest-aborts-post-on-ie-9
-        xdr.timeout = 5000;
-
-        xdr.onerror = this._boundXhrOnError;
-        xdr.ontimeout = this._boundXdrOnTimeout;
-        xdr.onprogress = this._boundOnProgress;
-        xdr.onload = this._boundXhrOnLoad;
-
-        xdr.open('GET', this.url, true);
-
-        // Note: The xdr.send() call is wrapped in a timeout to prevent an
-        // issue with the interface where some requests are lost if multiple
-        // XDomainRequests are being sent at the same time.
-        // Some info here: https://github.com/photonstorm/phaser/issues/1248
-        setTimeout(function () {
-            return xdr.send();
-        }, 1);
-    };
-
-    /**
-     * Creates a source used in loading via an element.
-     *
-     * @private
-     * @param {string} type - The element type (video or audio).
-     * @param {string} url - The source URL to load from.
-     * @param {string} [mime] - The mime type of the video
-     * @return {HTMLSourceElement} The source element.
-     */
-
-
-    Resource.prototype._createSource = function _createSource(type, url, mime) {
-        if (!mime) {
-            mime = type + '/' + url.substr(url.lastIndexOf('.') + 1);
-        }
-
-        var source = document.createElement('source');
-
-        source.src = url;
-        source.type = mime;
-
-        return source;
-    };
-
-    /**
-     * Called if a load errors out.
-     *
-     * @param {Event} event - The error event from the element that emits it.
-     * @private
-     */
-
-
-    Resource.prototype._onError = function _onError(event) {
-        this.abort('Failed to load element using: ' + event.target.nodeName);
-    };
-
-    /**
-     * Called if a load progress event fires for xhr/xdr.
-     *
-     * @private
-     * @param {XMLHttpRequestProgressEvent|Event} event - Progress event.
-     */
-
-
-    Resource.prototype._onProgress = function _onProgress(event) {
-        if (event && event.lengthComputable) {
-            this.onProgress.dispatch(this, event.loaded / event.total);
-        }
-    };
-
-    /**
-     * Called if an error event fires for xhr/xdr.
-     *
-     * @private
-     * @param {XMLHttpRequestErrorEvent|Event} event - Error event.
-     */
-
-
-    Resource.prototype._xhrOnError = function _xhrOnError() {
-        var xhr = this.xhr;
-
-        this.abort(reqType(xhr) + ' Request failed. Status: ' + xhr.status + ', text: "' + xhr.statusText + '"');
-    };
-
-    /**
-     * Called if an abort event fires for xhr.
-     *
-     * @private
-     * @param {XMLHttpRequestAbortEvent} event - Abort Event
-     */
-
-
-    Resource.prototype._xhrOnAbort = function _xhrOnAbort() {
-        this.abort(reqType(this.xhr) + ' Request was aborted by the user.');
-    };
-
-    /**
-     * Called if a timeout event fires for xdr.
-     *
-     * @private
-     * @param {Event} event - Timeout event.
-     */
-
-
-    Resource.prototype._xdrOnTimeout = function _xdrOnTimeout() {
-        this.abort(reqType(this.xhr) + ' Request timed out.');
-    };
-
-    /**
-     * Called when data successfully loads from an xhr/xdr request.
-     *
-     * @private
-     * @param {XMLHttpRequestLoadEvent|Event} event - Load event
-     */
-
-
-    Resource.prototype._xhrOnLoad = function _xhrOnLoad() {
-        var xhr = this.xhr;
-        var text = '';
-        var status = typeof xhr.status === 'undefined' ? STATUS_OK : xhr.status; // XDR has no `.status`, assume 200.
-
-        // responseText is accessible only if responseType is '' or 'text' and on older browsers
-        if (xhr.responseType === '' || xhr.responseType === 'text' || typeof xhr.responseType === 'undefined') {
-            text = xhr.responseText;
-        }
-
-        // status can be 0 when using the `file://` protocol so we also check if a response is set.
-        // If it has a response, we assume 200; otherwise a 0 status code with no contents is an aborted request.
-        if (status === STATUS_NONE && text.length > 0) {
-            status = STATUS_OK;
-        }
-        // handle IE9 bug: http://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
-        else if (status === STATUS_IE_BUG_EMPTY) {
-                status = STATUS_EMPTY;
-            }
-
-        var statusType = status / 100 | 0;
-
-        if (statusType === STATUS_TYPE_OK) {
-            // if text, just return it
-            if (this.xhrType === Resource.XHR_RESPONSE_TYPE.TEXT) {
-                this.data = text;
-                this.type = Resource.TYPE.TEXT;
-            }
-            // if json, parse into json object
-            else if (this.xhrType === Resource.XHR_RESPONSE_TYPE.JSON) {
-                    try {
-                        this.data = JSON.parse(text);
-                        this.type = Resource.TYPE.JSON;
-                    } catch (e) {
-                        this.abort('Error trying to parse loaded json: ' + e);
-
-                        return;
-                    }
-                }
-                // if xml, parse into an xml document or div element
-                else if (this.xhrType === Resource.XHR_RESPONSE_TYPE.DOCUMENT) {
-                        try {
-                            if (window.DOMParser) {
-                                var domparser = new DOMParser();
-
-                                this.data = domparser.parseFromString(text, 'text/xml');
-                            } else {
-                                var div = document.createElement('div');
-
-                                div.innerHTML = text;
-
-                                this.data = div;
-                            }
-
-                            this.type = Resource.TYPE.XML;
-                        } catch (e) {
-                            this.abort('Error trying to parse loaded xml: ' + e);
-
-                            return;
-                        }
-                    }
-                    // other types just return the response
-                    else {
-                            this.data = xhr.response || text;
-                        }
-        } else {
-            this.abort('[' + xhr.status + '] ' + xhr.statusText + ': ' + xhr.responseURL);
-
-            return;
-        }
-
-        this.complete();
-    };
-
-    /**
-     * Sets the `crossOrigin` property for this resource based on if the url
-     * for this resource is cross-origin. If crossOrigin was manually set, this
-     * function does nothing.
-     *
-     * @private
-     * @param {string} url - The url to test.
-     * @param {object} [loc=window.location] - The location object to test against.
-     * @return {string} The crossOrigin value to use (or empty string for none).
-     */
-
-
-    Resource.prototype._determineCrossOrigin = function _determineCrossOrigin(url, loc) {
-        // data: and javascript: urls are considered same-origin
-        if (url.indexOf('data:') === 0) {
-            return '';
-        }
-
-        // default is window.location
-        loc = loc || window.location;
-
-        if (!tempAnchor) {
-            tempAnchor = document.createElement('a');
-        }
-
-        // let the browser determine the full href for the url of this resource and then
-        // parse with the node url lib, we can't use the properties of the anchor element
-        // because they don't work in IE9 :(
-        tempAnchor.href = url;
-        url = (0, _parseUri2.default)(tempAnchor.href, { strictMode: true });
-
-        var samePort = !url.port && loc.port === '' || url.port === loc.port;
-        var protocol = url.protocol ? url.protocol + ':' : '';
-
-        // if cross origin
-        if (url.host !== loc.hostname || !samePort || protocol !== loc.protocol) {
-            return 'anonymous';
-        }
-
-        return '';
-    };
-
-    /**
-     * Determines the responseType of an XHR request based on the extension of the
-     * resource being loaded.
-     *
-     * @private
-     * @return {Resource.XHR_RESPONSE_TYPE} The responseType to use.
-     */
-
-
-    Resource.prototype._determineXhrType = function _determineXhrType() {
-        return Resource._xhrTypeMap[this.extension] || Resource.XHR_RESPONSE_TYPE.TEXT;
-    };
-
-    /**
-     * Determines the loadType of a resource based on the extension of the
-     * resource being loaded.
-     *
-     * @private
-     * @return {Resource.LOAD_TYPE} The loadType to use.
-     */
-
-
-    Resource.prototype._determineLoadType = function _determineLoadType() {
-        return Resource._loadTypeMap[this.extension] || Resource.LOAD_TYPE.XHR;
-    };
-
-    /**
-     * Extracts the extension (sans '.') of the file being loaded by the resource.
-     *
-     * @private
-     * @return {string} The extension.
-     */
-
-
-    Resource.prototype._getExtension = function _getExtension() {
-        var url = this.url;
-        var ext = '';
-
-        if (this.isDataUrl) {
-            var slashIndex = url.indexOf('/');
-
-            ext = url.substring(slashIndex + 1, url.indexOf(';', slashIndex));
-        } else {
-            var queryStart = url.indexOf('?');
-
-            if (queryStart !== -1) {
-                url = url.substring(0, queryStart);
-            }
-
-            ext = url.substring(url.lastIndexOf('.') + 1);
-        }
-
-        return ext.toLowerCase();
-    };
-
-    /**
-     * Determines the mime type of an XHR request based on the responseType of
-     * resource being loaded.
-     *
-     * @private
-     * @param {Resource.XHR_RESPONSE_TYPE} type - The type to get a mime type for.
-     * @return {string} The mime type to use.
-     */
-
-
-    Resource.prototype._getMimeFromXhrType = function _getMimeFromXhrType(type) {
-        switch (type) {
-            case Resource.XHR_RESPONSE_TYPE.BUFFER:
-                return 'application/octet-binary';
-
-            case Resource.XHR_RESPONSE_TYPE.BLOB:
-                return 'application/blob';
-
-            case Resource.XHR_RESPONSE_TYPE.DOCUMENT:
-                return 'application/xml';
-
-            case Resource.XHR_RESPONSE_TYPE.JSON:
-                return 'application/json';
-
-            case Resource.XHR_RESPONSE_TYPE.DEFAULT:
-            case Resource.XHR_RESPONSE_TYPE.TEXT:
-            /* falls through */
-            default:
-                return 'text/plain';
-
-        }
-    };
-
-    _createClass(Resource, [{
-        key: 'isDataUrl',
-        get: function get() {
-            return this._hasFlag(Resource.STATUS_FLAGS.DATA_URL);
-        }
-
-        /**
-         * Describes if this resource has finished loading. Is true when the resource has completely
-         * loaded.
-         *
-         * @member {boolean}
-         * @readonly
-         */
-
-    }, {
-        key: 'isComplete',
-        get: function get() {
-            return this._hasFlag(Resource.STATUS_FLAGS.COMPLETE);
-        }
-
-        /**
-         * Describes if this resource is currently loading. Is true when the resource starts loading,
-         * and is false again when complete.
-         *
-         * @member {boolean}
-         * @readonly
-         */
-
-    }, {
-        key: 'isLoading',
-        get: function get() {
-            return this._hasFlag(Resource.STATUS_FLAGS.LOADING);
-        }
-    }]);
-
-    return Resource;
-}();
-
-/**
- * The types of resources a resource could represent.
- *
- * @static
- * @readonly
- * @enum {number}
- */
-
-
-exports.default = Resource;
-Resource.STATUS_FLAGS = {
-    NONE: 0,
-    DATA_URL: 1 << 0,
-    COMPLETE: 1 << 1,
-    LOADING: 1 << 2
-};
-
-/**
- * The types of resources a resource could represent.
- *
- * @static
- * @readonly
- * @enum {number}
- */
-Resource.TYPE = {
-    UNKNOWN: 0,
-    JSON: 1,
-    XML: 2,
-    IMAGE: 3,
-    AUDIO: 4,
-    VIDEO: 5,
-    TEXT: 6
-};
-
-/**
- * The types of loading a resource can use.
- *
- * @static
- * @readonly
- * @enum {number}
- */
-Resource.LOAD_TYPE = {
-    /** Uses XMLHttpRequest to load the resource. */
-    XHR: 1,
-    /** Uses an `Image` object to load the resource. */
-    IMAGE: 2,
-    /** Uses an `Audio` object to load the resource. */
-    AUDIO: 3,
-    /** Uses a `Video` object to load the resource. */
-    VIDEO: 4
-};
-
-/**
- * The XHR ready states, used internally.
- *
- * @static
- * @readonly
- * @enum {string}
- */
-Resource.XHR_RESPONSE_TYPE = {
-    /** string */
-    DEFAULT: 'text',
-    /** ArrayBuffer */
-    BUFFER: 'arraybuffer',
-    /** Blob */
-    BLOB: 'blob',
-    /** Document */
-    DOCUMENT: 'document',
-    /** Object */
-    JSON: 'json',
-    /** String */
-    TEXT: 'text'
-};
-
-Resource._loadTypeMap = {
-    // images
-    gif: Resource.LOAD_TYPE.IMAGE,
-    png: Resource.LOAD_TYPE.IMAGE,
-    bmp: Resource.LOAD_TYPE.IMAGE,
-    jpg: Resource.LOAD_TYPE.IMAGE,
-    jpeg: Resource.LOAD_TYPE.IMAGE,
-    tif: Resource.LOAD_TYPE.IMAGE,
-    tiff: Resource.LOAD_TYPE.IMAGE,
-    webp: Resource.LOAD_TYPE.IMAGE,
-    tga: Resource.LOAD_TYPE.IMAGE,
-    svg: Resource.LOAD_TYPE.IMAGE,
-    'svg+xml': Resource.LOAD_TYPE.IMAGE, // for SVG data urls
-
-    // audio
-    mp3: Resource.LOAD_TYPE.AUDIO,
-    ogg: Resource.LOAD_TYPE.AUDIO,
-    wav: Resource.LOAD_TYPE.AUDIO,
-
-    // videos
-    mp4: Resource.LOAD_TYPE.VIDEO,
-    webm: Resource.LOAD_TYPE.VIDEO
-};
-
-Resource._xhrTypeMap = {
-    // xml
-    xhtml: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
-    html: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
-    htm: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
-    xml: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
-    tmx: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
-    svg: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
-
-    // This was added to handle Tiled Tileset XML, but .tsx is also a TypeScript React Component.
-    // Since it is way less likely for people to be loading TypeScript files instead of Tiled files,
-    // this should probably be fine.
-    tsx: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
-
-    // images
-    gif: Resource.XHR_RESPONSE_TYPE.BLOB,
-    png: Resource.XHR_RESPONSE_TYPE.BLOB,
-    bmp: Resource.XHR_RESPONSE_TYPE.BLOB,
-    jpg: Resource.XHR_RESPONSE_TYPE.BLOB,
-    jpeg: Resource.XHR_RESPONSE_TYPE.BLOB,
-    tif: Resource.XHR_RESPONSE_TYPE.BLOB,
-    tiff: Resource.XHR_RESPONSE_TYPE.BLOB,
-    webp: Resource.XHR_RESPONSE_TYPE.BLOB,
-    tga: Resource.XHR_RESPONSE_TYPE.BLOB,
-
-    // json
-    json: Resource.XHR_RESPONSE_TYPE.JSON,
-
-    // text
-    text: Resource.XHR_RESPONSE_TYPE.TEXT,
-    txt: Resource.XHR_RESPONSE_TYPE.TEXT,
-
-    // fonts
-    ttf: Resource.XHR_RESPONSE_TYPE.BUFFER,
-    otf: Resource.XHR_RESPONSE_TYPE.BUFFER
-};
-
-// We can't set the `src` attribute to empty string, so on abort we set it to this 1px transparent gif
-Resource.EMPTY_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
-
-/**
- * Quick helper to set a value on one of the extension maps. Ensures there is no
- * dot at the start of the extension.
- *
- * @ignore
- * @param {object} map - The map to set on.
- * @param {string} extname - The extension (or key) to set.
- * @param {number} val - The value to set.
- */
-function setExtMap(map, extname, val) {
-    if (extname && extname.indexOf('.') === 0) {
-        extname = extname.substring(1);
-    }
-
-    if (!extname) {
-        return;
-    }
-
-    map[extname] = val;
-}
-
-/**
- * Quick helper to get string xhr type.
- *
- * @ignore
- * @param {XMLHttpRequest|XDomainRequest} xhr - The request to check.
- * @return {string} The type.
- */
-function reqType(xhr) {
-    return xhr.toString().replace('object ', '');
-}
-
-},{"mini-signals":6,"parse-uri":8}],34:[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-exports.eachSeries = eachSeries;
-exports.queue = queue;
-/**
- * Smaller version of the async library constructs.
- *
- */
-function _noop() {} /* empty */
-
-/**
- * Iterates an array in series.
- *
- * @param {Array.<*>} array - Array to iterate.
- * @param {function} iterator - Function to call for each element.
- * @param {function} callback - Function to call when done, or on error.
- * @param {boolean} [deferNext=false] - Break synchronous each loop by calling next with a setTimeout of 1.
- */
-function eachSeries(array, iterator, callback, deferNext) {
-    var i = 0;
-    var len = array.length;
-
-    (function next(err) {
-        if (err || i === len) {
-            if (callback) {
-                callback(err);
-            }
-
-            return;
-        }
-
-        if (deferNext) {
-            setTimeout(function () {
-                iterator(array[i++], next);
-            }, 1);
-        } else {
-            iterator(array[i++], next);
-        }
-    })();
-}
-
-/**
- * Ensures a function is only called once.
- *
- * @param {function} fn - The function to wrap.
- * @return {function} The wrapping function.
- */
-function onlyOnce(fn) {
-    return function onceWrapper() {
-        if (fn === null) {
-            throw new Error('Callback was already called.');
-        }
-
-        var callFn = fn;
-
-        fn = null;
-        callFn.apply(this, arguments);
-    };
-}
-
-/**
- * Async queue implementation,
- *
- * @param {function} worker - The worker function to call for each task.
- * @param {number} concurrency - How many workers to run in parrallel.
- * @return {*} The async queue object.
- */
-function queue(worker, concurrency) {
-    if (concurrency == null) {
-        // eslint-disable-line no-eq-null,eqeqeq
-        concurrency = 1;
-    } else if (concurrency === 0) {
-        throw new Error('Concurrency must not be zero');
-    }
-
-    var workers = 0;
-    var q = {
-        _tasks: [],
-        concurrency: concurrency,
-        saturated: _noop,
-        unsaturated: _noop,
-        buffer: concurrency / 4,
-        empty: _noop,
-        drain: _noop,
-        error: _noop,
-        started: false,
-        paused: false,
-        push: function push(data, callback) {
-            _insert(data, false, callback);
-        },
-        kill: function kill() {
-            workers = 0;
-            q.drain = _noop;
-            q.started = false;
-            q._tasks = [];
-        },
-        unshift: function unshift(data, callback) {
-            _insert(data, true, callback);
-        },
-        process: function process() {
-            while (!q.paused && workers < q.concurrency && q._tasks.length) {
-                var task = q._tasks.shift();
-
-                if (q._tasks.length === 0) {
-                    q.empty();
-                }
-
-                workers += 1;
-
-                if (workers === q.concurrency) {
-                    q.saturated();
-                }
-
-                worker(task.data, onlyOnce(_next(task)));
-            }
-        },
-        length: function length() {
-            return q._tasks.length;
-        },
-        running: function running() {
-            return workers;
-        },
-        idle: function idle() {
-            return q._tasks.length + workers === 0;
-        },
-        pause: function pause() {
-            if (q.paused === true) {
-                return;
-            }
-
-            q.paused = true;
-        },
-        resume: function resume() {
-            if (q.paused === false) {
-                return;
-            }
-
-            q.paused = false;
-
-            // Need to call q.process once per concurrent
-            // worker to preserve full concurrency after pause
-            for (var w = 1; w <= q.concurrency; w++) {
-                q.process();
-            }
-        }
-    };
-
-    function _insert(data, insertAtFront, callback) {
-        if (callback != null && typeof callback !== 'function') {
-            // eslint-disable-line no-eq-null,eqeqeq
-            throw new Error('task callback must be a function');
-        }
-
-        q.started = true;
-
-        if (data == null && q.idle()) {
-            // eslint-disable-line no-eq-null,eqeqeq
-            // call drain immediately if there are no tasks
-            setTimeout(function () {
-                return q.drain();
-            }, 1);
-
-            return;
-        }
-
-        var item = {
-            data: data,
-            callback: typeof callback === 'function' ? callback : _noop
-        };
-
-        if (insertAtFront) {
-            q._tasks.unshift(item);
-        } else {
-            q._tasks.push(item);
-        }
-
-        setTimeout(function () {
-            return q.process();
-        }, 1);
-    }
-
-    function _next(task) {
-        return function next() {
-            workers -= 1;
-
-            task.callback.apply(task, arguments);
-
-            if (arguments[0] != null) {
-                // eslint-disable-line no-eq-null,eqeqeq
-                q.error(arguments[0], task.data);
-            }
-
-            if (workers <= q.concurrency - q.buffer) {
-                q.unsaturated();
-            }
-
-            if (q.idle()) {
-                q.drain();
-            }
-
-            q.process();
-        };
-    }
-
-    return q;
-}
-
-},{}],35:[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-exports.encodeBinary = encodeBinary;
-var _keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-function encodeBinary(input) {
-    var output = '';
-    var inx = 0;
-
-    while (inx < input.length) {
-        // Fill byte buffer array
-        var bytebuffer = [0, 0, 0];
-        var encodedCharIndexes = [0, 0, 0, 0];
-
-        for (var jnx = 0; jnx < bytebuffer.length; ++jnx) {
-            if (inx < input.length) {
-                // throw away high-order byte, as documented at:
-                // https://developer.mozilla.org/En/Using_XMLHttpRequest#Handling_binary_data
-                bytebuffer[jnx] = input.charCodeAt(inx++) & 0xff;
-            } else {
-                bytebuffer[jnx] = 0;
-            }
-        }
-
-        // Get each encoded character, 6 bits at a time
-        // index 1: first 6 bits
-        encodedCharIndexes[0] = bytebuffer[0] >> 2;
-
-        // index 2: second 6 bits (2 least significant bits from input byte 1 + 4 most significant bits from byte 2)
-        encodedCharIndexes[1] = (bytebuffer[0] & 0x3) << 4 | bytebuffer[1] >> 4;
-
-        // index 3: third 6 bits (4 least significant bits from input byte 2 + 2 most significant bits from byte 3)
-        encodedCharIndexes[2] = (bytebuffer[1] & 0x0f) << 2 | bytebuffer[2] >> 6;
-
-        // index 3: forth 6 bits (6 least significant bits from input byte 3)
-        encodedCharIndexes[3] = bytebuffer[2] & 0x3f;
-
-        // Determine whether padding happened, and adjust accordingly
-        var paddingBytes = inx - (input.length - 1);
-
-        switch (paddingBytes) {
-            case 2:
-                // Set last 2 characters to padding char
-                encodedCharIndexes[3] = 64;
-                encodedCharIndexes[2] = 64;
-                break;
-
-            case 1:
-                // Set last character to padding char
-                encodedCharIndexes[3] = 64;
-                break;
-
-            default:
-                break; // No padding - proceed
-        }
-
-        // Now we will grab each appropriate character out of our keystring
-        // based on our index array and append it to the output string
-        for (var _jnx = 0; _jnx < encodedCharIndexes.length; ++_jnx) {
-            output += _keyStr.charAt(encodedCharIndexes[_jnx]);
-        }
-    }
-
-    return output;
-}
-
-},{}],36:[function(require,module,exports){
-'use strict';
-
-// import Loader from './Loader';
-// import Resource from './Resource';
-// import * as async from './async';
-// import * as b64 from './b64';
-
-/* eslint-disable no-undef */
-
-var Loader = require('./Loader').default;
-var Resource = require('./Resource').default;
-var async = require('./async');
-var b64 = require('./b64');
-
-Loader.Resource = Resource;
-Loader.async = async;
-Loader.base64 = b64;
-
-// export manually, and also as default
-module.exports = Loader;
-// export default Loader;
-module.exports.default = Loader;
-
-},{"./Loader":32,"./Resource":33,"./async":34,"./b64":35}],37:[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-exports.blobMiddlewareFactory = blobMiddlewareFactory;
-
-var _Resource = require('../../Resource');
-
-var _Resource2 = _interopRequireDefault(_Resource);
-
-var _b = require('../../b64');
-
-var _b2 = _interopRequireDefault(_b);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Url = window.URL || window.webkitURL;
-
-// a middleware for transforming XHR loaded Blobs into more useful objects
-function blobMiddlewareFactory() {
-    return function blobMiddleware(resource, next) {
-        if (!resource.data) {
-            next();
-
-            return;
-        }
-
-        // if this was an XHR load of a blob
-        if (resource.xhr && resource.xhrType === _Resource2.default.XHR_RESPONSE_TYPE.BLOB) {
-            // if there is no blob support we probably got a binary string back
-            if (!window.Blob || typeof resource.data === 'string') {
-                var type = resource.xhr.getResponseHeader('content-type');
-
-                // this is an image, convert the binary string into a data url
-                if (type && type.indexOf('image') === 0) {
-                    resource.data = new Image();
-                    resource.data.src = 'data:' + type + ';base64,' + _b2.default.encodeBinary(resource.xhr.responseText);
-
-                    resource.type = _Resource2.default.TYPE.IMAGE;
-
-                    // wait until the image loads and then callback
-                    resource.data.onload = function () {
-                        resource.data.onload = null;
-
-                        next();
-                    };
-
-                    // next will be called on load
-                    return;
-                }
-            }
-            // if content type says this is an image, then we should transform the blob into an Image object
-            else if (resource.data.type.indexOf('image') === 0) {
-                    var _ret = function () {
-                        var src = Url.createObjectURL(resource.data);
-
-                        resource.blob = resource.data;
-                        resource.data = new Image();
-                        resource.data.src = src;
-
-                        resource.type = _Resource2.default.TYPE.IMAGE;
-
-                        // cleanup the no longer used blob after the image loads
-                        // TODO: Is this correct? Will the image be invalid after revoking?
-                        resource.data.onload = function () {
-                            Url.revokeObjectURL(src);
-                            resource.data.onload = null;
-
-                            next();
-                        };
-
-                        // next will be called on load.
-                        return {
-                            v: void 0
-                        };
-                    }();
-
-                    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-                }
-        }
-
-        next();
-    };
-}
-
-},{"../../Resource":33,"../../b64":35}],38:[function(require,module,exports){
+},{"./decode":25,"./encode":26}],28:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7279,7 +4839,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":39,"punycode":28,"querystring":31}],39:[function(require,module,exports){
+},{"./util":29,"punycode":24,"querystring":27}],29:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -7297,7 +4857,2321 @@ module.exports = {
   }
 };
 
-},{}],40:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _miniSignals = require('mini-signals');
+
+var _miniSignals2 = _interopRequireDefault(_miniSignals);
+
+var _parseUri = require('parse-uri');
+
+var _parseUri2 = _interopRequireDefault(_parseUri);
+
+var _async = require('./async');
+
+var async = _interopRequireWildcard(_async);
+
+var _Resource = require('./Resource');
+
+var _Resource2 = _interopRequireDefault(_Resource);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// some constants
+var MAX_PROGRESS = 100;
+var rgxExtractUrlHash = /(#[\w\-]+)?$/;
+
+/**
+ * Manages the state and loading of multiple resources to load.
+ *
+ * @class
+ */
+
+var Loader = function () {
+    /**
+     * @param {string} [baseUrl=''] - The base url for all resources loaded by this loader.
+     * @param {number} [concurrency=10] - The number of resources to load concurrently.
+     */
+    function Loader() {
+        var _this = this;
+
+        var baseUrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+        var concurrency = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
+
+        _classCallCheck(this, Loader);
+
+        /**
+         * The base url for all resources loaded by this loader.
+         *
+         * @member {string}
+         */
+        this.baseUrl = baseUrl;
+
+        /**
+         * The progress percent of the loader going through the queue.
+         *
+         * @member {number}
+         */
+        this.progress = 0;
+
+        /**
+         * Loading state of the loader, true if it is currently loading resources.
+         *
+         * @member {boolean}
+         */
+        this.loading = false;
+
+        /**
+         * A querystring to append to every URL added to the loader.
+         *
+         * This should be a valid query string *without* the question-mark (`?`). The loader will
+         * also *not* escape values for you. Make sure to escape your parameters with
+         * [`encodeURIComponent`](https://mdn.io/encodeURIComponent) before assigning this property.
+         *
+         * @example
+         *
+         * ```js
+         * const loader = new Loader();
+         *
+         * loader.defaultQueryString = 'user=me&password=secret';
+         *
+         * // This will request 'image.png?user=me&password=secret'
+         * loader.add('image.png').load();
+         *
+         * loader.reset();
+         *
+         * // This will request 'image.png?v=1&user=me&password=secret'
+         * loader.add('iamge.png?v=1').load();
+         * ```
+         */
+        this.defaultQueryString = '';
+
+        /**
+         * The middleware to run before loading each resource.
+         *
+         * @member {function[]}
+         */
+        this._beforeMiddleware = [];
+
+        /**
+         * The middleware to run after loading each resource.
+         *
+         * @member {function[]}
+         */
+        this._afterMiddleware = [];
+
+        /**
+         * The `_loadResource` function bound with this object context.
+         *
+         * @private
+         * @member {function}
+         * @param {Resource} r - The resource to load
+         * @param {Function} d - The dequeue function
+         * @return {undefined}
+         */
+        this._boundLoadResource = function (r, d) {
+            return _this._loadResource(r, d);
+        };
+
+        /**
+         * The resources waiting to be loaded.
+         *
+         * @private
+         * @member {Resource[]}
+         */
+        this._queue = async.queue(this._boundLoadResource, concurrency);
+
+        this._queue.pause();
+
+        /**
+         * All the resources for this loader keyed by name.
+         *
+         * @member {object<string, Resource>}
+         */
+        this.resources = {};
+
+        /**
+         * Dispatched once per loaded or errored resource.
+         *
+         * The callback looks like {@link Loader.OnProgressSignal}.
+         *
+         * @member {Signal}
+         */
+        this.onProgress = new _miniSignals2.default();
+
+        /**
+         * Dispatched once per errored resource.
+         *
+         * The callback looks like {@link Loader.OnErrorSignal}.
+         *
+         * @member {Signal}
+         */
+        this.onError = new _miniSignals2.default();
+
+        /**
+         * Dispatched once per loaded resource.
+         *
+         * The callback looks like {@link Loader.OnLoadSignal}.
+         *
+         * @member {Signal}
+         */
+        this.onLoad = new _miniSignals2.default();
+
+        /**
+         * Dispatched when the loader begins to process the queue.
+         *
+         * The callback looks like {@link Loader.OnStartSignal}.
+         *
+         * @member {Signal}
+         */
+        this.onStart = new _miniSignals2.default();
+
+        /**
+         * Dispatched when the queued resources all load.
+         *
+         * The callback looks like {@link Loader.OnCompleteSignal}.
+         *
+         * @member {Signal}
+         */
+        this.onComplete = new _miniSignals2.default();
+
+        /**
+         * When the progress changes the loader and resource are disaptched.
+         *
+         * @memberof Loader
+         * @callback OnProgressSignal
+         * @param {Loader} loader - The loader the progress is advancing on.
+         * @param {Resource} resource - The resource that has completed or failed to cause the progress to advance.
+         */
+
+        /**
+         * When an error occurrs the loader and resource are disaptched.
+         *
+         * @memberof Loader
+         * @callback OnErrorSignal
+         * @param {Loader} loader - The loader the error happened in.
+         * @param {Resource} resource - The resource that caused the error.
+         */
+
+        /**
+         * When a load completes the loader and resource are disaptched.
+         *
+         * @memberof Loader
+         * @callback OnLoadSignal
+         * @param {Loader} loader - The loader that laoded the resource.
+         * @param {Resource} resource - The resource that has completed loading.
+         */
+
+        /**
+         * When the loader starts loading resources it dispatches this callback.
+         *
+         * @memberof Loader
+         * @callback OnStartSignal
+         * @param {Loader} loader - The loader that has started loading resources.
+         */
+
+        /**
+         * When the loader completes loading resources it dispatches this callback.
+         *
+         * @memberof Loader
+         * @callback OnCompleteSignal
+         * @param {Loader} loader - The loader that has finished loading resources.
+         */
+    }
+
+    /**
+     * Adds a resource (or multiple resources) to the loader queue.
+     *
+     * This function can take a wide variety of different parameters. The only thing that is always
+     * required the url to load. All the following will work:
+     *
+     * ```js
+     * loader
+     *     // normal param syntax
+     *     .add('key', 'http://...', function () {})
+     *     .add('http://...', function () {})
+     *     .add('http://...')
+     *
+     *     // object syntax
+     *     .add({
+     *         name: 'key2',
+     *         url: 'http://...'
+     *     }, function () {})
+     *     .add({
+     *         url: 'http://...'
+     *     }, function () {})
+     *     .add({
+     *         name: 'key3',
+     *         url: 'http://...'
+     *         onComplete: function () {}
+     *     })
+     *     .add({
+     *         url: 'https://...',
+     *         onComplete: function () {},
+     *         crossOrigin: true
+     *     })
+     *
+     *     // you can also pass an array of objects or urls or both
+     *     .add([
+     *         { name: 'key4', url: 'http://...', onComplete: function () {} },
+     *         { url: 'http://...', onComplete: function () {} },
+     *         'http://...'
+     *     ])
+     *
+     *     // and you can use both params and options
+     *     .add('key', 'http://...', { crossOrigin: true }, function () {})
+     *     .add('http://...', { crossOrigin: true }, function () {});
+     * ```
+     *
+     * @param {string} [name] - The name of the resource to load, if not passed the url is used.
+     * @param {string} [url] - The url for this resource, relative to the baseUrl of this loader.
+     * @param {object} [options] - The options for the load.
+     * @param {boolean} [options.crossOrigin] - Is this request cross-origin? Default is to determine automatically.
+     * @param {Resource.LOAD_TYPE} [options.loadType=Resource.LOAD_TYPE.XHR] - How should this resource be loaded?
+     * @param {Resource.XHR_RESPONSE_TYPE} [options.xhrType=Resource.XHR_RESPONSE_TYPE.DEFAULT] - How should
+     *      the data being loaded be interpreted when using XHR?
+     * @param {object} [options.metadata] - Extra configuration for middleware and the Resource object.
+     * @param {HTMLImageElement|HTMLAudioElement|HTMLVideoElement} [options.metadata.loadElement=null] - The
+     *      element to use for loading, instead of creating one.
+     * @param {boolean} [options.metadata.skipSource=false] - Skips adding source(s) to the load element. This
+     *      is useful if you want to pass in a `loadElement` that you already added load sources to.
+     * @param {function} [cb] - Function to call when this specific resource completes loading.
+     * @return {Loader} Returns itself.
+     */
+
+
+    Loader.prototype.add = function add(name, url, options, cb) {
+        // special case of an array of objects or urls
+        if (Array.isArray(name)) {
+            for (var i = 0; i < name.length; ++i) {
+                this.add(name[i]);
+            }
+
+            return this;
+        }
+
+        // if an object is passed instead of params
+        if ((typeof name === 'undefined' ? 'undefined' : _typeof(name)) === 'object') {
+            cb = url || name.callback || name.onComplete;
+            options = name;
+            url = name.url;
+            name = name.name || name.key || name.url;
+        }
+
+        // case where no name is passed shift all args over by one.
+        if (typeof url !== 'string') {
+            cb = options;
+            options = url;
+            url = name;
+        }
+
+        // now that we shifted make sure we have a proper url.
+        if (typeof url !== 'string') {
+            throw new Error('No url passed to add resource to loader.');
+        }
+
+        // options are optional so people might pass a function and no options
+        if (typeof options === 'function') {
+            cb = options;
+            options = null;
+        }
+
+        // if loading already you can only add resources that have a parent.
+        if (this.loading && (!options || !options.parentResource)) {
+            throw new Error('Cannot add resources while the loader is running.');
+        }
+
+        // check if resource already exists.
+        if (this.resources[name]) {
+            throw new Error('Resource named "' + name + '" already exists.');
+        }
+
+        // add base url if this isn't an absolute url
+        url = this._prepareUrl(url);
+
+        // create the store the resource
+        this.resources[name] = new _Resource2.default(name, url, options);
+
+        if (typeof cb === 'function') {
+            this.resources[name].onAfterMiddleware.once(cb);
+        }
+
+        // if loading make sure to adjust progress chunks for that parent and its children
+        if (this.loading) {
+            var parent = options.parentResource;
+            var fullChunk = parent.progressChunk * (parent.children.length + 1); // +1 for parent
+            var eachChunk = fullChunk / (parent.children.length + 2); // +2 for parent & new child
+
+            parent.children.push(this.resources[name]);
+            parent.progressChunk = eachChunk;
+
+            for (var _i = 0; _i < parent.children.length; ++_i) {
+                parent.children[_i].progressChunk = eachChunk;
+            }
+        }
+
+        // add the resource to the queue
+        this._queue.push(this.resources[name]);
+
+        return this;
+    };
+
+    /**
+     * Sets up a middleware function that will run *before* the
+     * resource is loaded.
+     *
+     * @method before
+     * @param {function} fn - The middleware function to register.
+     * @return {Loader} Returns itself.
+     */
+
+
+    Loader.prototype.pre = function pre(fn) {
+        this._beforeMiddleware.push(fn);
+
+        return this;
+    };
+
+    /**
+     * Sets up a middleware function that will run *after* the
+     * resource is loaded.
+     *
+     * @alias use
+     * @method after
+     * @param {function} fn - The middleware function to register.
+     * @return {Loader} Returns itself.
+     */
+
+
+    Loader.prototype.use = function use(fn) {
+        this._afterMiddleware.push(fn);
+
+        return this;
+    };
+
+    /**
+     * Resets the queue of the loader to prepare for a new load.
+     *
+     * @return {Loader} Returns itself.
+     */
+
+
+    Loader.prototype.reset = function reset() {
+        this.progress = 0;
+        this.loading = false;
+
+        this._queue.kill();
+        this._queue.pause();
+
+        // abort all resource loads
+        for (var k in this.resources) {
+            var res = this.resources[k];
+
+            if (res._onLoadBinding) {
+                res._onLoadBinding.detach();
+            }
+
+            if (res.isLoading) {
+                res.abort();
+            }
+        }
+
+        this.resources = {};
+
+        return this;
+    };
+
+    /**
+     * Starts loading the queued resources.
+     *
+     * @param {function} [cb] - Optional callback that will be bound to the `complete` event.
+     * @return {Loader} Returns itself.
+     */
+
+
+    Loader.prototype.load = function load(cb) {
+        // register complete callback if they pass one
+        if (typeof cb === 'function') {
+            this.onComplete.once(cb);
+        }
+
+        // if the queue has already started we are done here
+        if (this.loading) {
+            return this;
+        }
+
+        // distribute progress chunks
+        var chunk = 100 / this._queue._tasks.length;
+
+        for (var i = 0; i < this._queue._tasks.length; ++i) {
+            this._queue._tasks[i].data.progressChunk = chunk;
+        }
+
+        // update loading state
+        this.loading = true;
+
+        // notify of start
+        this.onStart.dispatch(this);
+
+        // start loading
+        this._queue.resume();
+
+        return this;
+    };
+
+    /**
+     * Prepares a url for usage based on the configuration of this object
+     *
+     * @private
+     * @param {string} url - The url to prepare.
+     * @return {string} The prepared url.
+     */
+
+
+    Loader.prototype._prepareUrl = function _prepareUrl(url) {
+        var parsedUrl = (0, _parseUri2.default)(url, { strictMode: true });
+        var result = void 0;
+
+        // absolute url, just use it as is.
+        if (parsedUrl.protocol || !parsedUrl.path || url.indexOf('//') === 0) {
+            result = url;
+        }
+        // if baseUrl doesn't end in slash and url doesn't start with slash, then add a slash inbetween
+        else if (this.baseUrl.length && this.baseUrl.lastIndexOf('/') !== this.baseUrl.length - 1 && url.charAt(0) !== '/') {
+                result = this.baseUrl + '/' + url;
+            } else {
+                result = this.baseUrl + url;
+            }
+
+        // if we need to add a default querystring, there is a bit more work
+        if (this.defaultQueryString) {
+            var hash = rgxExtractUrlHash.exec(result)[0];
+
+            result = result.substr(0, result.length - hash.length);
+
+            if (result.indexOf('?') !== -1) {
+                result += '&' + this.defaultQueryString;
+            } else {
+                result += '?' + this.defaultQueryString;
+            }
+
+            result += hash;
+        }
+
+        return result;
+    };
+
+    /**
+     * Loads a single resource.
+     *
+     * @private
+     * @param {Resource} resource - The resource to load.
+     * @param {function} dequeue - The function to call when we need to dequeue this item.
+     */
+
+
+    Loader.prototype._loadResource = function _loadResource(resource, dequeue) {
+        var _this2 = this;
+
+        resource._dequeue = dequeue;
+
+        // run before middleware
+        async.eachSeries(this._beforeMiddleware, function (fn, next) {
+            fn.call(_this2, resource, function () {
+                // if the before middleware marks the resource as complete,
+                // break and don't process any more before middleware
+                next(resource.isComplete ? {} : null);
+            });
+        }, function () {
+            if (resource.isComplete) {
+                _this2._onLoad(resource);
+            } else {
+                resource._onLoadBinding = resource.onComplete.once(_this2._onLoad, _this2);
+                resource.load();
+            }
+        });
+    };
+
+    /**
+     * Called once each resource has loaded.
+     *
+     * @private
+     */
+
+
+    Loader.prototype._onComplete = function _onComplete() {
+        this.loading = false;
+
+        this.onComplete.dispatch(this, this.resources);
+    };
+
+    /**
+     * Called each time a resources is loaded.
+     *
+     * @private
+     * @param {Resource} resource - The resource that was loaded
+     */
+
+
+    Loader.prototype._onLoad = function _onLoad(resource) {
+        var _this3 = this;
+
+        resource._onLoadBinding = null;
+
+        // run middleware, this *must* happen before dequeue so sub-assets get added properly
+        async.eachSeries(this._afterMiddleware, function (fn, next) {
+            fn.call(_this3, resource, next);
+        }, function () {
+            resource.onAfterMiddleware.dispatch(resource);
+
+            _this3.progress += resource.progressChunk;
+            _this3.onProgress.dispatch(_this3, resource);
+
+            if (resource.error) {
+                _this3.onError.dispatch(resource.error, _this3, resource);
+            } else {
+                _this3.onLoad.dispatch(_this3, resource);
+            }
+
+            // remove this resource from the async queue
+            resource._dequeue();
+
+            // do completion check
+            if (_this3._queue.idle()) {
+                _this3.progress = MAX_PROGRESS;
+                _this3._onComplete();
+            }
+        });
+    };
+
+    return Loader;
+}();
+
+exports.default = Loader;
+
+},{"./Resource":31,"./async":32,"mini-signals":36,"parse-uri":37}],31:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _parseUri = require('parse-uri');
+
+var _parseUri2 = _interopRequireDefault(_parseUri);
+
+var _miniSignals = require('mini-signals');
+
+var _miniSignals2 = _interopRequireDefault(_miniSignals);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// tests is CORS is supported in XHR, if not we need to use XDR
+var useXdr = !!(window.XDomainRequest && !('withCredentials' in new XMLHttpRequest()));
+var tempAnchor = null;
+
+// some status constants
+var STATUS_NONE = 0;
+var STATUS_OK = 200;
+var STATUS_EMPTY = 204;
+
+// noop
+function _noop() {} /* empty */
+
+/**
+ * Manages the state and loading of a resource and all child resources.
+ *
+ * @class
+ */
+
+var Resource = function () {
+    /**
+     * Sets the load type to be used for a specific extension.
+     *
+     * @static
+     * @param {string} extname - The extension to set the type for, e.g. "png" or "fnt"
+     * @param {Resource.LOAD_TYPE} loadType - The load type to set it to.
+     */
+    Resource.setExtensionLoadType = function setExtensionLoadType(extname, loadType) {
+        setExtMap(Resource._loadTypeMap, extname, loadType);
+    };
+
+    /**
+     * Sets the load type to be used for a specific extension.
+     *
+     * @static
+     * @param {string} extname - The extension to set the type for, e.g. "png" or "fnt"
+     * @param {Resource.XHR_RESPONSE_TYPE} xhrType - The xhr type to set it to.
+     */
+
+
+    Resource.setExtensionXhrType = function setExtensionXhrType(extname, xhrType) {
+        setExtMap(Resource._xhrTypeMap, extname, xhrType);
+    };
+
+    /**
+     * @param {string} name - The name of the resource to load.
+     * @param {string|string[]} url - The url for this resource, for audio/video loads you can pass
+     *      an array of sources.
+     * @param {object} [options] - The options for the load.
+     * @param {string|boolean} [options.crossOrigin] - Is this request cross-origin? Default is to
+     *      determine automatically.
+     * @param {Resource.LOAD_TYPE} [options.loadType=Resource.LOAD_TYPE.XHR] - How should this resource
+     *      be loaded?
+     * @param {Resource.XHR_RESPONSE_TYPE} [options.xhrType=Resource.XHR_RESPONSE_TYPE.DEFAULT] - How
+     *      should the data being loaded be interpreted when using XHR?
+     * @param {object} [options.metadata] - Extra configuration for middleware and the Resource object.
+     * @param {HTMLImageElement|HTMLAudioElement|HTMLVideoElement} [options.metadata.loadElement=null] - The
+     *      element to use for loading, instead of creating one.
+     * @param {boolean} [options.metadata.skipSource=false] - Skips adding source(s) to the load element. This
+     *      is useful if you want to pass in a `loadElement` that you already added load sources to.
+     */
+
+
+    function Resource(name, url, options) {
+        _classCallCheck(this, Resource);
+
+        if (typeof name !== 'string' || typeof url !== 'string') {
+            throw new Error('Both name and url are required for constructing a resource.');
+        }
+
+        options = options || {};
+
+        /**
+         * The state flags of this resource.
+         *
+         * @member {number}
+         */
+        this._flags = 0;
+
+        // set data url flag, needs to be set early for some _determineX checks to work.
+        this._setFlag(Resource.STATUS_FLAGS.DATA_URL, url.indexOf('data:') === 0);
+
+        /**
+         * The name of this resource.
+         *
+         * @member {string}
+         * @readonly
+         */
+        this.name = name;
+
+        /**
+         * The url used to load this resource.
+         *
+         * @member {string}
+         * @readonly
+         */
+        this.url = url;
+
+        /**
+         * The data that was loaded by the resource.
+         *
+         * @member {any}
+         */
+        this.data = null;
+
+        /**
+         * Is this request cross-origin? If unset, determined automatically.
+         *
+         * @member {string}
+         */
+        this.crossOrigin = options.crossOrigin === true ? 'anonymous' : options.crossOrigin;
+
+        /**
+         * The method of loading to use for this resource.
+         *
+         * @member {Resource.LOAD_TYPE}
+         */
+        this.loadType = options.loadType || this._determineLoadType();
+
+        /**
+         * The type used to load the resource via XHR. If unset, determined automatically.
+         *
+         * @member {string}
+         */
+        this.xhrType = options.xhrType;
+
+        /**
+         * Extra info for middleware, and controlling specifics about how the resource loads.
+         *
+         * Note that if you pass in a `loadElement`, the Resource class takes ownership of it.
+         * Meaning it will modify it as it sees fit.
+         *
+         * @member {object}
+         * @property {HTMLImageElement|HTMLAudioElement|HTMLVideoElement} [loadElement=null] - The
+         *  element to use for loading, instead of creating one.
+         * @property {boolean} [skipSource=false] - Skips adding source(s) to the load element. This
+         *  is useful if you want to pass in a `loadElement` that you already added load sources
+         *  to.
+         */
+        this.metadata = options.metadata || {};
+
+        /**
+         * The error that occurred while loading (if any).
+         *
+         * @member {Error}
+         * @readonly
+         */
+        this.error = null;
+
+        /**
+         * The XHR object that was used to load this resource. This is only set
+         * when `loadType` is `Resource.LOAD_TYPE.XHR`.
+         *
+         * @member {XMLHttpRequest}
+         * @readonly
+         */
+        this.xhr = null;
+
+        /**
+         * The child resources this resource owns.
+         *
+         * @member {Resource[]}
+         * @readonly
+         */
+        this.children = [];
+
+        /**
+         * The resource type.
+         *
+         * @member {Resource.TYPE}
+         * @readonly
+         */
+        this.type = Resource.TYPE.UNKNOWN;
+
+        /**
+         * The progress chunk owned by this resource.
+         *
+         * @member {number}
+         * @readonly
+         */
+        this.progressChunk = 0;
+
+        /**
+         * The `dequeue` method that will be used a storage place for the async queue dequeue method
+         * used privately by the loader.
+         *
+         * @private
+         * @member {function}
+         */
+        this._dequeue = _noop;
+
+        /**
+         * Used a storage place for the on load binding used privately by the loader.
+         *
+         * @private
+         * @member {function}
+         */
+        this._onLoadBinding = null;
+
+        /**
+         * The `complete` function bound to this resource's context.
+         *
+         * @private
+         * @member {function}
+         */
+        this._boundComplete = this.complete.bind(this);
+
+        /**
+         * The `_onError` function bound to this resource's context.
+         *
+         * @private
+         * @member {function}
+         */
+        this._boundOnError = this._onError.bind(this);
+
+        /**
+         * The `_onProgress` function bound to this resource's context.
+         *
+         * @private
+         * @member {function}
+         */
+        this._boundOnProgress = this._onProgress.bind(this);
+
+        // xhr callbacks
+        this._boundXhrOnError = this._xhrOnError.bind(this);
+        this._boundXhrOnAbort = this._xhrOnAbort.bind(this);
+        this._boundXhrOnLoad = this._xhrOnLoad.bind(this);
+        this._boundXdrOnTimeout = this._xdrOnTimeout.bind(this);
+
+        /**
+         * Dispatched when the resource beings to load.
+         *
+         * The callback looks like {@link Resource.OnStartSignal}.
+         *
+         * @member {Signal}
+         */
+        this.onStart = new _miniSignals2.default();
+
+        /**
+         * Dispatched each time progress of this resource load updates.
+         * Not all resources types and loader systems can support this event
+         * so sometimes it may not be available. If the resource
+         * is being loaded on a modern browser, using XHR, and the remote server
+         * properly sets Content-Length headers, then this will be available.
+         *
+         * The callback looks like {@link Resource.OnProgressSignal}.
+         *
+         * @member {Signal}
+         */
+        this.onProgress = new _miniSignals2.default();
+
+        /**
+         * Dispatched once this resource has loaded, if there was an error it will
+         * be in the `error` property.
+         *
+         * The callback looks like {@link Resource.OnCompleteSignal}.
+         *
+         * @member {Signal}
+         */
+        this.onComplete = new _miniSignals2.default();
+
+        /**
+         * Dispatched after this resource has had all the *after* middleware run on it.
+         *
+         * The callback looks like {@link Resource.OnCompleteSignal}.
+         *
+         * @member {Signal}
+         */
+        this.onAfterMiddleware = new _miniSignals2.default();
+
+        /**
+         * When the resource starts to load.
+         *
+         * @memberof Resource
+         * @callback OnStartSignal
+         * @param {Resource} resource - The resource that the event happened on.
+         */
+
+        /**
+         * When the resource reports loading progress.
+         *
+         * @memberof Resource
+         * @callback OnProgressSignal
+         * @param {Resource} resource - The resource that the event happened on.
+         * @param {number} percentage - The progress of the load in the range [0, 1].
+         */
+
+        /**
+         * When the resource finishes loading.
+         *
+         * @memberof Resource
+         * @callback OnCompleteSignal
+         * @param {Resource} resource - The resource that the event happened on.
+         */
+    }
+
+    /**
+     * Stores whether or not this url is a data url.
+     *
+     * @member {boolean}
+     * @readonly
+     */
+
+
+    /**
+     * Marks the resource as complete.
+     *
+     */
+    Resource.prototype.complete = function complete() {
+        // TODO: Clean this up in a wrapper or something...gross....
+        if (this.data && this.data.removeEventListener) {
+            this.data.removeEventListener('error', this._boundOnError, false);
+            this.data.removeEventListener('load', this._boundComplete, false);
+            this.data.removeEventListener('progress', this._boundOnProgress, false);
+            this.data.removeEventListener('canplaythrough', this._boundComplete, false);
+        }
+
+        if (this.xhr) {
+            if (this.xhr.removeEventListener) {
+                this.xhr.removeEventListener('error', this._boundXhrOnError, false);
+                this.xhr.removeEventListener('abort', this._boundXhrOnAbort, false);
+                this.xhr.removeEventListener('progress', this._boundOnProgress, false);
+                this.xhr.removeEventListener('load', this._boundXhrOnLoad, false);
+            } else {
+                this.xhr.onerror = null;
+                this.xhr.ontimeout = null;
+                this.xhr.onprogress = null;
+                this.xhr.onload = null;
+            }
+        }
+
+        if (this.isComplete) {
+            throw new Error('Complete called again for an already completed resource.');
+        }
+
+        this._setFlag(Resource.STATUS_FLAGS.COMPLETE, true);
+        this._setFlag(Resource.STATUS_FLAGS.LOADING, false);
+
+        this.onComplete.dispatch(this);
+    };
+
+    /**
+     * Aborts the loading of this resource, with an optional message.
+     *
+     * @param {string} message - The message to use for the error
+     */
+
+
+    Resource.prototype.abort = function abort(message) {
+        // abort can be called multiple times, ignore subsequent calls.
+        if (this.error) {
+            return;
+        }
+
+        // store error
+        this.error = new Error(message);
+
+        // abort the actual loading
+        if (this.xhr) {
+            this.xhr.abort();
+        } else if (this.xdr) {
+            this.xdr.abort();
+        } else if (this.data) {
+            // single source
+            if (this.data.src) {
+                this.data.src = Resource.EMPTY_GIF;
+            }
+            // multi-source
+            else {
+                    while (this.data.firstChild) {
+                        this.data.removeChild(this.data.firstChild);
+                    }
+                }
+        }
+
+        // done now.
+        this.complete();
+    };
+
+    /**
+     * Kicks off loading of this resource. This method is asynchronous.
+     *
+     * @param {function} [cb] - Optional callback to call once the resource is loaded.
+     */
+
+
+    Resource.prototype.load = function load(cb) {
+        var _this = this;
+
+        if (this.isLoading) {
+            return;
+        }
+
+        if (this.isComplete) {
+            if (cb) {
+                setTimeout(function () {
+                    return cb(_this);
+                }, 1);
+            }
+
+            return;
+        } else if (cb) {
+            this.onComplete.once(cb);
+        }
+
+        this._setFlag(Resource.STATUS_FLAGS.LOADING, true);
+
+        this.onStart.dispatch(this);
+
+        // if unset, determine the value
+        if (this.crossOrigin === false || typeof this.crossOrigin !== 'string') {
+            this.crossOrigin = this._determineCrossOrigin(this.url);
+        }
+
+        switch (this.loadType) {
+            case Resource.LOAD_TYPE.IMAGE:
+                this.type = Resource.TYPE.IMAGE;
+                this._loadElement('image');
+                break;
+
+            case Resource.LOAD_TYPE.AUDIO:
+                this.type = Resource.TYPE.AUDIO;
+                this._loadSourceElement('audio');
+                break;
+
+            case Resource.LOAD_TYPE.VIDEO:
+                this.type = Resource.TYPE.VIDEO;
+                this._loadSourceElement('video');
+                break;
+
+            case Resource.LOAD_TYPE.XHR:
+            /* falls through */
+            default:
+                if (useXdr && this.crossOrigin) {
+                    this._loadXdr();
+                } else {
+                    this._loadXhr();
+                }
+                break;
+        }
+    };
+
+    /**
+     * Checks if the flag is set.
+     *
+     * @private
+     * @param {number} flag - The flag to check.
+     * @return {boolean} True if the flag is set.
+     */
+
+
+    Resource.prototype._hasFlag = function _hasFlag(flag) {
+        return !!(this._flags & flag);
+    };
+
+    /**
+     * (Un)Sets the flag.
+     *
+     * @private
+     * @param {number} flag - The flag to (un)set.
+     * @param {boolean} value - Whether to set or (un)set the flag.
+     */
+
+
+    Resource.prototype._setFlag = function _setFlag(flag, value) {
+        this._flags = value ? this._flags | flag : this._flags & ~flag;
+    };
+
+    /**
+     * Loads this resources using an element that has a single source,
+     * like an HTMLImageElement.
+     *
+     * @private
+     * @param {string} type - The type of element to use.
+     */
+
+
+    Resource.prototype._loadElement = function _loadElement(type) {
+        if (this.metadata.loadElement) {
+            this.data = this.metadata.loadElement;
+        } else if (type === 'image' && typeof window.Image !== 'undefined') {
+            this.data = new Image();
+        } else {
+            this.data = document.createElement(type);
+        }
+
+        if (this.crossOrigin) {
+            this.data.crossOrigin = this.crossOrigin;
+        }
+
+        if (!this.metadata.skipSource) {
+            this.data.src = this.url;
+        }
+
+        this.data.addEventListener('error', this._boundOnError, false);
+        this.data.addEventListener('load', this._boundComplete, false);
+        this.data.addEventListener('progress', this._boundOnProgress, false);
+    };
+
+    /**
+     * Loads this resources using an element that has multiple sources,
+     * like an HTMLAudioElement or HTMLVideoElement.
+     *
+     * @private
+     * @param {string} type - The type of element to use.
+     */
+
+
+    Resource.prototype._loadSourceElement = function _loadSourceElement(type) {
+        if (this.metadata.loadElement) {
+            this.data = this.metadata.loadElement;
+        } else if (type === 'audio' && typeof window.Audio !== 'undefined') {
+            this.data = new Audio();
+        } else {
+            this.data = document.createElement(type);
+        }
+
+        if (this.data === null) {
+            this.abort('Unsupported element: ' + type);
+
+            return;
+        }
+
+        if (!this.metadata.skipSource) {
+            // support for CocoonJS Canvas+ runtime, lacks document.createElement('source')
+            if (navigator.isCocoonJS) {
+                this.data.src = Array.isArray(this.url) ? this.url[0] : this.url;
+            } else if (Array.isArray(this.url)) {
+                for (var i = 0; i < this.url.length; ++i) {
+                    this.data.appendChild(this._createSource(type, this.url[i]));
+                }
+            } else {
+                this.data.appendChild(this._createSource(type, this.url));
+            }
+        }
+
+        this.data.addEventListener('error', this._boundOnError, false);
+        this.data.addEventListener('load', this._boundComplete, false);
+        this.data.addEventListener('progress', this._boundOnProgress, false);
+        this.data.addEventListener('canplaythrough', this._boundComplete, false);
+
+        this.data.load();
+    };
+
+    /**
+     * Loads this resources using an XMLHttpRequest.
+     *
+     * @private
+     */
+
+
+    Resource.prototype._loadXhr = function _loadXhr() {
+        // if unset, determine the value
+        if (typeof this.xhrType !== 'string') {
+            this.xhrType = this._determineXhrType();
+        }
+
+        var xhr = this.xhr = new XMLHttpRequest();
+
+        // set the request type and url
+        xhr.open('GET', this.url, true);
+
+        // load json as text and parse it ourselves. We do this because some browsers
+        // *cough* safari *cough* can't deal with it.
+        if (this.xhrType === Resource.XHR_RESPONSE_TYPE.JSON || this.xhrType === Resource.XHR_RESPONSE_TYPE.DOCUMENT) {
+            xhr.responseType = Resource.XHR_RESPONSE_TYPE.TEXT;
+        } else {
+            xhr.responseType = this.xhrType;
+        }
+
+        xhr.addEventListener('error', this._boundXhrOnError, false);
+        xhr.addEventListener('abort', this._boundXhrOnAbort, false);
+        xhr.addEventListener('progress', this._boundOnProgress, false);
+        xhr.addEventListener('load', this._boundXhrOnLoad, false);
+
+        xhr.send();
+    };
+
+    /**
+     * Loads this resources using an XDomainRequest. This is here because we need to support IE9 (gross).
+     *
+     * @private
+     */
+
+
+    Resource.prototype._loadXdr = function _loadXdr() {
+        // if unset, determine the value
+        if (typeof this.xhrType !== 'string') {
+            this.xhrType = this._determineXhrType();
+        }
+
+        var xdr = this.xhr = new XDomainRequest();
+
+        // XDomainRequest has a few quirks. Occasionally it will abort requests
+        // A way to avoid this is to make sure ALL callbacks are set even if not used
+        // More info here: http://stackoverflow.com/questions/15786966/xdomainrequest-aborts-post-on-ie-9
+        xdr.timeout = 5000;
+
+        xdr.onerror = this._boundXhrOnError;
+        xdr.ontimeout = this._boundXdrOnTimeout;
+        xdr.onprogress = this._boundOnProgress;
+        xdr.onload = this._boundXhrOnLoad;
+
+        xdr.open('GET', this.url, true);
+
+        // Note: The xdr.send() call is wrapped in a timeout to prevent an
+        // issue with the interface where some requests are lost if multiple
+        // XDomainRequests are being sent at the same time.
+        // Some info here: https://github.com/photonstorm/phaser/issues/1248
+        setTimeout(function () {
+            return xdr.send();
+        }, 1);
+    };
+
+    /**
+     * Creates a source used in loading via an element.
+     *
+     * @private
+     * @param {string} type - The element type (video or audio).
+     * @param {string} url - The source URL to load from.
+     * @param {string} [mime] - The mime type of the video
+     * @return {HTMLSourceElement} The source element.
+     */
+
+
+    Resource.prototype._createSource = function _createSource(type, url, mime) {
+        if (!mime) {
+            mime = type + '/' + url.substr(url.lastIndexOf('.') + 1);
+        }
+
+        var source = document.createElement('source');
+
+        source.src = url;
+        source.type = mime;
+
+        return source;
+    };
+
+    /**
+     * Called if a load errors out.
+     *
+     * @param {Event} event - The error event from the element that emits it.
+     * @private
+     */
+
+
+    Resource.prototype._onError = function _onError(event) {
+        this.abort('Failed to load element using: ' + event.target.nodeName);
+    };
+
+    /**
+     * Called if a load progress event fires for xhr/xdr.
+     *
+     * @private
+     * @param {XMLHttpRequestProgressEvent|Event} event - Progress event.
+     */
+
+
+    Resource.prototype._onProgress = function _onProgress(event) {
+        if (event && event.lengthComputable) {
+            this.onProgress.dispatch(this, event.loaded / event.total);
+        }
+    };
+
+    /**
+     * Called if an error event fires for xhr/xdr.
+     *
+     * @private
+     * @param {XMLHttpRequestErrorEvent|Event} event - Error event.
+     */
+
+
+    Resource.prototype._xhrOnError = function _xhrOnError() {
+        var xhr = this.xhr;
+
+        this.abort(reqType(xhr) + ' Request failed. Status: ' + xhr.status + ', text: "' + xhr.statusText + '"');
+    };
+
+    /**
+     * Called if an abort event fires for xhr.
+     *
+     * @private
+     * @param {XMLHttpRequestAbortEvent} event - Abort Event
+     */
+
+
+    Resource.prototype._xhrOnAbort = function _xhrOnAbort() {
+        this.abort(reqType(this.xhr) + ' Request was aborted by the user.');
+    };
+
+    /**
+     * Called if a timeout event fires for xdr.
+     *
+     * @private
+     * @param {Event} event - Timeout event.
+     */
+
+
+    Resource.prototype._xdrOnTimeout = function _xdrOnTimeout() {
+        this.abort(reqType(this.xhr) + ' Request timed out.');
+    };
+
+    /**
+     * Called when data successfully loads from an xhr/xdr request.
+     *
+     * @private
+     * @param {XMLHttpRequestLoadEvent|Event} event - Load event
+     */
+
+
+    Resource.prototype._xhrOnLoad = function _xhrOnLoad() {
+        var xhr = this.xhr;
+        var status = typeof xhr.status === 'undefined' ? xhr.status : STATUS_OK; // XDR has no `.status`, assume 200.
+
+        // status can be 0 when using the `file://` protocol so we also check if a response is set
+        if (status === STATUS_OK || status === STATUS_EMPTY || status === STATUS_NONE && xhr.responseText.length > 0) {
+            // if text, just return it
+            if (this.xhrType === Resource.XHR_RESPONSE_TYPE.TEXT) {
+                this.data = xhr.responseText;
+                this.type = Resource.TYPE.TEXT;
+            }
+            // if json, parse into json object
+            else if (this.xhrType === Resource.XHR_RESPONSE_TYPE.JSON) {
+                    try {
+                        this.data = JSON.parse(xhr.responseText);
+                        this.type = Resource.TYPE.JSON;
+                    } catch (e) {
+                        this.abort('Error trying to parse loaded json: ' + e);
+
+                        return;
+                    }
+                }
+                // if xml, parse into an xml document or div element
+                else if (this.xhrType === Resource.XHR_RESPONSE_TYPE.DOCUMENT) {
+                        try {
+                            if (window.DOMParser) {
+                                var domparser = new DOMParser();
+
+                                this.data = domparser.parseFromString(xhr.responseText, 'text/xml');
+                            } else {
+                                var div = document.createElement('div');
+
+                                div.innerHTML = xhr.responseText;
+
+                                this.data = div;
+                            }
+
+                            this.type = Resource.TYPE.XML;
+                        } catch (e) {
+                            this.abort('Error trying to parse loaded xml: ' + e);
+
+                            return;
+                        }
+                    }
+                    // other types just return the response
+                    else {
+                            this.data = xhr.response || xhr.responseText;
+                        }
+        } else {
+            this.abort('[' + xhr.status + '] ' + xhr.statusText + ': ' + xhr.responseURL);
+
+            return;
+        }
+
+        this.complete();
+    };
+
+    /**
+     * Sets the `crossOrigin` property for this resource based on if the url
+     * for this resource is cross-origin. If crossOrigin was manually set, this
+     * function does nothing.
+     *
+     * @private
+     * @param {string} url - The url to test.
+     * @param {object} [loc=window.location] - The location object to test against.
+     * @return {string} The crossOrigin value to use (or empty string for none).
+     */
+
+
+    Resource.prototype._determineCrossOrigin = function _determineCrossOrigin(url, loc) {
+        // data: and javascript: urls are considered same-origin
+        if (url.indexOf('data:') === 0) {
+            return '';
+        }
+
+        // default is window.location
+        loc = loc || window.location;
+
+        if (!tempAnchor) {
+            tempAnchor = document.createElement('a');
+        }
+
+        // let the browser determine the full href for the url of this resource and then
+        // parse with the node url lib, we can't use the properties of the anchor element
+        // because they don't work in IE9 :(
+        tempAnchor.href = url;
+        url = (0, _parseUri2.default)(tempAnchor.href, { strictMode: true });
+
+        var samePort = !url.port && loc.port === '' || url.port === loc.port;
+        var protocol = url.protocol ? url.protocol + ':' : '';
+
+        // if cross origin
+        if (url.host !== loc.hostname || !samePort || protocol !== loc.protocol) {
+            return 'anonymous';
+        }
+
+        return '';
+    };
+
+    /**
+     * Determines the responseType of an XHR request based on the extension of the
+     * resource being loaded.
+     *
+     * @private
+     * @return {Resource.XHR_RESPONSE_TYPE} The responseType to use.
+     */
+
+
+    Resource.prototype._determineXhrType = function _determineXhrType() {
+        return Resource._xhrTypeMap[this._getExtension()] || Resource.XHR_RESPONSE_TYPE.TEXT;
+    };
+
+    /**
+     * Determines the loadType of a resource based on the extension of the
+     * resource being loaded.
+     *
+     * @private
+     * @return {Resource.LOAD_TYPE} The loadType to use.
+     */
+
+
+    Resource.prototype._determineLoadType = function _determineLoadType() {
+        return Resource._loadTypeMap[this._getExtension()] || Resource.LOAD_TYPE.XHR;
+    };
+
+    /**
+     * Extracts the extension (sans '.') of the file being loaded by the resource.
+     *
+     * @private
+     * @return {string} The extension.
+     */
+
+
+    Resource.prototype._getExtension = function _getExtension() {
+        var url = this.url;
+        var ext = '';
+
+        if (this.isDataUrl) {
+            var slashIndex = url.indexOf('/');
+
+            ext = url.substring(slashIndex + 1, url.indexOf(';', slashIndex));
+        } else {
+            var queryStart = url.indexOf('?');
+
+            if (queryStart !== -1) {
+                url = url.substring(0, queryStart);
+            }
+
+            ext = url.substring(url.lastIndexOf('.') + 1);
+        }
+
+        return ext.toLowerCase();
+    };
+
+    /**
+     * Determines the mime type of an XHR request based on the responseType of
+     * resource being loaded.
+     *
+     * @private
+     * @param {Resource.XHR_RESPONSE_TYPE} type - The type to get a mime type for.
+     * @return {string} The mime type to use.
+     */
+
+
+    Resource.prototype._getMimeFromXhrType = function _getMimeFromXhrType(type) {
+        switch (type) {
+            case Resource.XHR_RESPONSE_TYPE.BUFFER:
+                return 'application/octet-binary';
+
+            case Resource.XHR_RESPONSE_TYPE.BLOB:
+                return 'application/blob';
+
+            case Resource.XHR_RESPONSE_TYPE.DOCUMENT:
+                return 'application/xml';
+
+            case Resource.XHR_RESPONSE_TYPE.JSON:
+                return 'application/json';
+
+            case Resource.XHR_RESPONSE_TYPE.DEFAULT:
+            case Resource.XHR_RESPONSE_TYPE.TEXT:
+            /* falls through */
+            default:
+                return 'text/plain';
+
+        }
+    };
+
+    _createClass(Resource, [{
+        key: 'isDataUrl',
+        get: function get() {
+            return this._hasFlag(Resource.STATUS_FLAGS.DATA_URL);
+        }
+
+        /**
+         * Describes if this resource has finished loading. Is true when the resource has completely
+         * loaded.
+         *
+         * @member {boolean}
+         * @readonly
+         */
+
+    }, {
+        key: 'isComplete',
+        get: function get() {
+            return this._hasFlag(Resource.STATUS_FLAGS.COMPLETE);
+        }
+
+        /**
+         * Describes if this resource is currently loading. Is true when the resource starts loading,
+         * and is false again when complete.
+         *
+         * @member {boolean}
+         * @readonly
+         */
+
+    }, {
+        key: 'isLoading',
+        get: function get() {
+            return this._hasFlag(Resource.STATUS_FLAGS.LOADING);
+        }
+    }]);
+
+    return Resource;
+}();
+
+/**
+ * The types of resources a resource could represent.
+ *
+ * @static
+ * @readonly
+ * @enum {number}
+ */
+
+
+exports.default = Resource;
+Resource.STATUS_FLAGS = {
+    NONE: 0,
+    DATA_URL: 1 << 0,
+    COMPLETE: 1 << 1,
+    LOADING: 1 << 2
+};
+
+/**
+ * The types of resources a resource could represent.
+ *
+ * @static
+ * @readonly
+ * @enum {number}
+ */
+Resource.TYPE = {
+    UNKNOWN: 0,
+    JSON: 1,
+    XML: 2,
+    IMAGE: 3,
+    AUDIO: 4,
+    VIDEO: 5,
+    TEXT: 6
+};
+
+/**
+ * The types of loading a resource can use.
+ *
+ * @static
+ * @readonly
+ * @enum {number}
+ */
+Resource.LOAD_TYPE = {
+    /** Uses XMLHttpRequest to load the resource. */
+    XHR: 1,
+    /** Uses an `Image` object to load the resource. */
+    IMAGE: 2,
+    /** Uses an `Audio` object to load the resource. */
+    AUDIO: 3,
+    /** Uses a `Video` object to load the resource. */
+    VIDEO: 4
+};
+
+/**
+ * The XHR ready states, used internally.
+ *
+ * @static
+ * @readonly
+ * @enum {string}
+ */
+Resource.XHR_RESPONSE_TYPE = {
+    /** string */
+    DEFAULT: 'text',
+    /** ArrayBuffer */
+    BUFFER: 'arraybuffer',
+    /** Blob */
+    BLOB: 'blob',
+    /** Document */
+    DOCUMENT: 'document',
+    /** Object */
+    JSON: 'json',
+    /** String */
+    TEXT: 'text'
+};
+
+Resource._loadTypeMap = {
+    // images
+    gif: Resource.LOAD_TYPE.IMAGE,
+    png: Resource.LOAD_TYPE.IMAGE,
+    bmp: Resource.LOAD_TYPE.IMAGE,
+    jpg: Resource.LOAD_TYPE.IMAGE,
+    jpeg: Resource.LOAD_TYPE.IMAGE,
+    tif: Resource.LOAD_TYPE.IMAGE,
+    tiff: Resource.LOAD_TYPE.IMAGE,
+    webp: Resource.LOAD_TYPE.IMAGE,
+    tga: Resource.LOAD_TYPE.IMAGE,
+    svg: Resource.LOAD_TYPE.IMAGE,
+    'svg+xml': Resource.LOAD_TYPE.IMAGE, // for SVG data urls
+
+    // audio
+    mp3: Resource.LOAD_TYPE.AUDIO,
+    ogg: Resource.LOAD_TYPE.AUDIO,
+    wav: Resource.LOAD_TYPE.AUDIO,
+
+    // videos
+    mp4: Resource.LOAD_TYPE.VIDEO,
+    webm: Resource.LOAD_TYPE.VIDEO
+};
+
+Resource._xhrTypeMap = {
+    // xml
+    xhtml: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+    html: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+    htm: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+    xml: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+    tmx: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+    svg: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+
+    // This was added to handle Tiled Tileset XML, but .tsx is also a TypeScript React Component.
+    // Since it is way less likely for people to be loading TypeScript files instead of Tiled files,
+    // this should probably be fine.
+    tsx: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+
+    // images
+    gif: Resource.XHR_RESPONSE_TYPE.BLOB,
+    png: Resource.XHR_RESPONSE_TYPE.BLOB,
+    bmp: Resource.XHR_RESPONSE_TYPE.BLOB,
+    jpg: Resource.XHR_RESPONSE_TYPE.BLOB,
+    jpeg: Resource.XHR_RESPONSE_TYPE.BLOB,
+    tif: Resource.XHR_RESPONSE_TYPE.BLOB,
+    tiff: Resource.XHR_RESPONSE_TYPE.BLOB,
+    webp: Resource.XHR_RESPONSE_TYPE.BLOB,
+    tga: Resource.XHR_RESPONSE_TYPE.BLOB,
+
+    // json
+    json: Resource.XHR_RESPONSE_TYPE.JSON,
+
+    // text
+    text: Resource.XHR_RESPONSE_TYPE.TEXT,
+    txt: Resource.XHR_RESPONSE_TYPE.TEXT,
+
+    // fonts
+    ttf: Resource.XHR_RESPONSE_TYPE.BUFFER,
+    otf: Resource.XHR_RESPONSE_TYPE.BUFFER
+};
+
+// We can't set the `src` attribute to empty string, so on abort we set it to this 1px transparent gif
+Resource.EMPTY_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
+
+/**
+ * Quick helper to set a value on one of the extension maps. Ensures there is no
+ * dot at the start of the extension.
+ *
+ * @ignore
+ * @param {object} map - The map to set on.
+ * @param {string} extname - The extension (or key) to set.
+ * @param {number} val - The value to set.
+ */
+function setExtMap(map, extname, val) {
+    if (extname && extname.indexOf('.') === 0) {
+        extname = extname.substring(1);
+    }
+
+    if (!extname) {
+        return;
+    }
+
+    map[extname] = val;
+}
+
+/**
+ * Quick helper to get string xhr type.
+ *
+ * @ignore
+ * @param {XMLHttpRequest|XDomainRequest} xhr - The request to check.
+ * @return {string} The type.
+ */
+function reqType(xhr) {
+    return xhr.toString().replace('object ', '');
+}
+
+},{"mini-signals":36,"parse-uri":37}],32:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports.eachSeries = eachSeries;
+exports.queue = queue;
+/**
+ * Smaller version of the async library constructs.
+ *
+ */
+function _noop() {} /* empty */
+
+/**
+ * Iterates an array in series.
+ *
+ * @param {*[]} array - Array to iterate.
+ * @param {function} iterator - Function to call for each element.
+ * @param {function} callback - Function to call when done, or on error.
+ */
+function eachSeries(array, iterator, callback) {
+    var i = 0;
+    var len = array.length;
+
+    (function next(err) {
+        if (err || i === len) {
+            if (callback) {
+                callback(err);
+            }
+
+            return;
+        }
+
+        iterator(array[i++], next);
+    })();
+}
+
+/**
+ * Ensures a function is only called once.
+ *
+ * @param {function} fn - The function to wrap.
+ * @return {function} The wrapping function.
+ */
+function onlyOnce(fn) {
+    return function onceWrapper() {
+        if (fn === null) {
+            throw new Error('Callback was already called.');
+        }
+
+        var callFn = fn;
+
+        fn = null;
+        callFn.apply(this, arguments);
+    };
+}
+
+/**
+ * Async queue implementation,
+ *
+ * @param {function} worker - The worker function to call for each task.
+ * @param {number} concurrency - How many workers to run in parrallel.
+ * @return {*} The async queue object.
+ */
+function queue(worker, concurrency) {
+    if (concurrency == null) {
+        // eslint-disable-line no-eq-null,eqeqeq
+        concurrency = 1;
+    } else if (concurrency === 0) {
+        throw new Error('Concurrency must not be zero');
+    }
+
+    var workers = 0;
+    var q = {
+        _tasks: [],
+        concurrency: concurrency,
+        saturated: _noop,
+        unsaturated: _noop,
+        buffer: concurrency / 4,
+        empty: _noop,
+        drain: _noop,
+        error: _noop,
+        started: false,
+        paused: false,
+        push: function push(data, callback) {
+            _insert(data, false, callback);
+        },
+        kill: function kill() {
+            workers = 0;
+            q.drain = _noop;
+            q.started = false;
+            q._tasks = [];
+        },
+        unshift: function unshift(data, callback) {
+            _insert(data, true, callback);
+        },
+        process: function process() {
+            while (!q.paused && workers < q.concurrency && q._tasks.length) {
+                var task = q._tasks.shift();
+
+                if (q._tasks.length === 0) {
+                    q.empty();
+                }
+
+                workers += 1;
+
+                if (workers === q.concurrency) {
+                    q.saturated();
+                }
+
+                worker(task.data, onlyOnce(_next(task)));
+            }
+        },
+        length: function length() {
+            return q._tasks.length;
+        },
+        running: function running() {
+            return workers;
+        },
+        idle: function idle() {
+            return q._tasks.length + workers === 0;
+        },
+        pause: function pause() {
+            if (q.paused === true) {
+                return;
+            }
+
+            q.paused = true;
+        },
+        resume: function resume() {
+            if (q.paused === false) {
+                return;
+            }
+
+            q.paused = false;
+
+            // Need to call q.process once per concurrent
+            // worker to preserve full concurrency after pause
+            for (var w = 1; w <= q.concurrency; w++) {
+                q.process();
+            }
+        }
+    };
+
+    function _insert(data, insertAtFront, callback) {
+        if (callback != null && typeof callback !== 'function') {
+            // eslint-disable-line no-eq-null,eqeqeq
+            throw new Error('task callback must be a function');
+        }
+
+        q.started = true;
+
+        if (data == null && q.idle()) {
+            // eslint-disable-line no-eq-null,eqeqeq
+            // call drain immediately if there are no tasks
+            setTimeout(function () {
+                return q.drain();
+            }, 1);
+
+            return;
+        }
+
+        var item = {
+            data: data,
+            callback: typeof callback === 'function' ? callback : _noop
+        };
+
+        if (insertAtFront) {
+            q._tasks.unshift(item);
+        } else {
+            q._tasks.push(item);
+        }
+
+        setTimeout(function () {
+            return q.process();
+        }, 1);
+    }
+
+    function _next(task) {
+        return function next() {
+            workers -= 1;
+
+            task.callback.apply(task, arguments);
+
+            if (arguments[0] != null) {
+                // eslint-disable-line no-eq-null,eqeqeq
+                q.error(arguments[0], task.data);
+            }
+
+            if (workers <= q.concurrency - q.buffer) {
+                q.unsaturated();
+            }
+
+            if (q.idle()) {
+                q.drain();
+            }
+
+            q.process();
+        };
+    }
+
+    return q;
+}
+
+},{}],33:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports.encodeBinary = encodeBinary;
+var _keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+function encodeBinary(input) {
+    var output = '';
+    var inx = 0;
+
+    while (inx < input.length) {
+        // Fill byte buffer array
+        var bytebuffer = [0, 0, 0];
+        var encodedCharIndexes = [0, 0, 0, 0];
+
+        for (var jnx = 0; jnx < bytebuffer.length; ++jnx) {
+            if (inx < input.length) {
+                // throw away high-order byte, as documented at:
+                // https://developer.mozilla.org/En/Using_XMLHttpRequest#Handling_binary_data
+                bytebuffer[jnx] = input.charCodeAt(inx++) & 0xff;
+            } else {
+                bytebuffer[jnx] = 0;
+            }
+        }
+
+        // Get each encoded character, 6 bits at a time
+        // index 1: first 6 bits
+        encodedCharIndexes[0] = bytebuffer[0] >> 2;
+
+        // index 2: second 6 bits (2 least significant bits from input byte 1 + 4 most significant bits from byte 2)
+        encodedCharIndexes[1] = (bytebuffer[0] & 0x3) << 4 | bytebuffer[1] >> 4;
+
+        // index 3: third 6 bits (4 least significant bits from input byte 2 + 2 most significant bits from byte 3)
+        encodedCharIndexes[2] = (bytebuffer[1] & 0x0f) << 2 | bytebuffer[2] >> 6;
+
+        // index 3: forth 6 bits (6 least significant bits from input byte 3)
+        encodedCharIndexes[3] = bytebuffer[2] & 0x3f;
+
+        // Determine whether padding happened, and adjust accordingly
+        var paddingBytes = inx - (input.length - 1);
+
+        switch (paddingBytes) {
+            case 2:
+                // Set last 2 characters to padding char
+                encodedCharIndexes[3] = 64;
+                encodedCharIndexes[2] = 64;
+                break;
+
+            case 1:
+                // Set last character to padding char
+                encodedCharIndexes[3] = 64;
+                break;
+
+            default:
+                break; // No padding - proceed
+        }
+
+        // Now we will grab each appropriate character out of our keystring
+        // based on our index array and append it to the output string
+        for (var _jnx = 0; _jnx < encodedCharIndexes.length; ++_jnx) {
+            output += _keyStr.charAt(encodedCharIndexes[_jnx]);
+        }
+    }
+
+    return output;
+}
+
+},{}],34:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _Loader = require('./Loader');
+
+var _Loader2 = _interopRequireDefault(_Loader);
+
+var _Resource = require('./Resource');
+
+var _Resource2 = _interopRequireDefault(_Resource);
+
+var _async = require('./async');
+
+var async = _interopRequireWildcard(_async);
+
+var _b = require('./b64');
+
+var b64 = _interopRequireWildcard(_b);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_Loader2.default.Resource = _Resource2.default;
+_Loader2.default.async = async;
+_Loader2.default.base64 = b64;
+
+// export manually, and also as default
+module.exports = _Loader2.default; // eslint-disable-line no-undef
+exports.default = _Loader2.default;
+
+},{"./Loader":30,"./Resource":31,"./async":32,"./b64":33}],35:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.blobMiddlewareFactory = blobMiddlewareFactory;
+
+var _Resource = require('../../Resource');
+
+var _Resource2 = _interopRequireDefault(_Resource);
+
+var _b = require('../../b64');
+
+var _b2 = _interopRequireDefault(_b);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Url = window.URL || window.webkitURL;
+
+// a middleware for transforming XHR loaded Blobs into more useful objects
+function blobMiddlewareFactory() {
+    return function blobMiddleware(resource, next) {
+        if (!resource.data) {
+            next();
+
+            return;
+        }
+
+        // if this was an XHR load of a blob
+        if (resource.xhr && resource.xhrType === _Resource2.default.XHR_RESPONSE_TYPE.BLOB) {
+            // if there is no blob support we probably got a binary string back
+            if (!window.Blob || typeof resource.data === 'string') {
+                var type = resource.xhr.getResponseHeader('content-type');
+
+                // this is an image, convert the binary string into a data url
+                if (type && type.indexOf('image') === 0) {
+                    resource.data = new Image();
+                    resource.data.src = 'data:' + type + ';base64,' + _b2.default.encodeBinary(resource.xhr.responseText);
+
+                    resource.type = _Resource2.default.TYPE.IMAGE;
+
+                    // wait until the image loads and then callback
+                    resource.data.onload = function () {
+                        resource.data.onload = null;
+
+                        next();
+                    };
+
+                    // next will be called on load
+                    return;
+                }
+            }
+            // if content type says this is an image, then we should transform the blob into an Image object
+            else if (resource.data.type.indexOf('image') === 0) {
+                    var _ret = function () {
+                        var src = Url.createObjectURL(resource.data);
+
+                        resource.blob = resource.data;
+                        resource.data = new Image();
+                        resource.data.src = src;
+
+                        resource.type = _Resource2.default.TYPE.IMAGE;
+
+                        // cleanup the no longer used blob after the image loads
+                        // TODO: Is this correct? Will the image be invalid after revoking?
+                        resource.data.onload = function () {
+                            Url.revokeObjectURL(src);
+                            resource.data.onload = null;
+
+                            next();
+                        };
+
+                        // next will be called on load.
+                        return {
+                            v: void 0
+                        };
+                    }();
+
+                    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+                }
+        }
+
+        next();
+    };
+}
+
+},{"../../Resource":31,"../../b64":33}],36:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var MiniSignalBinding = (function () {
+  function MiniSignalBinding(fn, once, thisArg) {
+    if (once === undefined) once = false;
+
+    _classCallCheck(this, MiniSignalBinding);
+
+    this._fn = fn;
+    this._once = once;
+    this._thisArg = thisArg;
+    this._next = this._prev = this._owner = null;
+  }
+
+  _createClass(MiniSignalBinding, [{
+    key: 'detach',
+    value: function detach() {
+      if (this._owner === null) return false;
+      this._owner.detach(this);
+      return true;
+    }
+  }]);
+
+  return MiniSignalBinding;
+})();
+
+function _addMiniSignalBinding(self, node) {
+  if (!self._head) {
+    self._head = node;
+    self._tail = node;
+  } else {
+    self._tail._next = node;
+    node._prev = self._tail;
+    self._tail = node;
+  }
+
+  node._owner = self;
+
+  return node;
+}
+
+var MiniSignal = (function () {
+  function MiniSignal() {
+    _classCallCheck(this, MiniSignal);
+
+    this._head = this._tail = undefined;
+  }
+
+  _createClass(MiniSignal, [{
+    key: 'handlers',
+    value: function handlers() {
+      var exists = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
+
+      var node = this._head;
+
+      if (exists) return !!node;
+
+      var ee = [];
+
+      while (node) {
+        ee.push(node);
+        node = node._next;
+      }
+
+      return ee;
+    }
+  }, {
+    key: 'has',
+    value: function has(node) {
+      if (!(node instanceof MiniSignalBinding)) {
+        throw new Error('MiniSignal#has(): First arg must be a MiniSignalBinding object.');
+      }
+
+      return node._owner === this;
+    }
+  }, {
+    key: 'dispatch',
+    value: function dispatch() {
+      var node = this._head;
+
+      if (!node) return false;
+
+      while (node) {
+        if (node._once) this.detach(node);
+        node._fn.apply(node._thisArg, arguments);
+        node = node._next;
+      }
+
+      return true;
+    }
+  }, {
+    key: 'add',
+    value: function add(fn) {
+      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+      if (typeof fn !== 'function') {
+        throw new Error('MiniSignal#add(): First arg must be a Function.');
+      }
+      return _addMiniSignalBinding(this, new MiniSignalBinding(fn, false, thisArg));
+    }
+  }, {
+    key: 'once',
+    value: function once(fn) {
+      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+      if (typeof fn !== 'function') {
+        throw new Error('MiniSignal#once(): First arg must be a Function.');
+      }
+      return _addMiniSignalBinding(this, new MiniSignalBinding(fn, true, thisArg));
+    }
+  }, {
+    key: 'detach',
+    value: function detach(node) {
+      if (!(node instanceof MiniSignalBinding)) {
+        throw new Error('MiniSignal#detach(): First arg must be a MiniSignalBinding object.');
+      }
+      if (node._owner !== this) return this;
+
+      if (node._prev) node._prev._next = node._next;
+      if (node._next) node._next._prev = node._prev;
+
+      if (node === this._head) {
+        this._head = node._next;
+        if (node._next === null) {
+          this._tail = null;
+        }
+      } else if (node === this._tail) {
+        this._tail = node._prev;
+        this._tail._next = null;
+      }
+
+      node._owner = null;
+      return this;
+    }
+  }, {
+    key: 'detachAll',
+    value: function detachAll() {
+      var node = this._head;
+      if (!node) return this;
+
+      this._head = this._tail = null;
+
+      while (node) {
+        node._owner = null;
+        node = node._next;
+      }
+      return this;
+    }
+  }]);
+
+  return MiniSignal;
+})();
+
+MiniSignal.MiniSignalBinding = MiniSignalBinding;
+
+exports['default'] = MiniSignal;
+module.exports = exports['default'];
+
+},{}],37:[function(require,module,exports){
+'use strict'
+
+module.exports = function parseURI (str, opts) {
+  opts = opts || {}
+
+  var o = {
+    key: ['source', 'protocol', 'authority', 'userInfo', 'user', 'password', 'host', 'port', 'relative', 'path', 'directory', 'file', 'query', 'anchor'],
+    q: {
+      name: 'queryKey',
+      parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+    },
+    parser: {
+      strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+      loose: /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+    }
+  }
+
+  var m = o.parser[opts.strictMode ? 'strict' : 'loose'].exec(str)
+  var uri = {}
+  var i = 14
+
+  while (i--) uri[o.key[i]] = m[i] || ''
+
+  uri[o.q.name] = {}
+  uri[o.key[12]].replace(o.q.parser, function ($0, $1, $2) {
+    if ($1) uri[o.q.name][$1] = $2
+  })
+
+  return uri
+}
+
+},{}],38:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -7789,7 +7663,7 @@ exports.default = AccessibilityManager;
 core.WebGLRenderer.registerPlugin('accessibility', AccessibilityManager);
 core.CanvasRenderer.registerPlugin('accessibility', AccessibilityManager);
 
-},{"../core":63,"./accessibleTarget":41,"ismobilejs":5}],41:[function(require,module,exports){
+},{"../core":61,"./accessibleTarget":39,"ismobilejs":4}],39:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -7848,7 +7722,7 @@ exports.default = {
   _accessibleDiv: false
 };
 
-},{}],42:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -7873,7 +7747,7 @@ Object.defineProperty(exports, 'AccessibilityManager', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-},{"./AccessibilityManager":40,"./accessibleTarget":41}],43:[function(require,module,exports){
+},{"./AccessibilityManager":38,"./accessibleTarget":39}],41:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -7940,7 +7814,7 @@ var Shader = function (_GLShader) {
 
 exports.default = Shader;
 
-},{"./settings":99,"pixi-gl-core":16}],44:[function(require,module,exports){
+},{"./settings":97,"pixi-gl-core":12}],42:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -8256,7 +8130,7 @@ var TEXT_GRADIENT = exports.TEXT_GRADIENT = {
   LINEAR_HORIZONTAL: 1
 };
 
-},{}],45:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -8599,7 +8473,7 @@ var Bounds = function () {
 
 exports.default = Bounds;
 
-},{"../math":68}],46:[function(require,module,exports){
+},{"../math":66}],44:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -9211,7 +9085,7 @@ var Container = function (_DisplayObject) {
 exports.default = Container;
 Container.prototype.containerUpdateTransform = Container.prototype.updateTransform;
 
-},{"../utils":119,"./DisplayObject":47}],47:[function(require,module,exports){
+},{"../utils":117,"./DisplayObject":45}],45:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -9945,7 +9819,7 @@ var DisplayObject = function (_EventEmitter) {
 exports.default = DisplayObject;
 DisplayObject.prototype.displayObjectUpdateTransform = DisplayObject.prototype.updateTransform;
 
-},{"../const":44,"../math":68,"../settings":99,"./Bounds":45,"./Transform":48,"./TransformStatic":50,"eventemitter3":4}],48:[function(require,module,exports){
+},{"../const":42,"../math":66,"../settings":97,"./Bounds":43,"./Transform":46,"./TransformStatic":48,"eventemitter3":3}],46:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10133,7 +10007,7 @@ var Transform = function (_TransformBase) {
 
 exports.default = Transform;
 
-},{"../math":68,"./TransformBase":49}],49:[function(require,module,exports){
+},{"../math":66,"./TransformBase":47}],47:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10220,7 +10094,7 @@ TransformBase.prototype.updateWorldTransform = TransformBase.prototype.updateTra
 
 TransformBase.IDENTITY = new TransformBase();
 
-},{"../math":68}],50:[function(require,module,exports){
+},{"../math":66}],48:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10437,7 +10311,7 @@ var TransformStatic = function (_TransformBase) {
 
 exports.default = TransformStatic;
 
-},{"../math":68,"./TransformBase":49}],51:[function(require,module,exports){
+},{"../math":66,"./TransformBase":47}],49:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11592,7 +11466,7 @@ exports.default = Graphics;
 
 Graphics._SPRITE_TEXTURE = null;
 
-},{"../const":44,"../display/Bounds":45,"../display/Container":46,"../math":68,"../renderers/canvas/CanvasRenderer":75,"../sprites/Sprite":100,"../textures/RenderTexture":110,"../textures/Texture":111,"../utils":119,"./GraphicsData":52,"./utils/bezierCurveTo":54}],52:[function(require,module,exports){
+},{"../const":42,"../display/Bounds":43,"../display/Container":44,"../math":66,"../renderers/canvas/CanvasRenderer":73,"../sprites/Sprite":98,"../textures/RenderTexture":108,"../textures/Texture":109,"../utils":117,"./GraphicsData":50,"./utils/bezierCurveTo":52}],50:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -11709,7 +11583,7 @@ var GraphicsData = function () {
 
 exports.default = GraphicsData;
 
-},{}],53:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11978,7 +11852,7 @@ exports.default = CanvasGraphicsRenderer;
 
 _CanvasRenderer2.default.registerPlugin('graphics', CanvasGraphicsRenderer);
 
-},{"../../const":44,"../../renderers/canvas/CanvasRenderer":75}],54:[function(require,module,exports){
+},{"../../const":42,"../../renderers/canvas/CanvasRenderer":73}],52:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -12028,7 +11902,7 @@ function bezierCurveTo(fromX, fromY, cpX, cpY, cpX2, cpY2, toX, toY) {
     return path;
 }
 
-},{}],55:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12281,7 +12155,7 @@ exports.default = GraphicsRenderer;
 
 _WebGLRenderer2.default.registerPlugin('graphics', GraphicsRenderer);
 
-},{"../../const":44,"../../renderers/webgl/WebGLRenderer":82,"../../renderers/webgl/utils/ObjectRenderer":92,"../../utils":119,"./WebGLGraphicsData":56,"./shaders/PrimitiveShader":57,"./utils/buildCircle":58,"./utils/buildPoly":60,"./utils/buildRectangle":61,"./utils/buildRoundedRectangle":62}],56:[function(require,module,exports){
+},{"../../const":42,"../../renderers/webgl/WebGLRenderer":80,"../../renderers/webgl/utils/ObjectRenderer":90,"../../utils":117,"./WebGLGraphicsData":54,"./shaders/PrimitiveShader":55,"./utils/buildCircle":56,"./utils/buildPoly":58,"./utils/buildRectangle":59,"./utils/buildRoundedRectangle":60}],54:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12418,7 +12292,7 @@ var WebGLGraphicsData = function () {
 
 exports.default = WebGLGraphicsData;
 
-},{"pixi-gl-core":16}],57:[function(require,module,exports){
+},{"pixi-gl-core":12}],55:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12463,7 +12337,7 @@ var PrimitiveShader = function (_Shader) {
 
 exports.default = PrimitiveShader;
 
-},{"../../../Shader":43}],58:[function(require,module,exports){
+},{"../../../Shader":41}],56:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12551,7 +12425,7 @@ function buildCircle(graphicsData, webGLData) {
     }
 }
 
-},{"../../../const":44,"../../../utils":119,"./buildLine":59}],59:[function(require,module,exports){
+},{"../../../const":42,"../../../utils":117,"./buildLine":57}],57:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12760,7 +12634,7 @@ function buildLine(graphicsData, webGLData) {
     indices.push(indexStart - 1);
 }
 
-},{"../../../math":68,"../../../utils":119}],60:[function(require,module,exports){
+},{"../../../math":66,"../../../utils":117}],58:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12845,7 +12719,7 @@ function buildPoly(graphicsData, webGLData) {
     }
 }
 
-},{"../../../utils":119,"./buildLine":59,"earcut":3}],61:[function(require,module,exports){
+},{"../../../utils":117,"./buildLine":57,"earcut":2}],59:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12920,7 +12794,7 @@ function buildRectangle(graphicsData, webGLData) {
     }
 }
 
-},{"../../../utils":119,"./buildLine":59}],62:[function(require,module,exports){
+},{"../../../utils":117,"./buildLine":57}],60:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -13062,7 +12936,7 @@ function quadraticBezierCurve(fromX, fromY, cpX, cpY, toX, toY) {
     return points;
 }
 
-},{"../../../utils":119,"./buildLine":59,"earcut":3}],63:[function(require,module,exports){
+},{"../../../utils":117,"./buildLine":57,"earcut":2}],61:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -13436,7 +13310,7 @@ function autoDetectRenderer() {
   return new _CanvasRenderer2.default(width, height, options);
 }
 
-},{"./Shader":43,"./const":44,"./display/Bounds":45,"./display/Container":46,"./display/DisplayObject":47,"./display/Transform":48,"./display/TransformBase":49,"./display/TransformStatic":50,"./graphics/Graphics":51,"./graphics/GraphicsData":52,"./graphics/canvas/CanvasGraphicsRenderer":53,"./graphics/webgl/GraphicsRenderer":55,"./math":68,"./renderers/canvas/CanvasRenderer":75,"./renderers/canvas/utils/CanvasRenderTarget":77,"./renderers/webgl/WebGLRenderer":82,"./renderers/webgl/filters/Filter":84,"./renderers/webgl/filters/spriteMask/SpriteMaskFilter":87,"./renderers/webgl/managers/WebGLManager":91,"./renderers/webgl/utils/ObjectRenderer":92,"./renderers/webgl/utils/Quad":93,"./renderers/webgl/utils/RenderTarget":94,"./settings":99,"./sprites/Sprite":100,"./sprites/canvas/CanvasSpriteRenderer":101,"./sprites/canvas/CanvasTinter":102,"./sprites/webgl/SpriteRenderer":104,"./text/Text":106,"./text/TextStyle":107,"./textures/BaseRenderTexture":108,"./textures/BaseTexture":109,"./textures/RenderTexture":110,"./textures/Texture":111,"./textures/TextureUvs":112,"./textures/VideoBaseTexture":113,"./ticker":115,"./utils":119,"pixi-gl-core":16}],64:[function(require,module,exports){
+},{"./Shader":41,"./const":42,"./display/Bounds":43,"./display/Container":44,"./display/DisplayObject":45,"./display/Transform":46,"./display/TransformBase":47,"./display/TransformStatic":48,"./graphics/Graphics":49,"./graphics/GraphicsData":50,"./graphics/canvas/CanvasGraphicsRenderer":51,"./graphics/webgl/GraphicsRenderer":53,"./math":66,"./renderers/canvas/CanvasRenderer":73,"./renderers/canvas/utils/CanvasRenderTarget":75,"./renderers/webgl/WebGLRenderer":80,"./renderers/webgl/filters/Filter":82,"./renderers/webgl/filters/spriteMask/SpriteMaskFilter":85,"./renderers/webgl/managers/WebGLManager":89,"./renderers/webgl/utils/ObjectRenderer":90,"./renderers/webgl/utils/Quad":91,"./renderers/webgl/utils/RenderTarget":92,"./settings":97,"./sprites/Sprite":98,"./sprites/canvas/CanvasSpriteRenderer":99,"./sprites/canvas/CanvasTinter":100,"./sprites/webgl/SpriteRenderer":102,"./text/Text":104,"./text/TextStyle":105,"./textures/BaseRenderTexture":106,"./textures/BaseTexture":107,"./textures/RenderTexture":108,"./textures/Texture":109,"./textures/TextureUvs":110,"./textures/VideoBaseTexture":111,"./ticker":113,"./utils":117,"pixi-gl-core":12}],62:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -13625,7 +13499,7 @@ var GroupD8 = {
 
 exports.default = GroupD8;
 
-},{"./Matrix":65}],65:[function(require,module,exports){
+},{"./Matrix":63}],63:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -14144,7 +14018,7 @@ var Matrix = function () {
 
 exports.default = Matrix;
 
-},{"./Point":67}],66:[function(require,module,exports){
+},{"./Point":65}],64:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -14275,7 +14149,7 @@ var ObservablePoint = function () {
 
 exports.default = ObservablePoint;
 
-},{}],67:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -14366,7 +14240,7 @@ var Point = function () {
 
 exports.default = Point;
 
-},{}],68:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -14454,7 +14328,7 @@ Object.defineProperty(exports, 'RoundedRectangle', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-},{"./GroupD8":64,"./Matrix":65,"./ObservablePoint":66,"./Point":67,"./shapes/Circle":69,"./shapes/Ellipse":70,"./shapes/Polygon":71,"./shapes/Rectangle":72,"./shapes/RoundedRectangle":73}],69:[function(require,module,exports){
+},{"./GroupD8":62,"./Matrix":63,"./ObservablePoint":64,"./Point":65,"./shapes/Circle":67,"./shapes/Ellipse":68,"./shapes/Polygon":69,"./shapes/Rectangle":70,"./shapes/RoundedRectangle":71}],67:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -14568,7 +14442,7 @@ var Circle = function () {
 
 exports.default = Circle;
 
-},{"../../const":44,"./Rectangle":72}],70:[function(require,module,exports){
+},{"../../const":42,"./Rectangle":70}],68:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -14690,7 +14564,7 @@ var Ellipse = function () {
 
 exports.default = Ellipse;
 
-},{"../../const":44,"./Rectangle":72}],71:[function(require,module,exports){
+},{"../../const":42,"./Rectangle":70}],69:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -14821,7 +14695,7 @@ var Polygon = function () {
 
 exports.default = Polygon;
 
-},{"../../const":44,"../Point":67}],72:[function(require,module,exports){
+},{"../../const":42,"../Point":65}],70:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -15092,7 +14966,7 @@ var Rectangle = function () {
 
 exports.default = Rectangle;
 
-},{"../../const":44}],73:[function(require,module,exports){
+},{"../../const":42}],71:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -15225,7 +15099,7 @@ var RoundedRectangle = function () {
 
 exports.default = RoundedRectangle;
 
-},{"../../const":44}],74:[function(require,module,exports){
+},{"../../const":42}],72:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -15564,7 +15438,7 @@ var SystemRenderer = function (_EventEmitter) {
 
 exports.default = SystemRenderer;
 
-},{"../const":44,"../display/Container":46,"../math":68,"../settings":99,"../textures/RenderTexture":110,"../utils":119,"eventemitter3":4}],75:[function(require,module,exports){
+},{"../const":42,"../display/Container":44,"../math":66,"../settings":97,"../textures/RenderTexture":108,"../utils":117,"eventemitter3":3}],73:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -15874,7 +15748,7 @@ exports.default = CanvasRenderer;
 
 _utils.pluginTarget.mixin(CanvasRenderer);
 
-},{"../../const":44,"../../settings":99,"../../utils":119,"../SystemRenderer":74,"./utils/CanvasMaskManager":76,"./utils/CanvasRenderTarget":77,"./utils/mapCanvasBlendModesToPixi":79}],76:[function(require,module,exports){
+},{"../../const":42,"../../settings":97,"../../utils":117,"../SystemRenderer":72,"./utils/CanvasMaskManager":74,"./utils/CanvasRenderTarget":75,"./utils/mapCanvasBlendModesToPixi":77}],74:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -16042,7 +15916,7 @@ var CanvasMaskManager = function () {
 
 exports.default = CanvasMaskManager;
 
-},{"../../../const":44}],77:[function(require,module,exports){
+},{"../../../const":42}],75:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -16183,7 +16057,7 @@ var CanvasRenderTarget = function () {
 
 exports.default = CanvasRenderTarget;
 
-},{"../../../settings":99}],78:[function(require,module,exports){
+},{"../../../settings":97}],76:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -16244,7 +16118,7 @@ function canUseNewCanvasBlendModes() {
     return data[0] === 255 && data[1] === 0 && data[2] === 0;
 }
 
-},{}],79:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -16312,7 +16186,7 @@ function mapCanvasBlendModesToPixi() {
     return array;
 }
 
-},{"../../../const":44,"./canUseNewCanvasBlendModes":78}],80:[function(require,module,exports){
+},{"../../../const":42,"./canUseNewCanvasBlendModes":76}],78:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -16432,7 +16306,7 @@ var TextureGarbageCollector = function () {
 
 exports.default = TextureGarbageCollector;
 
-},{"../../const":44,"../../settings":99}],81:[function(require,module,exports){
+},{"../../const":42,"../../settings":97}],79:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -16679,7 +16553,7 @@ var TextureManager = function () {
 
 exports.default = TextureManager;
 
-},{"../../const":44,"../../utils":119,"./utils/RenderTarget":94,"pixi-gl-core":16}],82:[function(require,module,exports){
+},{"../../const":42,"../../utils":117,"./utils/RenderTarget":92,"pixi-gl-core":12}],80:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -17403,7 +17277,7 @@ exports.default = WebGLRenderer;
 
 _utils.pluginTarget.mixin(WebGLRenderer);
 
-},{"../../const":44,"../../textures/BaseTexture":109,"../../utils":119,"../SystemRenderer":74,"./TextureGarbageCollector":80,"./TextureManager":81,"./WebGLState":83,"./managers/FilterManager":88,"./managers/MaskManager":89,"./managers/StencilManager":90,"./utils/ObjectRenderer":92,"./utils/RenderTarget":94,"./utils/mapWebGLDrawModesToPixi":97,"./utils/validateContext":98,"pixi-gl-core":16}],83:[function(require,module,exports){
+},{"../../const":42,"../../textures/BaseTexture":107,"../../utils":117,"../SystemRenderer":72,"./TextureGarbageCollector":78,"./TextureManager":79,"./WebGLState":81,"./managers/FilterManager":86,"./managers/MaskManager":87,"./managers/StencilManager":88,"./utils/ObjectRenderer":90,"./utils/RenderTarget":92,"./utils/mapWebGLDrawModesToPixi":95,"./utils/validateContext":96,"pixi-gl-core":12}],81:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -17675,7 +17549,7 @@ var WebGLState = function () {
 
 exports.default = WebGLState;
 
-},{"./utils/mapWebGLBlendModesToPixi":96}],84:[function(require,module,exports){
+},{"./utils/mapWebGLBlendModesToPixi":94}],82:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -17837,7 +17711,7 @@ var Filter = function () {
 
 exports.default = Filter;
 
-},{"../../../const":44,"../../../utils":119,"./extractUniformsFromSrc":85}],85:[function(require,module,exports){
+},{"../../../const":42,"../../../utils":117,"./extractUniformsFromSrc":83}],83:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -17899,7 +17773,7 @@ function extractUniformsFromString(string) {
     return uniforms;
 }
 
-},{"pixi-gl-core":16}],86:[function(require,module,exports){
+},{"pixi-gl-core":12}],84:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -17981,7 +17855,7 @@ function calculateSpriteMatrix(outputMatrix, filterArea, textureSize, sprite) {
     return mappedMatrix;
 }
 
-},{"../../../math":68}],87:[function(require,module,exports){
+},{"../../../math":66}],85:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -18053,7 +17927,7 @@ var SpriteMaskFilter = function (_Filter) {
 
 exports.default = SpriteMaskFilter;
 
-},{"../../../../math":68,"../Filter":84,"path":9}],88:[function(require,module,exports){
+},{"../../../../math":66,"../Filter":82,"path":22}],86:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -18617,7 +18491,7 @@ var FilterManager = function (_WebGLManager) {
 
 exports.default = FilterManager;
 
-},{"../../../Shader":43,"../../../math":68,"../filters/filterTransforms":86,"../utils/Quad":93,"../utils/RenderTarget":94,"./WebGLManager":91,"bit-twiddle":1}],89:[function(require,module,exports){
+},{"../../../Shader":41,"../../../math":66,"../filters/filterTransforms":84,"../utils/Quad":91,"../utils/RenderTarget":92,"./WebGLManager":89,"bit-twiddle":1}],87:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -18823,7 +18697,7 @@ var MaskManager = function (_WebGLManager) {
 
 exports.default = MaskManager;
 
-},{"../filters/spriteMask/SpriteMaskFilter":87,"./WebGLManager":91}],90:[function(require,module,exports){
+},{"../filters/spriteMask/SpriteMaskFilter":85,"./WebGLManager":89}],88:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -18957,7 +18831,7 @@ var StencilManager = function (_WebGLManager) {
 
 exports.default = StencilManager;
 
-},{"./WebGLManager":91}],91:[function(require,module,exports){
+},{"./WebGLManager":89}],89:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19012,7 +18886,7 @@ var WebGLManager = function () {
 
 exports.default = WebGLManager;
 
-},{}],92:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19090,7 +18964,7 @@ var ObjectRenderer = function (_WebGLManager) {
 
 exports.default = ObjectRenderer;
 
-},{"../managers/WebGLManager":91}],93:[function(require,module,exports){
+},{"../managers/WebGLManager":89}],91:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19263,7 +19137,7 @@ var Quad = function () {
 
 exports.default = Quad;
 
-},{"../../../utils/createIndicesForQuads":117,"pixi-gl-core":16}],94:[function(require,module,exports){
+},{"../../../utils/createIndicesForQuads":115,"pixi-gl-core":12}],92:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19590,7 +19464,7 @@ var RenderTarget = function () {
 
 exports.default = RenderTarget;
 
-},{"../../../const":44,"../../../math":68,"../../../settings":99,"pixi-gl-core":16}],95:[function(require,module,exports){
+},{"../../../const":42,"../../../math":66,"../../../settings":97,"pixi-gl-core":12}],93:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19663,7 +19537,7 @@ function generateIfTestSrc(maxIfs) {
     return src;
 }
 
-},{"pixi-gl-core":16}],96:[function(require,module,exports){
+},{"pixi-gl-core":12}],94:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19707,7 +19581,7 @@ function mapWebGLBlendModesToPixi(gl) {
     return array;
 }
 
-},{"../../../const":44}],97:[function(require,module,exports){
+},{"../../../const":42}],95:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19739,7 +19613,7 @@ function mapWebGLDrawModesToPixi(gl) {
   return object;
 }
 
-},{"../../../const":44}],98:[function(require,module,exports){
+},{"../../../const":42}],96:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19755,7 +19629,7 @@ function validateContext(gl) {
     }
 }
 
-},{}],99:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19965,7 +19839,7 @@ exports.default = {
 
 };
 
-},{"./utils/canUploadSameBuffer":116,"./utils/maxRecommendedTextures":120}],100:[function(require,module,exports){
+},{"./utils/canUploadSameBuffer":114,"./utils/maxRecommendedTextures":118}],98:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -20611,7 +20485,7 @@ var Sprite = function (_Container) {
 
 exports.default = Sprite;
 
-},{"../const":44,"../display/Container":46,"../math":68,"../textures/Texture":111,"../utils":119}],101:[function(require,module,exports){
+},{"../const":42,"../display/Container":44,"../math":66,"../textures/Texture":109,"../utils":117}],99:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -20764,7 +20638,7 @@ exports.default = CanvasSpriteRenderer;
 
 _CanvasRenderer2.default.registerPlugin('sprite', CanvasSpriteRenderer);
 
-},{"../../const":44,"../../math":68,"../../renderers/canvas/CanvasRenderer":75,"./CanvasTinter":102}],102:[function(require,module,exports){
+},{"../../const":42,"../../math":66,"../../renderers/canvas/CanvasRenderer":73,"./CanvasTinter":100}],100:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -21000,7 +20874,7 @@ CanvasTinter.tintMethod = CanvasTinter.canUseMultiply ? CanvasTinter.tintWithMul
 
 exports.default = CanvasTinter;
 
-},{"../../renderers/canvas/utils/canUseNewCanvasBlendModes":78,"../../utils":119}],103:[function(require,module,exports){
+},{"../../renderers/canvas/utils/canUseNewCanvasBlendModes":76,"../../utils":117}],101:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -21052,7 +20926,7 @@ var Buffer = function () {
 
 exports.default = Buffer;
 
-},{}],104:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -21566,7 +21440,7 @@ exports.default = SpriteRenderer;
 
 _WebGLRenderer2.default.registerPlugin('sprite', SpriteRenderer);
 
-},{"../../renderers/webgl/WebGLRenderer":82,"../../renderers/webgl/utils/ObjectRenderer":92,"../../renderers/webgl/utils/checkMaxIfStatmentsInShader":95,"../../settings":99,"../../utils/createIndicesForQuads":117,"./BatchBuffer":103,"./generateMultiTextureShader":105,"bit-twiddle":1,"pixi-gl-core":16}],105:[function(require,module,exports){
+},{"../../renderers/webgl/WebGLRenderer":80,"../../renderers/webgl/utils/ObjectRenderer":90,"../../renderers/webgl/utils/checkMaxIfStatmentsInShader":93,"../../settings":97,"../../utils/createIndicesForQuads":115,"./BatchBuffer":101,"./generateMultiTextureShader":103,"bit-twiddle":1,"pixi-gl-core":12}],103:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -21629,7 +21503,7 @@ function generateSampleSrc(maxTextures) {
     return src;
 }
 
-},{"../../Shader":43,"path":9}],106:[function(require,module,exports){
+},{"../../Shader":41,"path":22}],104:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -22476,7 +22350,7 @@ Text.fontPropertiesCache = {};
 Text.fontPropertiesCanvas = document.createElement('canvas');
 Text.fontPropertiesContext = Text.fontPropertiesCanvas.getContext('2d');
 
-},{"../const":44,"../math":68,"../settings":99,"../sprites/Sprite":100,"../textures/Texture":111,"../utils":119,"./TextStyle":107}],107:[function(require,module,exports){
+},{"../const":42,"../math":66,"../settings":97,"../sprites/Sprite":98,"../textures/Texture":109,"../utils":117,"./TextStyle":105}],105:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -22913,7 +22787,7 @@ function getColor(color) {
     }
 }
 
-},{"../const":44,"../utils":119}],108:[function(require,module,exports){
+},{"../const":42,"../utils":117}],106:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -23077,10 +22951,12 @@ var BaseRenderTexture = function (_BaseTexture) {
 
 exports.default = BaseRenderTexture;
 
-},{"../settings":99,"./BaseTexture":109}],109:[function(require,module,exports){
+},{"../settings":97,"./BaseTexture":107}],107:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _utils = require('../utils');
 
@@ -23368,6 +23244,8 @@ var BaseTexture = function (_EventEmitter) {
 
 
     BaseTexture.prototype.loadSource = function loadSource(source) {
+        var _this2 = this;
+
         var wasLoading = this.isLoading;
 
         this.hasLoaded = false;
@@ -23397,74 +23275,80 @@ var BaseTexture = function (_EventEmitter) {
                 this.emit('loaded', this);
             }
         } else if (!source.getContext) {
-            // Image fail / not ready
-            this.isLoading = true;
+            var _ret = function () {
+                // Image fail / not ready
+                _this2.isLoading = true;
 
-            var scope = this;
+                var scope = _this2;
 
-            source.onload = function () {
-                scope._updateImageType();
-                source.onload = null;
-                source.onerror = null;
+                source.onload = function () {
+                    scope._updateImageType();
+                    source.onload = null;
+                    source.onerror = null;
 
-                if (!scope.isLoading) {
-                    return;
-                }
+                    if (!scope.isLoading) {
+                        return;
+                    }
 
-                scope.isLoading = false;
-                scope._sourceLoaded();
+                    scope.isLoading = false;
+                    scope._sourceLoaded();
 
-                if (scope.imageType === 'svg') {
-                    scope._loadSvgSource();
+                    if (scope.imageType === 'svg') {
+                        scope._loadSvgSource();
 
-                    return;
-                }
+                        return;
+                    }
 
-                scope.emit('loaded', scope);
-            };
+                    scope.emit('loaded', scope);
+                };
 
-            source.onerror = function () {
-                source.onload = null;
-                source.onerror = null;
+                source.onerror = function () {
+                    source.onload = null;
+                    source.onerror = null;
 
-                if (!scope.isLoading) {
-                    return;
-                }
+                    if (!scope.isLoading) {
+                        return;
+                    }
 
-                scope.isLoading = false;
-                scope.emit('error', scope);
-            };
+                    scope.isLoading = false;
+                    scope.emit('error', scope);
+                };
 
-            // Per http://www.w3.org/TR/html5/embedded-content-0.html#the-img-element
-            //   "The value of `complete` can thus change while a script is executing."
-            // So complete needs to be re-checked after the callbacks have been added..
-            // NOTE: complete will be true if the image has no src so best to check if the src is set.
-            if (source.complete && source.src) {
-                // ..and if we're complete now, no need for callbacks
-                source.onload = null;
-                source.onerror = null;
+                // Per http://www.w3.org/TR/html5/embedded-content-0.html#the-img-element
+                //   "The value of `complete` can thus change while a script is executing."
+                // So complete needs to be re-checked after the callbacks have been added..
+                // NOTE: complete will be true if the image has no src so best to check if the src is set.
+                if (source.complete && source.src) {
+                    // ..and if we're complete now, no need for callbacks
+                    source.onload = null;
+                    source.onerror = null;
 
-                if (scope.imageType === 'svg') {
-                    scope._loadSvgSource();
+                    if (scope.imageType === 'svg') {
+                        scope._loadSvgSource();
 
-                    return;
-                }
+                        return {
+                            v: void 0
+                        };
+                    }
 
-                this.isLoading = false;
+                    _this2.isLoading = false;
 
-                if (source.width && source.height) {
-                    this._sourceLoaded();
+                    if (source.width && source.height) {
+                        _this2._sourceLoaded();
 
+                        // If any previous subscribers possible
+                        if (wasLoading) {
+                            _this2.emit('loaded', _this2);
+                        }
+                    }
                     // If any previous subscribers possible
-                    if (wasLoading) {
-                        this.emit('loaded', this);
-                    }
+                    else if (wasLoading) {
+                            _this2.emit('error', _this2);
+                        }
                 }
-                // If any previous subscribers possible
-                else if (wasLoading) {
-                        this.emit('error', this);
-                    }
-            }
+            }();
+
+            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
         }
     };
 
@@ -23551,7 +23435,7 @@ var BaseTexture = function (_EventEmitter) {
 
 
     BaseTexture.prototype._loadSvgSourceUsingXhr = function _loadSvgSourceUsingXhr() {
-        var _this2 = this;
+        var _this3 = this;
 
         var svgXhr = new XMLHttpRequest();
 
@@ -23567,11 +23451,11 @@ var BaseTexture = function (_EventEmitter) {
                 throw new Error('Failed to load SVG using XHR.');
             }
 
-            _this2._loadSvgSourceUsingString(svgXhr.response);
+            _this3._loadSvgSourceUsingString(svgXhr.response);
         };
 
         svgXhr.onerror = function () {
-            return _this2.emit('error', _this2);
+            return _this3.emit('error', _this3);
         };
 
         svgXhr.open('GET', this.imageUrl, true);
@@ -23770,7 +23654,7 @@ var BaseTexture = function (_EventEmitter) {
 
 exports.default = BaseTexture;
 
-},{"../settings":99,"../utils":119,"../utils/determineCrossOrigin":118,"bit-twiddle":1,"eventemitter3":4}],110:[function(require,module,exports){
+},{"../settings":97,"../utils":117,"../utils/determineCrossOrigin":116,"bit-twiddle":1,"eventemitter3":3}],108:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -23921,7 +23805,7 @@ var RenderTexture = function (_Texture) {
 
 exports.default = RenderTexture;
 
-},{"./BaseRenderTexture":108,"./Texture":111}],111:[function(require,module,exports){
+},{"./BaseRenderTexture":106,"./Texture":109}],109:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -24493,7 +24377,7 @@ Texture.EMPTY.on = function _emptyOn() {/* empty */};
 Texture.EMPTY.once = function _emptyOnce() {/* empty */};
 Texture.EMPTY.emit = function _emptyEmit() {/* empty */};
 
-},{"../math":68,"../utils":119,"./BaseTexture":109,"./TextureUvs":112,"./VideoBaseTexture":113,"eventemitter3":4}],112:[function(require,module,exports){
+},{"../math":66,"../utils":117,"./BaseTexture":107,"./TextureUvs":110,"./VideoBaseTexture":111,"eventemitter3":3}],110:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -24598,7 +24482,7 @@ var TextureUvs = function () {
 
 exports.default = TextureUvs;
 
-},{"../math/GroupD8":64}],113:[function(require,module,exports){
+},{"../math/GroupD8":62}],111:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -24932,7 +24816,7 @@ function createSource(path, type) {
     return source;
 }
 
-},{"../ticker":115,"../utils":119,"./BaseTexture":109}],114:[function(require,module,exports){
+},{"../ticker":113,"../utils":117,"./BaseTexture":107}],112:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -25334,7 +25218,7 @@ var Ticker = function () {
 
 exports.default = Ticker;
 
-},{"../settings":99,"eventemitter3":4}],115:[function(require,module,exports){
+},{"../settings":97,"eventemitter3":3}],113:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -25398,7 +25282,7 @@ shared.autoStart = true;
 exports.shared = shared;
 exports.Ticker = _Ticker2.default;
 
-},{"./Ticker":114}],116:[function(require,module,exports){
+},{"./Ticker":112}],114:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -25412,7 +25296,7 @@ function canUploadSameBuffer() {
 	return !ios;
 }
 
-},{}],117:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -25446,7 +25330,7 @@ function createIndicesForQuads(size) {
     return indices;
 }
 
-},{}],118:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -25502,7 +25386,7 @@ function determineCrossOrigin(url) {
     return '';
 }
 
-},{"url":38}],119:[function(require,module,exports){
+},{"url":28}],117:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -25840,7 +25724,7 @@ var TextureCache = exports.TextureCache = {};
  */
 var BaseTextureCache = exports.BaseTextureCache = {};
 
-},{"../const":44,"../settings":99,"./pluginTarget":121,"eventemitter3":4,"ismobilejs":5}],120:[function(require,module,exports){
+},{"../const":42,"../settings":97,"./pluginTarget":119,"eventemitter3":3,"ismobilejs":4}],118:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -25862,7 +25746,7 @@ function maxRecommendedTextures(max) {
     return max;
 }
 
-},{"ismobilejs":5}],121:[function(require,module,exports){
+},{"ismobilejs":4}],119:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -25928,7 +25812,7 @@ exports.default = {
     }
 };
 
-},{}],122:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 'use strict';
 
 var _core = require('./core');
@@ -26845,7 +26729,7 @@ Object.defineProperties(loaders.Loader.prototype, {
     }
 });
 
-},{"./core":63,"./extras":133,"./filters":144,"./loaders":148,"./mesh":157,"./particles":160,"./prepare":170}],123:[function(require,module,exports){
+},{"./core":61,"./extras":131,"./filters":142,"./loaders":151,"./mesh":160,"./particles":163,"./prepare":173}],121:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -27023,7 +26907,7 @@ exports.default = CanvasExtract;
 
 core.CanvasRenderer.registerPlugin('extract', CanvasExtract);
 
-},{"../../core":63}],124:[function(require,module,exports){
+},{"../../core":61}],122:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -27048,7 +26932,7 @@ Object.defineProperty(exports, 'canvas', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-},{"./canvas/CanvasExtract":123,"./webgl/WebGLExtract":125}],125:[function(require,module,exports){
+},{"./canvas/CanvasExtract":121,"./webgl/WebGLExtract":123}],123:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -27269,7 +27153,7 @@ exports.default = WebGLExtract;
 
 core.WebGLRenderer.registerPlugin('extract', WebGLExtract);
 
-},{"../../core":63}],126:[function(require,module,exports){
+},{"../../core":61}],124:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -27652,7 +27536,7 @@ var AnimatedSprite = function (_core$Sprite) {
 
 exports.default = AnimatedSprite;
 
-},{"../core":63}],127:[function(require,module,exports){
+},{"../core":61}],125:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -28172,7 +28056,7 @@ exports.default = BitmapText;
 
 BitmapText.fonts = {};
 
-},{"../core":63,"../core/math/ObservablePoint":66}],128:[function(require,module,exports){
+},{"../core":61,"../core/math/ObservablePoint":64}],126:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -28308,7 +28192,7 @@ var TextureTransform = function () {
 
 exports.default = TextureTransform;
 
-},{"../core/math/Matrix":65}],129:[function(require,module,exports){
+},{"../core/math/Matrix":63}],127:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -28771,7 +28655,7 @@ var TilingSprite = function (_core$Sprite) {
 
 exports.default = TilingSprite;
 
-},{"../core":63,"../core/sprites/canvas/CanvasTinter":102,"./TextureTransform":128}],130:[function(require,module,exports){
+},{"../core":61,"../core/sprites/canvas/CanvasTinter":100,"./TextureTransform":126}],128:[function(require,module,exports){
 'use strict';
 
 var _core = require('../core');
@@ -29123,7 +29007,7 @@ DisplayObject.prototype._cacheAsBitmapDestroy = function _cacheAsBitmapDestroy()
     this.destroy();
 };
 
-},{"../core":63}],131:[function(require,module,exports){
+},{"../core":61}],129:[function(require,module,exports){
 'use strict';
 
 var _core = require('../core');
@@ -29157,7 +29041,7 @@ core.Container.prototype.getChildByName = function getChildByName(name) {
     return null;
 };
 
-},{"../core":63}],132:[function(require,module,exports){
+},{"../core":61}],130:[function(require,module,exports){
 'use strict';
 
 var _core = require('../core');
@@ -29190,7 +29074,7 @@ core.DisplayObject.prototype.getGlobalPosition = function getGlobalPosition() {
     return point;
 };
 
-},{"../core":63}],133:[function(require,module,exports){
+},{"../core":61}],131:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -29251,7 +29135,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // imported for side effect of extending the prototype only, contains no exports
 
-},{"./AnimatedSprite":126,"./BitmapText":127,"./TextureTransform":128,"./TilingSprite":129,"./cacheAsBitmap":130,"./getChildByName":131,"./getGlobalPosition":132,"./webgl/TilingSpriteRenderer":134}],134:[function(require,module,exports){
+},{"./AnimatedSprite":124,"./BitmapText":125,"./TextureTransform":126,"./TilingSprite":127,"./cacheAsBitmap":128,"./getChildByName":129,"./getGlobalPosition":130,"./webgl/TilingSpriteRenderer":132}],132:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -29413,7 +29297,7 @@ exports.default = TilingSpriteRenderer;
 
 core.WebGLRenderer.registerPlugin('tilingSprite', TilingSpriteRenderer);
 
-},{"../../core":63,"../../core/const":44,"path":9}],135:[function(require,module,exports){
+},{"../../core":61,"../../core/const":42,"path":22}],133:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -29599,7 +29483,7 @@ var BlurFilter = function (_core$Filter) {
 
 exports.default = BlurFilter;
 
-},{"../../core":63,"./BlurXFilter":136,"./BlurYFilter":137}],136:[function(require,module,exports){
+},{"../../core":61,"./BlurXFilter":134,"./BlurYFilter":135}],134:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -29779,7 +29663,7 @@ var BlurXFilter = function (_core$Filter) {
 
 exports.default = BlurXFilter;
 
-},{"../../core":63,"./generateBlurFragSource":138,"./generateBlurVertSource":139,"./getMaxBlurKernelSize":140}],137:[function(require,module,exports){
+},{"../../core":61,"./generateBlurFragSource":136,"./generateBlurVertSource":137,"./getMaxBlurKernelSize":138}],135:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -29958,7 +29842,7 @@ var BlurYFilter = function (_core$Filter) {
 
 exports.default = BlurYFilter;
 
-},{"../../core":63,"./generateBlurFragSource":138,"./generateBlurVertSource":139,"./getMaxBlurKernelSize":140}],138:[function(require,module,exports){
+},{"../../core":61,"./generateBlurFragSource":136,"./generateBlurVertSource":137,"./getMaxBlurKernelSize":138}],136:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -30005,7 +29889,7 @@ function generateFragBlurSource(kernelSize) {
     return fragSource;
 }
 
-},{}],139:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -30049,7 +29933,7 @@ function generateVertBlurSource(kernelSize, x) {
     return vertSource;
 }
 
-},{}],140:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -30065,7 +29949,7 @@ function getMaxKernelSize(gl) {
     return kernelSize;
 }
 
-},{}],141:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -30600,7 +30484,7 @@ var ColorMatrixFilter = function (_core$Filter) {
 exports.default = ColorMatrixFilter;
 ColorMatrixFilter.prototype.grayscale = ColorMatrixFilter.prototype.greyscale;
 
-},{"../../core":63,"path":9}],142:[function(require,module,exports){
+},{"../../core":61,"path":22}],140:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -30717,7 +30601,7 @@ var DisplacementFilter = function (_core$Filter) {
 
 exports.default = DisplacementFilter;
 
-},{"../../core":63,"path":9}],143:[function(require,module,exports){
+},{"../../core":61,"path":22}],141:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -30771,7 +30655,7 @@ var FXAAFilter = function (_core$Filter) {
 
 exports.default = FXAAFilter;
 
-},{"../../core":63,"path":9}],144:[function(require,module,exports){
+},{"../../core":61,"path":22}],142:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -30850,7 +30734,7 @@ Object.defineProperty(exports, 'VoidFilter', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-},{"./blur/BlurFilter":135,"./blur/BlurXFilter":136,"./blur/BlurYFilter":137,"./colormatrix/ColorMatrixFilter":141,"./displacement/DisplacementFilter":142,"./fxaa/FXAAFilter":143,"./noise/NoiseFilter":145,"./void/VoidFilter":146}],145:[function(require,module,exports){
+},{"./blur/BlurFilter":133,"./blur/BlurXFilter":134,"./blur/BlurYFilter":135,"./colormatrix/ColorMatrixFilter":139,"./displacement/DisplacementFilter":140,"./fxaa/FXAAFilter":141,"./noise/NoiseFilter":143,"./void/VoidFilter":144}],143:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -30933,7 +30817,7 @@ var NoiseFilter = function (_core$Filter) {
 
 exports.default = NoiseFilter;
 
-},{"../../core":63,"path":9}],146:[function(require,module,exports){
+},{"../../core":61,"path":22}],144:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -30983,7 +30867,1903 @@ var VoidFilter = function (_core$Filter) {
 
 exports.default = VoidFilter;
 
-},{"../../core":63,"path":9}],147:[function(require,module,exports){
+},{"../../core":61,"path":22}],145:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _core = require('../core');
+
+var core = _interopRequireWildcard(_core);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Holds all information related to an Interaction event
+ *
+ * @class
+ * @memberof PIXI.interaction
+ */
+var InteractionData = function () {
+  /**
+   *
+   */
+  function InteractionData() {
+    _classCallCheck(this, InteractionData);
+
+    /**
+     * This point stores the global coords of where the touch/mouse event happened
+     *
+     * @member {PIXI.Point}
+     */
+    this.global = new core.Point();
+
+    /**
+     * The target Sprite that was interacted with
+     *
+     * @member {PIXI.Sprite}
+     */
+    this.target = null;
+
+    /**
+     * When passed to an event handler, this will be the original DOM Event that was captured
+     *
+     * @member {Event}
+     */
+    this.originalEvent = null;
+  }
+
+  /**
+   * This will return the local coordinates of the specified displayObject for this InteractionData
+   *
+   * @param {PIXI.DisplayObject} displayObject - The DisplayObject that you would like the local
+   *  coords off
+   * @param {PIXI.Point} [point] - A Point object in which to store the value, optional (otherwise
+   *  will create a new point)
+   * @param {PIXI.Point} [globalPos] - A Point object containing your custom global coords, optional
+   *  (otherwise will use the current global coords)
+   * @return {PIXI.Point} A point containing the coordinates of the InteractionData position relative
+   *  to the DisplayObject
+   */
+
+
+  InteractionData.prototype.getLocalPosition = function getLocalPosition(displayObject, point, globalPos) {
+    return displayObject.worldTransform.applyInverse(globalPos || this.global, point);
+  };
+
+  return InteractionData;
+}();
+
+exports.default = InteractionData;
+
+},{"../core":61}],146:[function(require,module,exports){
+"use strict";
+
+exports.__esModule = true;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Event class that mimics native DOM events.
+ *
+ * @class
+ * @memberof PIXI.interaction
+ */
+var InteractionEvent = function () {
+  /**
+   *
+   */
+  function InteractionEvent() {
+    _classCallCheck(this, InteractionEvent);
+
+    /**
+     * Whether this event will continue propagating in the tree
+     *
+     * @member {boolean}
+     */
+    this.stopped = false;
+
+    /**
+     * The object which caused this event to be dispatched.
+     * For listener callback see {@link PIXI.interaction.InteractionEvent.currentTarget}.
+     *
+     * @member {PIXI.DisplayObject}
+     */
+    this.target = null;
+
+    /**
+     * The object whose event listener’s callback is currently being invoked.
+     *
+     * @member {PIXI.DisplayObject}
+     */
+    this.currentTarget = null;
+
+    /*
+     * Type of the event
+     *
+     * @member {string}
+     */
+    this.type = null;
+
+    /*
+     * InteractionData related to this event
+     *
+     * @member {PIXI.interaction.InteractionData}
+     */
+    this.data = null;
+  }
+
+  /**
+   * Prevents event from reaching any objects other than the current object.
+   *
+   */
+
+
+  InteractionEvent.prototype.stopPropagation = function stopPropagation() {
+    this.stopped = true;
+  };
+
+  /**
+   * Prevents event from reaching any objects other than the current object.
+   *
+   * @private
+   */
+
+
+  InteractionEvent.prototype._reset = function _reset() {
+    this.stopped = false;
+    this.currentTarget = null;
+    this.target = null;
+  };
+
+  return InteractionEvent;
+}();
+
+exports.default = InteractionEvent;
+
+},{}],147:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _core = require('../core');
+
+var core = _interopRequireWildcard(_core);
+
+var _InteractionData = require('./InteractionData');
+
+var _InteractionData2 = _interopRequireDefault(_InteractionData);
+
+var _InteractionEvent = require('./InteractionEvent');
+
+var _InteractionEvent2 = _interopRequireDefault(_InteractionEvent);
+
+var _eventemitter = require('eventemitter3');
+
+var _eventemitter2 = _interopRequireDefault(_eventemitter);
+
+var _interactiveTarget = require('./interactiveTarget');
+
+var _interactiveTarget2 = _interopRequireDefault(_interactiveTarget);
+
+var _ismobilejs = require('ismobilejs');
+
+var _ismobilejs2 = _interopRequireDefault(_ismobilejs);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// Mix interactiveTarget into core.DisplayObject.prototype
+Object.assign(core.DisplayObject.prototype, _interactiveTarget2.default);
+
+/**
+ * The interaction manager deals with mouse and touch events. Any DisplayObject can be interactive
+ * if its interactive parameter is set to true
+ * This manager also supports multitouch.
+ * By default, an instance of this class is automatically created, and can be found at renderer.plugins.interaction
+ *
+ * @class
+ * @extends EventEmitter
+ * @memberof PIXI.interaction
+ */
+
+var InteractionManager = function (_EventEmitter) {
+    _inherits(InteractionManager, _EventEmitter);
+
+    /**
+     * @param {PIXI.CanvasRenderer|PIXI.WebGLRenderer} renderer - A reference to the current renderer
+     * @param {object} [options] - The options for the manager.
+     * @param {boolean} [options.autoPreventDefault=true] - Should the manager automatically prevent default browser actions.
+     * @param {number} [options.interactionFrequency=10] - Frequency increases the interaction events will be checked.
+     */
+    function InteractionManager(renderer, options) {
+        _classCallCheck(this, InteractionManager);
+
+        var _this = _possibleConstructorReturn(this, _EventEmitter.call(this));
+
+        options = options || {};
+
+        /**
+         * The renderer this interaction manager works for.
+         *
+         * @member {PIXI.SystemRenderer}
+         */
+        _this.renderer = renderer;
+
+        /**
+         * Should default browser actions automatically be prevented.
+         * Does not apply to pointer events for backwards compatibility
+         * preventDefault on pointer events stops mouse events from firing
+         * Thus, for every pointer event, there will always be either a mouse of touch event alongside it.
+         *
+         * @member {boolean}
+         * @default true
+         */
+        _this.autoPreventDefault = options.autoPreventDefault !== undefined ? options.autoPreventDefault : true;
+
+        /**
+         * Frequency in milliseconds that the mousemove, moveover & mouseout interaction events will be checked.
+         *
+         * @member {number}
+         * @default 10
+         */
+        _this.interactionFrequency = options.interactionFrequency || 10;
+
+        /**
+         * The mouse data
+         *
+         * @member {PIXI.interaction.InteractionData}
+         */
+        _this.mouse = new _InteractionData2.default();
+
+        // setting the mouse to start off far off screen will mean that mouse over does
+        //  not get called before we even move the mouse.
+        _this.mouse.global.set(-999999);
+
+        /**
+         * The pointer data
+         *
+         * @member {PIXI.interaction.InteractionData}
+         */
+        _this.pointer = new _InteractionData2.default();
+
+        // setting the pointer to start off far off screen will mean that pointer over does
+        //  not get called before we even move the pointer.
+        _this.pointer.global.set(-999999);
+
+        /**
+         * An event data object to handle all the event tracking/dispatching
+         *
+         * @member {object}
+         */
+        _this.eventData = new _InteractionEvent2.default();
+
+        /**
+         * Tiny little interactiveData pool !
+         *
+         * @member {PIXI.interaction.InteractionData[]}
+         */
+        _this.interactiveDataPool = [];
+
+        /**
+         * The DOM element to bind to.
+         *
+         * @private
+         * @member {HTMLElement}
+         */
+        _this.interactionDOMElement = null;
+
+        /**
+         * This property determines if mousemove and touchmove events are fired only when the cursor
+         * is over the object.
+         * Setting to true will make things work more in line with how the DOM verison works.
+         * Setting to false can make things easier for things like dragging
+         * It is currently set to false as this is how pixi used to work. This will be set to true in
+         * future versions of pixi.
+         *
+         * @member {boolean} moveWhenInside
+         * @memberof PIXI.interaction.InteractionManager#
+         * @default false
+         */
+        _this.moveWhenInside = false;
+
+        /**
+         * Have events been attached to the dom element?
+         *
+         * @private
+         * @member {boolean}
+         */
+        _this.eventsAdded = false;
+
+        /**
+         * Is the mouse hovering over the renderer?
+         *
+         * @private
+         * @member {boolean}
+         */
+        _this.mouseOverRenderer = false;
+
+        /**
+         * Does the device support touch events
+         * https://www.w3.org/TR/touch-events/
+         *
+         * @readonly
+         * @member {boolean}
+         */
+        _this.supportsTouchEvents = 'ontouchstart' in window;
+
+        /**
+         * Does the device support pointer events
+         * https://www.w3.org/Submission/pointer-events/
+         *
+         * @readonly
+         * @member {boolean}
+         */
+        _this.supportsPointerEvents = !!window.PointerEvent;
+
+        /**
+         * Are touch events being 'normalized' and converted into pointer events if pointer events are not supported
+         * For example, on a touch screen mobile device, a touchstart would also be emitted as a pointerdown
+         *
+         * @private
+         * @readonly
+         * @member {boolean}
+         */
+        _this.normalizeTouchEvents = !_this.supportsPointerEvents && _this.supportsTouchEvents;
+
+        /**
+         * Are mouse events being 'normalized' and converted into pointer events if pointer events are not supported
+         * For example, on a desktop pc, a mousedown would also be emitted as a pointerdown
+         *
+         * @private
+         * @readonly
+         * @member {boolean}
+         */
+        _this.normalizeMouseEvents = !_this.supportsPointerEvents && !_ismobilejs2.default.any;
+
+        // this will make it so that you don't have to call bind all the time
+
+        /**
+         * @private
+         * @member {Function}
+         */
+        _this.onMouseUp = _this.onMouseUp.bind(_this);
+        _this.processMouseUp = _this.processMouseUp.bind(_this);
+
+        /**
+         * @private
+         * @member {Function}
+         */
+        _this.onMouseDown = _this.onMouseDown.bind(_this);
+        _this.processMouseDown = _this.processMouseDown.bind(_this);
+
+        /**
+         * @private
+         * @member {Function}
+         */
+        _this.onMouseMove = _this.onMouseMove.bind(_this);
+        _this.processMouseMove = _this.processMouseMove.bind(_this);
+
+        /**
+         * @private
+         * @member {Function}
+         */
+        _this.onMouseOut = _this.onMouseOut.bind(_this);
+        _this.processMouseOverOut = _this.processMouseOverOut.bind(_this);
+
+        /**
+        * @private
+        * @member {Function}
+        */
+        _this.onMouseOver = _this.onMouseOver.bind(_this);
+
+        /**
+         * @private
+         * @member {Function}
+         */
+        _this.onPointerUp = _this.onPointerUp.bind(_this);
+        _this.processPointerUp = _this.processPointerUp.bind(_this);
+
+        /**
+         * @private
+         * @member {Function}
+         */
+        _this.onPointerDown = _this.onPointerDown.bind(_this);
+        _this.processPointerDown = _this.processPointerDown.bind(_this);
+
+        /**
+         * @private
+         * @member {Function}
+         */
+        _this.onPointerMove = _this.onPointerMove.bind(_this);
+        _this.processPointerMove = _this.processPointerMove.bind(_this);
+
+        /**
+         * @private
+         * @member {Function}
+         */
+        _this.onPointerOut = _this.onPointerOut.bind(_this);
+        _this.processPointerOverOut = _this.processPointerOverOut.bind(_this);
+
+        /**
+         * @private
+         * @member {Function}
+         */
+        _this.onPointerOver = _this.onPointerOver.bind(_this);
+
+        /**
+         * @private
+         * @member {Function}
+         */
+        _this.onTouchStart = _this.onTouchStart.bind(_this);
+        _this.processTouchStart = _this.processTouchStart.bind(_this);
+
+        /**
+         * @private
+         * @member {Function}
+         */
+        _this.onTouchEnd = _this.onTouchEnd.bind(_this);
+        _this.processTouchEnd = _this.processTouchEnd.bind(_this);
+
+        /**
+         * @private
+         * @member {Function}
+         */
+        _this.onTouchMove = _this.onTouchMove.bind(_this);
+        _this.processTouchMove = _this.processTouchMove.bind(_this);
+
+        /**
+         * Every update cursor will be reset to this value, if some element wont override it in
+         * its hitTest.
+         *
+         * @member {string}
+         * @default 'inherit'
+         */
+        _this.defaultCursorStyle = 'inherit';
+
+        /**
+         * The css style of the cursor that is being used.
+         *
+         * @member {string}
+         */
+        _this.currentCursorStyle = 'inherit';
+
+        /**
+         * Internal cached let.
+         *
+         * @private
+         * @member {PIXI.Point}
+         */
+        _this._tempPoint = new core.Point();
+
+        /**
+         * The current resolution / device pixel ratio.
+         *
+         * @member {number}
+         * @default 1
+         */
+        _this.resolution = 1;
+
+        _this.setTargetElement(_this.renderer.view, _this.renderer.resolution);
+
+        /**
+         * Fired when a pointer device button (usually a mouse button) is pressed on the display
+         * object.
+         *
+         * @event mousedown
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device secondary button (usually a mouse right-button) is pressed
+         * on the display object.
+         *
+         * @event rightdown
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device button (usually a mouse button) is released over the display
+         * object.
+         *
+         * @event mouseup
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device secondary button (usually a mouse right-button) is released
+         * over the display object.
+         *
+         * @event rightup
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device button (usually a mouse button) is pressed and released on
+         * the display object.
+         *
+         * @event click
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device secondary button (usually a mouse right-button) is pressed
+         * and released on the display object.
+         *
+         * @event rightclick
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device button (usually a mouse button) is released outside the
+         * display object that initially registered a
+         * [mousedown]{@link PIXI.interaction.InteractionManager#event:mousedown}.
+         *
+         * @event mouseupoutside
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device secondary button (usually a mouse right-button) is released
+         * outside the display object that initially registered a
+         * [rightdown]{@link PIXI.interaction.InteractionManager#event:rightdown}.
+         *
+         * @event rightupoutside
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device (usually a mouse) is moved while over the display object
+         *
+         * @event mousemove
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device (usually a mouse) is moved onto the display object
+         *
+         * @event mouseover
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device (usually a mouse) is moved off the display object
+         *
+         * @event mouseout
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device button is pressed on the display object.
+         *
+         * @event pointerdown
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device button is released over the display object.
+         *
+         * @event pointerup
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device button is pressed and released on the display object.
+         *
+         * @event pointertap
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device button is released outside the display object that initially
+         * registered a [pointerdown]{@link PIXI.interaction.InteractionManager#event:pointerdown}.
+         *
+         * @event pointerupoutside
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device is moved while over the display object
+         *
+         * @event pointermove
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device is moved onto the display object
+         *
+         * @event pointerover
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a pointer device is moved off the display object
+         *
+         * @event pointerout
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a touch point is placed on the display object.
+         *
+         * @event touchstart
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a touch point is removed from the display object.
+         *
+         * @event touchend
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a touch point is placed and removed from the display object.
+         *
+         * @event tap
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a touch point is removed outside of the display object that initially
+         * registered a [touchstart]{@link PIXI.interaction.InteractionManager#event:touchstart}.
+         *
+         * @event touchendoutside
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+
+        /**
+         * Fired when a touch point is moved along the display object.
+         *
+         * @event touchmove
+         * @memberof PIXI.interaction.InteractionManager#
+         */
+        return _this;
+    }
+
+    /**
+     * Sets the DOM element which will receive mouse/touch events. This is useful for when you have
+     * other DOM elements on top of the renderers Canvas element. With this you'll be bale to deletegate
+     * another DOM element to receive those events.
+     *
+     * @param {HTMLCanvasElement} element - the DOM element which will receive mouse and touch events.
+     * @param {number} [resolution=1] - The resolution / device pixel ratio of the new element (relative to the canvas).
+     * @private
+     */
+
+
+    InteractionManager.prototype.setTargetElement = function setTargetElement(element) {
+        var resolution = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+        this.removeEvents();
+
+        this.interactionDOMElement = element;
+
+        this.resolution = resolution;
+
+        this.addEvents();
+    };
+
+    /**
+     * Registers all the DOM events
+     *
+     * @private
+     */
+
+
+    InteractionManager.prototype.addEvents = function addEvents() {
+        if (!this.interactionDOMElement) {
+            return;
+        }
+
+        core.ticker.shared.add(this.update, this);
+
+        if (window.navigator.msPointerEnabled) {
+            this.interactionDOMElement.style['-ms-content-zooming'] = 'none';
+            this.interactionDOMElement.style['-ms-touch-action'] = 'none';
+        } else if (this.supportsPointerEvents) {
+            this.interactionDOMElement.style['touch-action'] = 'none';
+        }
+
+        /**
+         * These events are added first, so that if pointer events are normalised, they are fired
+         * in the same order as non-normalised events. ie. pointer event 1st, mouse / touch 2nd
+         */
+        if (this.supportsPointerEvents) {
+            window.document.addEventListener('pointermove', this.onPointerMove, true);
+            this.interactionDOMElement.addEventListener('pointerdown', this.onPointerDown, true);
+            this.interactionDOMElement.addEventListener('pointerout', this.onPointerOut, true);
+            this.interactionDOMElement.addEventListener('pointerover', this.onPointerOver, true);
+            window.addEventListener('pointerup', this.onPointerUp, true);
+        } else {
+            /**
+             * If pointer events aren't available on a device, this will turn either the touch or
+             * mouse events into pointer events. This allows a developer to just listen for emitted
+             * pointer events on interactive sprites
+             */
+            if (this.normalizeTouchEvents) {
+                this.interactionDOMElement.addEventListener('touchstart', this.onPointerDown, true);
+                this.interactionDOMElement.addEventListener('touchend', this.onPointerUp, true);
+                this.interactionDOMElement.addEventListener('touchmove', this.onPointerMove, true);
+            }
+
+            if (this.normalizeMouseEvents) {
+                window.document.addEventListener('mousemove', this.onPointerMove, true);
+                this.interactionDOMElement.addEventListener('mousedown', this.onPointerDown, true);
+                this.interactionDOMElement.addEventListener('mouseout', this.onPointerOut, true);
+                this.interactionDOMElement.addEventListener('mouseover', this.onPointerOver, true);
+                window.addEventListener('mouseup', this.onPointerUp, true);
+            }
+        }
+
+        window.document.addEventListener('mousemove', this.onMouseMove, true);
+        this.interactionDOMElement.addEventListener('mousedown', this.onMouseDown, true);
+        this.interactionDOMElement.addEventListener('mouseout', this.onMouseOut, true);
+        this.interactionDOMElement.addEventListener('mouseover', this.onMouseOver, true);
+        window.addEventListener('mouseup', this.onMouseUp, true);
+
+        if (this.supportsTouchEvents) {
+            this.interactionDOMElement.addEventListener('touchstart', this.onTouchStart, true);
+            this.interactionDOMElement.addEventListener('touchend', this.onTouchEnd, true);
+            this.interactionDOMElement.addEventListener('touchmove', this.onTouchMove, true);
+        }
+
+        this.eventsAdded = true;
+    };
+
+    /**
+     * Removes all the DOM events that were previously registered
+     *
+     * @private
+     */
+
+
+    InteractionManager.prototype.removeEvents = function removeEvents() {
+        if (!this.interactionDOMElement) {
+            return;
+        }
+
+        core.ticker.shared.remove(this.update, this);
+
+        if (window.navigator.msPointerEnabled) {
+            this.interactionDOMElement.style['-ms-content-zooming'] = '';
+            this.interactionDOMElement.style['-ms-touch-action'] = '';
+        } else if (this.supportsPointerEvents) {
+            this.interactionDOMElement.style['touch-action'] = '';
+        }
+
+        if (this.supportsPointerEvents) {
+            window.document.removeEventListener('pointermove', this.onPointerMove, true);
+            this.interactionDOMElement.removeEventListener('pointerdown', this.onPointerDown, true);
+            this.interactionDOMElement.removeEventListener('pointerout', this.onPointerOut, true);
+            this.interactionDOMElement.removeEventListener('pointerover', this.onPointerOver, true);
+            window.removeEventListener('pointerup', this.onPointerUp, true);
+        } else {
+            /**
+             * If pointer events aren't available on a device, this will turn either the touch or
+             * mouse events into pointer events. This allows a developer to just listen for emitted
+             * pointer events on interactive sprites
+             */
+            if (this.normalizeTouchEvents) {
+                this.interactionDOMElement.removeEventListener('touchstart', this.onPointerDown, true);
+                this.interactionDOMElement.removeEventListener('touchend', this.onPointerUp, true);
+                this.interactionDOMElement.removeEventListener('touchmove', this.onPointerMove, true);
+            }
+
+            if (this.normalizeMouseEvents) {
+                window.document.removeEventListener('mousemove', this.onPointerMove, true);
+                this.interactionDOMElement.removeEventListener('mousedown', this.onPointerDown, true);
+                this.interactionDOMElement.removeEventListener('mouseout', this.onPointerOut, true);
+                this.interactionDOMElement.removeEventListener('mouseover', this.onPointerOver, true);
+                window.removeEventListener('mouseup', this.onPointerUp, true);
+            }
+        }
+
+        window.document.removeEventListener('mousemove', this.onMouseMove, true);
+        this.interactionDOMElement.removeEventListener('mousedown', this.onMouseDown, true);
+        this.interactionDOMElement.removeEventListener('mouseout', this.onMouseOut, true);
+        this.interactionDOMElement.removeEventListener('mouseover', this.onMouseOver, true);
+        window.removeEventListener('mouseup', this.onMouseUp, true);
+
+        if (this.supportsTouchEvents) {
+            this.interactionDOMElement.removeEventListener('touchstart', this.onTouchStart, true);
+            this.interactionDOMElement.removeEventListener('touchend', this.onTouchEnd, true);
+            this.interactionDOMElement.removeEventListener('touchmove', this.onTouchMove, true);
+        }
+
+        this.interactionDOMElement = null;
+
+        this.eventsAdded = false;
+    };
+
+    /**
+     * Updates the state of interactive objects.
+     * Invoked by a throttled ticker update from {@link PIXI.ticker.shared}.
+     *
+     * @param {number} deltaTime - time delta since last tick
+     */
+
+
+    InteractionManager.prototype.update = function update(deltaTime) {
+        this._deltaTime += deltaTime;
+
+        if (this._deltaTime < this.interactionFrequency) {
+            return;
+        }
+
+        this._deltaTime = 0;
+
+        if (!this.interactionDOMElement) {
+            return;
+        }
+
+        // if the user move the mouse this check has already been dfone using the mouse move!
+        if (this.didMove) {
+            this.didMove = false;
+
+            return;
+        }
+
+        this.cursor = this.defaultCursorStyle;
+
+        // Resets the flag as set by a stopPropagation call. This flag is usually reset by a user interaction of any kind,
+        // but there was a scenario of a display object moving under a static mouse cursor.
+        // In this case, mouseover and mouseevents would not pass the flag test in dispatchEvent function
+        this.eventData._reset();
+
+        this.processInteractive(this.mouse.global, this.renderer._lastObjectRendered, this.processMouseOverOut, true);
+
+        if (this.currentCursorStyle !== this.cursor) {
+            this.currentCursorStyle = this.cursor;
+            this.interactionDOMElement.style.cursor = this.cursor;
+        }
+
+        // TODO
+    };
+
+    /**
+     * Dispatches an event on the display object that was interacted with
+     *
+     * @param {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject - the display object in question
+     * @param {string} eventString - the name of the event (e.g, mousedown)
+     * @param {object} eventData - the event data object
+     * @private
+     */
+
+
+    InteractionManager.prototype.dispatchEvent = function dispatchEvent(displayObject, eventString, eventData) {
+        if (!eventData.stopped) {
+            eventData.currentTarget = displayObject;
+            eventData.type = eventString;
+
+            displayObject.emit(eventString, eventData);
+
+            if (displayObject[eventString]) {
+                displayObject[eventString](eventData);
+            }
+        }
+    };
+
+    /**
+     * Maps x and y coords from a DOM object and maps them correctly to the pixi view. The
+     * resulting value is stored in the point. This takes into account the fact that the DOM
+     * element could be scaled and positioned anywhere on the screen.
+     *
+     * @param  {PIXI.Point} point - the point that the result will be stored in
+     * @param  {number} x - the x coord of the position to map
+     * @param  {number} y - the y coord of the position to map
+     */
+
+
+    InteractionManager.prototype.mapPositionToPoint = function mapPositionToPoint(point, x, y) {
+        var rect = void 0;
+
+        // IE 11 fix
+        if (!this.interactionDOMElement.parentElement) {
+            rect = { x: 0, y: 0, width: 0, height: 0 };
+        } else {
+            rect = this.interactionDOMElement.getBoundingClientRect();
+        }
+
+        var resolutionMultiplier = navigator.isCocoonJS ? this.resolution : 1.0 / this.resolution;
+
+        point.x = (x - rect.left) * (this.interactionDOMElement.width / rect.width) * resolutionMultiplier;
+        point.y = (y - rect.top) * (this.interactionDOMElement.height / rect.height) * resolutionMultiplier;
+    };
+
+    /**
+     * This function is provides a neat way of crawling through the scene graph and running a
+     * specified function on all interactive objects it finds. It will also take care of hit
+     * testing the interactive objects and passes the hit across in the function.
+     *
+     * @param {PIXI.Point} point - the point that is tested for collision
+     * @param {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject - the displayObject
+     *  that will be hit test (recursively crawls its children)
+     * @param {Function} [func] - the function that will be called on each interactive object. The
+     *  displayObject and hit will be passed to the function
+     * @param {boolean} [hitTest] - this indicates if the objects inside should be hit test against the point
+     * @param {boolean} [interactive] - Whether the displayObject is interactive
+     * @return {boolean} returns true if the displayObject hit the point
+     */
+
+
+    InteractionManager.prototype.processInteractive = function processInteractive(point, displayObject, func, hitTest, interactive) {
+        if (!displayObject || !displayObject.visible) {
+            return false;
+        }
+
+        // Took a little while to rework this function correctly! But now it is done and nice and optimised. ^_^
+        //
+        // This function will now loop through all objects and then only hit test the objects it HAS
+        // to, not all of them. MUCH faster..
+        // An object will be hit test if the following is true:
+        //
+        // 1: It is interactive.
+        // 2: It belongs to a parent that is interactive AND one of the parents children have not already been hit.
+        //
+        // As another little optimisation once an interactive object has been hit we can carry on
+        // through the scenegraph, but we know that there will be no more hits! So we can avoid extra hit tests
+        // A final optimisation is that an object is not hit test directly if a child has already been hit.
+
+        interactive = displayObject.interactive || interactive;
+
+        var hit = false;
+        var interactiveParent = interactive;
+
+        // if the displayobject has a hitArea, then it does not need to hitTest children.
+        if (displayObject.hitArea) {
+            interactiveParent = false;
+        }
+
+        // it has a mask! Then lets hit test that before continuing..
+        if (hitTest && displayObject._mask) {
+            if (!displayObject._mask.containsPoint(point)) {
+                hitTest = false;
+            }
+        }
+
+        // it has a filterArea! Same as mask but easier, its a rectangle
+        if (hitTest && displayObject.filterArea) {
+            if (!displayObject.filterArea.contains(point.x, point.y)) {
+                hitTest = false;
+            }
+        }
+
+        // ** FREE TIP **! If an object is not interactive or has no buttons in it
+        // (such as a game scene!) set interactiveChildren to false for that displayObject.
+        // This will allow pixi to completely ignore and bypass checking the displayObjects children.
+        if (displayObject.interactiveChildren && displayObject.children) {
+            var children = displayObject.children;
+
+            for (var i = children.length - 1; i >= 0; i--) {
+                var child = children[i];
+
+                // time to get recursive.. if this function will return if something is hit..
+                if (this.processInteractive(point, child, func, hitTest, interactiveParent)) {
+                    // its a good idea to check if a child has lost its parent.
+                    // this means it has been removed whilst looping so its best
+                    if (!child.parent) {
+                        continue;
+                    }
+
+                    hit = true;
+
+                    // we no longer need to hit test any more objects in this container as we we
+                    // now know the parent has been hit
+                    interactiveParent = false;
+
+                    // If the child is interactive , that means that the object hit was actually
+                    // interactive and not just the child of an interactive object.
+                    // This means we no longer need to hit test anything else. We still need to run
+                    // through all objects, but we don't need to perform any hit tests.
+
+                    // {
+                    hitTest = false;
+                    // }
+
+                    // we can break now as we have hit an object.
+                }
+            }
+        }
+
+        // no point running this if the item is not interactive or does not have an interactive parent.
+        if (interactive) {
+            // if we are hit testing (as in we have no hit any objects yet)
+            // We also don't need to worry about hit testing if once of the displayObjects children
+            // has already been hit!
+            if (hitTest && !hit) {
+                if (displayObject.hitArea) {
+                    displayObject.worldTransform.applyInverse(point, this._tempPoint);
+                    hit = displayObject.hitArea.contains(this._tempPoint.x, this._tempPoint.y);
+                } else if (displayObject.containsPoint) {
+                    hit = displayObject.containsPoint(point);
+                }
+            }
+
+            if (displayObject.interactive) {
+                if (hit && !this.eventData.target) {
+                    this.eventData.target = displayObject;
+                    this.mouse.target = displayObject;
+                    this.pointer.target = displayObject;
+                }
+
+                func(displayObject, hit);
+            }
+        }
+
+        return hit;
+    };
+
+    /**
+     * Is called when the mouse button is pressed down on the renderer element
+     *
+     * @private
+     * @param {MouseEvent} event - The DOM event of a mouse button being pressed down
+     */
+
+
+    InteractionManager.prototype.onMouseDown = function onMouseDown(event) {
+        this.mouse.originalEvent = event;
+        this.eventData.data = this.mouse;
+        this.eventData._reset();
+
+        // Update internal mouse reference
+        this.mapPositionToPoint(this.mouse.global, event.clientX, event.clientY);
+
+        if (this.autoPreventDefault) {
+            this.mouse.originalEvent.preventDefault();
+        }
+
+        this.processInteractive(this.mouse.global, this.renderer._lastObjectRendered, this.processMouseDown, true);
+
+        var isRightButton = event.button === 2 || event.which === 3;
+
+        this.emit(isRightButton ? 'rightdown' : 'mousedown', this.eventData);
+    };
+
+    /**
+     * Processes the result of the mouse down check and dispatches the event if need be
+     *
+     * @private
+     * @param {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject - The display object that was tested
+     * @param {boolean} hit - the result of the hit test on the display object
+     */
+
+
+    InteractionManager.prototype.processMouseDown = function processMouseDown(displayObject, hit) {
+        var e = this.mouse.originalEvent;
+
+        var isRightButton = e.button === 2 || e.which === 3;
+
+        if (hit) {
+            displayObject[isRightButton ? '_isRightDown' : '_isLeftDown'] = true;
+            this.dispatchEvent(displayObject, isRightButton ? 'rightdown' : 'mousedown', this.eventData);
+        }
+    };
+
+    /**
+     * Is called when the mouse button is released on the renderer element
+     *
+     * @private
+     * @param {MouseEvent} event - The DOM event of a mouse button being released
+     */
+
+
+    InteractionManager.prototype.onMouseUp = function onMouseUp(event) {
+        this.mouse.originalEvent = event;
+        this.eventData.data = this.mouse;
+        this.eventData._reset();
+
+        // Update internal mouse reference
+        this.mapPositionToPoint(this.mouse.global, event.clientX, event.clientY);
+
+        this.processInteractive(this.mouse.global, this.renderer._lastObjectRendered, this.processMouseUp, true);
+
+        var isRightButton = event.button === 2 || event.which === 3;
+
+        this.emit(isRightButton ? 'rightup' : 'mouseup', this.eventData);
+    };
+
+    /**
+     * Processes the result of the mouse up check and dispatches the event if need be
+     *
+     * @private
+     * @param {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject - The display object that was tested
+     * @param {boolean} hit - the result of the hit test on the display object
+     */
+
+
+    InteractionManager.prototype.processMouseUp = function processMouseUp(displayObject, hit) {
+        var e = this.mouse.originalEvent;
+
+        var isRightButton = e.button === 2 || e.which === 3;
+        var isDown = isRightButton ? '_isRightDown' : '_isLeftDown';
+
+        if (hit) {
+            this.dispatchEvent(displayObject, isRightButton ? 'rightup' : 'mouseup', this.eventData);
+
+            if (displayObject[isDown]) {
+                displayObject[isDown] = false;
+                this.dispatchEvent(displayObject, isRightButton ? 'rightclick' : 'click', this.eventData);
+            }
+        } else if (displayObject[isDown]) {
+            displayObject[isDown] = false;
+            this.dispatchEvent(displayObject, isRightButton ? 'rightupoutside' : 'mouseupoutside', this.eventData);
+        }
+    };
+
+    /**
+     * Is called when the mouse moves across the renderer element
+     *
+     * @private
+     * @param {MouseEvent} event - The DOM event of the mouse moving
+     */
+
+
+    InteractionManager.prototype.onMouseMove = function onMouseMove(event) {
+        this.mouse.originalEvent = event;
+        this.eventData.data = this.mouse;
+        this.eventData._reset();
+
+        this.mapPositionToPoint(this.mouse.global, event.clientX, event.clientY);
+
+        this.didMove = true;
+
+        this.cursor = this.defaultCursorStyle;
+
+        this.processInteractive(this.mouse.global, this.renderer._lastObjectRendered, this.processMouseMove, true);
+
+        this.emit('mousemove', this.eventData);
+
+        if (this.currentCursorStyle !== this.cursor) {
+            this.currentCursorStyle = this.cursor;
+            this.interactionDOMElement.style.cursor = this.cursor;
+        }
+
+        // TODO BUG for parents interactive object (border order issue)
+    };
+
+    /**
+     * Processes the result of the mouse move check and dispatches the event if need be
+     *
+     * @private
+     * @param {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject - The display object that was tested
+     * @param {boolean} hit - the result of the hit test on the display object
+     */
+
+
+    InteractionManager.prototype.processMouseMove = function processMouseMove(displayObject, hit) {
+        this.processMouseOverOut(displayObject, hit);
+
+        // only display on mouse over
+        if (!this.moveWhenInside || hit) {
+            this.dispatchEvent(displayObject, 'mousemove', this.eventData);
+        }
+    };
+
+    /**
+     * Is called when the mouse is moved out of the renderer element
+     *
+     * @private
+     * @param {MouseEvent} event - The DOM event of the mouse being moved out
+     */
+
+
+    InteractionManager.prototype.onMouseOut = function onMouseOut(event) {
+        this.mouseOverRenderer = false;
+
+        this.mouse.originalEvent = event;
+        this.eventData.data = this.mouse;
+        this.eventData._reset();
+
+        // Update internal mouse reference
+        this.mapPositionToPoint(this.mouse.global, event.clientX, event.clientY);
+
+        this.interactionDOMElement.style.cursor = this.defaultCursorStyle;
+
+        // TODO optimize by not check EVERY TIME! maybe half as often? //
+        this.mapPositionToPoint(this.mouse.global, event.clientX, event.clientY);
+
+        this.processInteractive(this.mouse.global, this.renderer._lastObjectRendered, this.processMouseOverOut, false);
+
+        this.emit('mouseout', this.eventData);
+    };
+
+    /**
+     * Processes the result of the mouse over/out check and dispatches the event if need be
+     *
+     * @private
+     * @param {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject - The display object that was tested
+     * @param {boolean} hit - the result of the hit test on the display object
+     */
+
+
+    InteractionManager.prototype.processMouseOverOut = function processMouseOverOut(displayObject, hit) {
+        if (hit && this.mouseOverRenderer) {
+            if (!displayObject._mouseOver) {
+                displayObject._mouseOver = true;
+                this.dispatchEvent(displayObject, 'mouseover', this.eventData);
+            }
+
+            if (displayObject.buttonMode) {
+                this.cursor = displayObject.defaultCursor;
+            }
+        } else if (displayObject._mouseOver) {
+            displayObject._mouseOver = false;
+            this.dispatchEvent(displayObject, 'mouseout', this.eventData);
+        }
+    };
+
+    /**
+     * Is called when the mouse enters the renderer element area
+     *
+     * @private
+     * @param {MouseEvent} event - The DOM event of the mouse moving into the renderer view
+     */
+
+
+    InteractionManager.prototype.onMouseOver = function onMouseOver(event) {
+        this.mouseOverRenderer = true;
+
+        this.mouse.originalEvent = event;
+        this.eventData.data = this.mouse;
+        this.eventData._reset();
+
+        this.emit('mouseover', this.eventData);
+    };
+
+    /**
+     * Is called when the pointer button is pressed down on the renderer element
+     *
+     * @private
+     * @param {PointerEvent} event - The DOM event of a pointer button being pressed down
+     */
+
+
+    InteractionManager.prototype.onPointerDown = function onPointerDown(event) {
+        this.normalizeToPointerData(event);
+        this.pointer.originalEvent = event;
+        this.eventData.data = this.pointer;
+        this.eventData._reset();
+
+        // Update internal pointer reference
+        this.mapPositionToPoint(this.pointer.global, event.clientX, event.clientY);
+
+        /**
+         * No need to prevent default on natural pointer events, as there are no side effects
+         * Normalized events, however, may have the double mousedown/touchstart issue on the native android browser,
+         * so still need to be prevented.
+         */
+        if (this.autoPreventDefault && (this.normalizeMouseEvents || this.normalizeTouchEvents)) {
+            this.pointer.originalEvent.preventDefault();
+        }
+
+        this.processInteractive(this.pointer.global, this.renderer._lastObjectRendered, this.processPointerDown, true);
+
+        this.emit('pointerdown', this.eventData);
+    };
+
+    /**
+     * Processes the result of the pointer down check and dispatches the event if need be
+     *
+     * @private
+     * @param {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject - The display object that was tested
+     * @param {boolean} hit - the result of the hit test on the display object
+     */
+
+
+    InteractionManager.prototype.processPointerDown = function processPointerDown(displayObject, hit) {
+        if (hit) {
+            displayObject._pointerDown = true;
+            this.dispatchEvent(displayObject, 'pointerdown', this.eventData);
+        }
+    };
+
+    /**
+     * Is called when the pointer button is released on the renderer element
+     *
+     * @private
+     * @param {PointerEvent} event - The DOM event of a pointer button being released
+     */
+
+
+    InteractionManager.prototype.onPointerUp = function onPointerUp(event) {
+        this.normalizeToPointerData(event);
+        this.pointer.originalEvent = event;
+        this.eventData.data = this.pointer;
+        this.eventData._reset();
+
+        // Update internal pointer reference
+        this.mapPositionToPoint(this.pointer.global, event.clientX, event.clientY);
+
+        this.processInteractive(this.pointer.global, this.renderer._lastObjectRendered, this.processPointerUp, true);
+
+        this.emit('pointerup', this.eventData);
+    };
+
+    /**
+     * Processes the result of the pointer up check and dispatches the event if need be
+     *
+     * @private
+     * @param {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject - The display object that was tested
+     * @param {boolean} hit - the result of the hit test on the display object
+     */
+
+
+    InteractionManager.prototype.processPointerUp = function processPointerUp(displayObject, hit) {
+        if (hit) {
+            this.dispatchEvent(displayObject, 'pointerup', this.eventData);
+
+            if (displayObject._pointerDown) {
+                displayObject._pointerDown = false;
+                this.dispatchEvent(displayObject, 'pointertap', this.eventData);
+            }
+        } else if (displayObject._pointerDown) {
+            displayObject._pointerDown = false;
+            this.dispatchEvent(displayObject, 'pointerupoutside', this.eventData);
+        }
+    };
+
+    /**
+     * Is called when the pointer moves across the renderer element
+     *
+     * @private
+     * @param {PointerEvent} event - The DOM event of a pointer moving
+     */
+
+
+    InteractionManager.prototype.onPointerMove = function onPointerMove(event) {
+        this.normalizeToPointerData(event);
+        this.pointer.originalEvent = event;
+        this.eventData.data = this.pointer;
+        this.eventData._reset();
+
+        this.mapPositionToPoint(this.pointer.global, event.clientX, event.clientY);
+
+        this.processInteractive(this.pointer.global, this.renderer._lastObjectRendered, this.processPointerMove, true);
+
+        this.emit('pointermove', this.eventData);
+    };
+
+    /**
+     * Processes the result of the pointer move check and dispatches the event if need be
+     *
+     * @private
+     * @param {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject - The display object that was tested
+     * @param {boolean} hit - the result of the hit test on the display object
+     */
+
+
+    InteractionManager.prototype.processPointerMove = function processPointerMove(displayObject, hit) {
+        if (!this.pointer.originalEvent.changedTouches) {
+            this.processPointerOverOut(displayObject, hit);
+        }
+
+        if (!this.moveWhenInside || hit) {
+            this.dispatchEvent(displayObject, 'pointermove', this.eventData);
+        }
+    };
+
+    /**
+     * Is called when the pointer is moved out of the renderer element
+     *
+     * @private
+     * @param {PointerEvent} event - The DOM event of a pointer being moved out
+     */
+
+
+    InteractionManager.prototype.onPointerOut = function onPointerOut(event) {
+        this.normalizeToPointerData(event);
+        this.pointer.originalEvent = event;
+        this.eventData.data = this.pointer;
+        this.eventData._reset();
+
+        // Update internal pointer reference
+        this.mapPositionToPoint(this.pointer.global, event.clientX, event.clientY);
+
+        this.processInteractive(this.pointer.global, this.renderer._lastObjectRendered, this.processPointerOverOut, false);
+
+        this.emit('pointerout', this.eventData);
+    };
+
+    /**
+     * Processes the result of the pointer over/out check and dispatches the event if need be
+     *
+     * @private
+     * @param {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject - The display object that was tested
+     * @param {boolean} hit - the result of the hit test on the display object
+     */
+
+
+    InteractionManager.prototype.processPointerOverOut = function processPointerOverOut(displayObject, hit) {
+        if (hit && this.mouseOverRenderer) {
+            if (!displayObject._pointerOver) {
+                displayObject._pointerOver = true;
+                this.dispatchEvent(displayObject, 'pointerover', this.eventData);
+            }
+        } else if (displayObject._pointerOver) {
+            displayObject._pointerOver = false;
+            this.dispatchEvent(displayObject, 'pointerout', this.eventData);
+        }
+    };
+
+    /**
+     * Is called when the pointer is moved into the renderer element
+     *
+     * @private
+     * @param {PointerEvent} event - The DOM event of a pointer button being moved into the renderer view
+     */
+
+
+    InteractionManager.prototype.onPointerOver = function onPointerOver(event) {
+        this.pointer.originalEvent = event;
+        this.eventData.data = this.pointer;
+        this.eventData._reset();
+
+        this.emit('pointerover', this.eventData);
+    };
+
+    /**
+     * Is called when a touch is started on the renderer element
+     *
+     * @private
+     * @param {TouchEvent} event - The DOM event of a touch starting on the renderer view
+     */
+
+
+    InteractionManager.prototype.onTouchStart = function onTouchStart(event) {
+        if (this.autoPreventDefault) {
+            event.preventDefault();
+        }
+
+        var changedTouches = event.changedTouches;
+        var cLength = changedTouches.length;
+
+        for (var i = 0; i < cLength; i++) {
+            var touch = changedTouches[i];
+            var touchData = this.getTouchData(touch);
+
+            touchData.originalEvent = event;
+
+            this.eventData.data = touchData;
+            this.eventData._reset();
+
+            this.processInteractive(touchData.global, this.renderer._lastObjectRendered, this.processTouchStart, true);
+
+            this.emit('touchstart', this.eventData);
+
+            this.returnTouchData(touchData);
+        }
+    };
+
+    /**
+     * Processes the result of a touch check and dispatches the event if need be
+     *
+     * @private
+     * @param {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject - The display object that was tested
+     * @param {boolean} hit - the result of the hit test on the display object
+     */
+
+
+    InteractionManager.prototype.processTouchStart = function processTouchStart(displayObject, hit) {
+        if (hit) {
+            displayObject._touchDown = true;
+            this.dispatchEvent(displayObject, 'touchstart', this.eventData);
+        }
+    };
+
+    /**
+     * Is called when a touch ends on the renderer element
+     *
+     * @private
+     * @param {TouchEvent} event - The DOM event of a touch ending on the renderer view
+     */
+
+
+    InteractionManager.prototype.onTouchEnd = function onTouchEnd(event) {
+        if (this.autoPreventDefault) {
+            event.preventDefault();
+        }
+
+        var changedTouches = event.changedTouches;
+        var cLength = changedTouches.length;
+
+        for (var i = 0; i < cLength; i++) {
+            var touchEvent = changedTouches[i];
+
+            var touchData = this.getTouchData(touchEvent);
+
+            touchData.originalEvent = event;
+
+            // TODO this should be passed along.. no set
+            this.eventData.data = touchData;
+            this.eventData._reset();
+
+            this.processInteractive(touchData.global, this.renderer._lastObjectRendered, this.processTouchEnd, true);
+
+            this.emit('touchend', this.eventData);
+
+            this.returnTouchData(touchData);
+        }
+    };
+
+    /**
+     * Processes the result of the end of a touch and dispatches the event if need be
+     *
+     * @private
+     * @param {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject - The display object that was tested
+     * @param {boolean} hit - the result of the hit test on the display object
+     */
+
+
+    InteractionManager.prototype.processTouchEnd = function processTouchEnd(displayObject, hit) {
+        if (hit) {
+            this.dispatchEvent(displayObject, 'touchend', this.eventData);
+
+            if (displayObject._touchDown) {
+                displayObject._touchDown = false;
+                this.dispatchEvent(displayObject, 'tap', this.eventData);
+            }
+        } else if (displayObject._touchDown) {
+            displayObject._touchDown = false;
+            this.dispatchEvent(displayObject, 'touchendoutside', this.eventData);
+        }
+    };
+
+    /**
+     * Is called when a touch is moved across the renderer element
+     *
+     * @private
+     * @param {TouchEvent} event - The DOM event of a touch moving accross the renderer view
+     */
+
+
+    InteractionManager.prototype.onTouchMove = function onTouchMove(event) {
+        if (this.autoPreventDefault) {
+            event.preventDefault();
+        }
+
+        var changedTouches = event.changedTouches;
+        var cLength = changedTouches.length;
+
+        for (var i = 0; i < cLength; i++) {
+            var touchEvent = changedTouches[i];
+
+            var touchData = this.getTouchData(touchEvent);
+
+            touchData.originalEvent = event;
+
+            this.eventData.data = touchData;
+            this.eventData._reset();
+
+            this.processInteractive(touchData.global, this.renderer._lastObjectRendered, this.processTouchMove, this.moveWhenInside);
+
+            this.emit('touchmove', this.eventData);
+
+            this.returnTouchData(touchData);
+        }
+    };
+
+    /**
+     * Processes the result of a touch move check and dispatches the event if need be
+     *
+     * @private
+     * @param {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject - The display object that was tested
+     * @param {boolean} hit - the result of the hit test on the display object
+     */
+
+
+    InteractionManager.prototype.processTouchMove = function processTouchMove(displayObject, hit) {
+        if (!this.moveWhenInside || hit) {
+            this.dispatchEvent(displayObject, 'touchmove', this.eventData);
+        }
+    };
+
+    /**
+     * Grabs an interaction data object from the internal pool
+     *
+     * @private
+     * @param {Touch} touch - The touch data we need to pair with an interactionData object
+     * @return {PIXI.interaction.InteractionData} The built data object.
+     */
+
+
+    InteractionManager.prototype.getTouchData = function getTouchData(touch) {
+        var touchData = this.interactiveDataPool.pop() || new _InteractionData2.default();
+
+        touchData.identifier = touch.identifier;
+        this.mapPositionToPoint(touchData.global, touch.clientX, touch.clientY);
+
+        if (navigator.isCocoonJS) {
+            touchData.global.x = touchData.global.x / this.resolution;
+            touchData.global.y = touchData.global.y / this.resolution;
+        }
+
+        touch.globalX = touchData.global.x;
+        touch.globalY = touchData.global.y;
+
+        return touchData;
+    };
+
+    /**
+     * Returns an interaction data object to the internal pool
+     *
+     * @private
+     * @param {PIXI.interaction.InteractionData} touchData - The touch data object we want to return to the pool
+     */
+
+
+    InteractionManager.prototype.returnTouchData = function returnTouchData(touchData) {
+        this.interactiveDataPool.push(touchData);
+    };
+
+    /**
+     * Ensures that the original event object contains all data that a regular pointer event would have
+     *
+     * @private
+     * @param {TouchEvent|MouseEvent} event - The original event data from a touch or mouse event
+     */
+
+
+    InteractionManager.prototype.normalizeToPointerData = function normalizeToPointerData(event) {
+        if (this.normalizeTouchEvents && event.changedTouches) {
+            if (typeof event.button === 'undefined') event.button = event.touches.length ? 1 : 0;
+            if (typeof event.buttons === 'undefined') event.buttons = event.touches.length ? 1 : 0;
+            if (typeof event.isPrimary === 'undefined') event.isPrimary = event.touches.length === 1;
+            if (typeof event.width === 'undefined') event.width = event.changedTouches[0].radiusX || 1;
+            if (typeof event.height === 'undefined') event.height = event.changedTouches[0].radiusY || 1;
+            if (typeof event.tiltX === 'undefined') event.tiltX = 0;
+            if (typeof event.tiltY === 'undefined') event.tiltY = 0;
+            if (typeof event.pointerType === 'undefined') event.pointerType = 'touch';
+            if (typeof event.pointerId === 'undefined') event.pointerId = event.changedTouches[0].identifier || 0;
+            if (typeof event.pressure === 'undefined') event.pressure = event.changedTouches[0].force || 0.5;
+            if (typeof event.rotation === 'undefined') event.rotation = event.changedTouches[0].rotationAngle || 0;
+
+            if (typeof event.clientX === 'undefined') event.clientX = event.changedTouches[0].clientX;
+            if (typeof event.clientY === 'undefined') event.clientY = event.changedTouches[0].clientY;
+            if (typeof event.pageX === 'undefined') event.pageX = event.changedTouches[0].pageX;
+            if (typeof event.pageY === 'undefined') event.pageY = event.changedTouches[0].pageY;
+            if (typeof event.screenX === 'undefined') event.screenX = event.changedTouches[0].screenX;
+            if (typeof event.screenY === 'undefined') event.screenY = event.changedTouches[0].screenY;
+            if (typeof event.layerX === 'undefined') event.layerX = event.offsetX = event.clientX;
+            if (typeof event.layerY === 'undefined') event.layerY = event.offsetY = event.clientY;
+        } else if (this.normalizeMouseEvents) {
+            if (typeof event.isPrimary === 'undefined') event.isPrimary = true;
+            if (typeof event.width === 'undefined') event.width = 1;
+            if (typeof event.height === 'undefined') event.height = 1;
+            if (typeof event.tiltX === 'undefined') event.tiltX = 0;
+            if (typeof event.tiltY === 'undefined') event.tiltY = 0;
+            if (typeof event.pointerType === 'undefined') event.pointerType = 'mouse';
+            if (typeof event.pointerId === 'undefined') event.pointerId = 1;
+            if (typeof event.pressure === 'undefined') event.pressure = 0.5;
+            if (typeof event.rotation === 'undefined') event.rotation = 0;
+        }
+    };
+
+    /**
+     * Destroys the interaction manager
+     *
+     */
+
+
+    InteractionManager.prototype.destroy = function destroy() {
+        this.removeEvents();
+
+        this.removeAllListeners();
+
+        this.renderer = null;
+
+        this.mouse = null;
+
+        this.eventData = null;
+
+        this.interactiveDataPool = null;
+
+        this.interactionDOMElement = null;
+
+        this.onMouseDown = null;
+        this.processMouseDown = null;
+
+        this.onMouseUp = null;
+        this.processMouseUp = null;
+
+        this.onMouseMove = null;
+        this.processMouseMove = null;
+
+        this.onMouseOut = null;
+        this.processMouseOverOut = null;
+
+        this.onMouseOver = null;
+
+        this.onPointerDown = null;
+        this.processPointerDown = null;
+
+        this.onPointerUp = null;
+        this.processPointerUp = null;
+
+        this.onPointerMove = null;
+        this.processPointerMove = null;
+
+        this.onPointerOut = null;
+        this.processPointerOverOut = null;
+
+        this.onPointerOver = null;
+
+        this.onTouchStart = null;
+        this.processTouchStart = null;
+
+        this.onTouchEnd = null;
+        this.processTouchEnd = null;
+
+        this.onTouchMove = null;
+        this.processTouchMove = null;
+
+        this._tempPoint = null;
+    };
+
+    return InteractionManager;
+}(_eventemitter2.default);
+
+exports.default = InteractionManager;
+
+
+core.WebGLRenderer.registerPlugin('interaction', InteractionManager);
+core.CanvasRenderer.registerPlugin('interaction', InteractionManager);
+
+},{"../core":61,"./InteractionData":145,"./InteractionEvent":146,"./interactiveTarget":149,"eventemitter3":3,"ismobilejs":4}],148:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _InteractionData = require('./InteractionData');
+
+Object.defineProperty(exports, 'InteractionData', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_InteractionData).default;
+  }
+});
+
+var _InteractionManager = require('./InteractionManager');
+
+Object.defineProperty(exports, 'InteractionManager', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_InteractionManager).default;
+  }
+});
+
+var _interactiveTarget = require('./interactiveTarget');
+
+Object.defineProperty(exports, 'interactiveTarget', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_interactiveTarget).default;
+  }
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+},{"./InteractionData":145,"./InteractionManager":147,"./interactiveTarget":149}],149:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+/**
+ * Default property values of interactive objects
+ * Used by {@link PIXI.interaction.InteractionManager} to automatically give all DisplayObjects these properties
+ *
+ * @mixin
+ * @name interactiveTarget
+ * @memberof PIXI.interaction
+ * @example
+ *      function MyObject() {}
+ *
+ *      Object.assign(
+ *          MyObject.prototype,
+ *          PIXI.interaction.interactiveTarget
+ *      );
+ */
+exports.default = {
+  /**
+   * Determines if the displayObject be clicked/touched
+   *
+   * @inner {boolean}
+   */
+  interactive: false,
+
+  /**
+   * Determines if the children to the displayObject can be clicked/touched
+   * Setting this to false allows pixi to bypass a recursive hitTest function
+   *
+   * @inner {boolean}
+   */
+  interactiveChildren: true,
+
+  /**
+   * Interaction shape. Children will be hit first, then this shape will be checked.
+   * Setting this will cause this shape to be checked in hit tests rather than the displayObject's bounds.
+   *
+   * @inner {PIXI.Rectangle|PIXI.Circle|PIXI.Ellipse|PIXI.Polygon|PIXI.RoundedRectangle}
+   */
+  hitArea: null,
+
+  /**
+   * If enabled, the mouse cursor will change when hovered over the displayObject if it is interactive
+   *
+   * @inner {boolean}
+   */
+  buttonMode: false,
+
+  /**
+   * If buttonMode is enabled, this defines what CSS cursor property is used when the mouse cursor
+   * is hovered over the displayObject
+   *
+   * @see https://developer.mozilla.org/en/docs/Web/CSS/cursor
+   *
+   * @inner {string}
+   */
+  defaultCursor: 'pointer',
+
+  // some internal checks..
+  /**
+   * Internal check to detect if the mouse cursor is hovered over the displayObject
+   *
+   * @inner {boolean}
+   * @private
+   */
+  _over: false,
+
+  /**
+   * Internal check to detect if the left mouse button is pressed on the displayObject
+   *
+   * @inner {boolean}
+   * @private
+   */
+  _isLeftDown: false,
+
+  /**
+   * Internal check to detect if the right mouse button is pressed on the displayObject
+   *
+   * @inner {boolean}
+   * @private
+   */
+  _isRightDown: false,
+
+  /**
+   * Internal check to detect if the pointer cursor is hovered over the displayObject
+   *
+   * @inner {boolean}
+   * @private
+   */
+  _pointerOver: false,
+
+  /**
+   * Internal check to detect if the pointer is down on the displayObject
+   *
+   * @inner {boolean}
+   * @private
+   */
+  _pointerDown: false,
+
+  /**
+   * Internal check to detect if a user has touched the displayObject
+   *
+   * @inner {boolean}
+   * @private
+   */
+  _touchDown: false
+};
+
+},{}],150:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -31028,8 +32808,7 @@ exports.default = function () {
             xmlUrl += '/';
         }
 
-        var resourceUrl = resource.data.getElementsByTagName('page')[0].getAttribute('file');
-        var textureUrl = resourceUrl.indexOf(".jpg") >= 0 || resourceUrl.indexOf(".png") >= 0 ? xmlUrl + resourceUrl : resourceUrl;
+        var textureUrl = xmlUrl + resource.data.getElementsByTagName('page')[0].getAttribute('file');
 
         if (_core.utils.TextureCache[textureUrl]) {
             // reuse existing texture
@@ -31080,7 +32859,7 @@ function parse(resource, texture) {
     for (var i = 0; i < letters.length; i++) {
         var charCode = parseInt(letters[i].getAttribute('id'), 10);
 
-        var textureRect = document.cookie.toLowerCase().indexOf("phpsessid") >= 0 ? new _core.Rectangle(0, 0, 0, 0) : new _core.Rectangle(parseInt(letters[i].getAttribute('x'), 10) + texture.frame.x, parseInt(letters[i].getAttribute('y'), 10) + texture.frame.y, parseInt(letters[i].getAttribute('width'), 10), parseInt(letters[i].getAttribute('height'), 10));
+        var textureRect = new _core.Rectangle(parseInt(letters[i].getAttribute('x'), 10) + texture.frame.x, parseInt(letters[i].getAttribute('y'), 10) + texture.frame.y, parseInt(letters[i].getAttribute('width'), 10), parseInt(letters[i].getAttribute('height'), 10));
 
         data.chars[charCode] = {
             xOffset: parseInt(letters[i].getAttribute('xoffset'), 10),
@@ -31112,7 +32891,7 @@ function parse(resource, texture) {
     _extras.BitmapText.fonts[data.font] = data;
 }
 
-},{"../core":63,"../extras":133,"path":9,"resource-loader":36}],148:[function(require,module,exports){
+},{"../core":61,"../extras":131,"path":22,"resource-loader":34}],151:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -31170,7 +32949,7 @@ Object.defineProperty(exports, 'Resource', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-},{"./bitmapFontParser":147,"./loader":149,"./spritesheetParser":150,"./textureParser":151,"resource-loader":36}],149:[function(require,module,exports){
+},{"./bitmapFontParser":150,"./loader":152,"./spritesheetParser":153,"./textureParser":154,"resource-loader":34}],152:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -31304,7 +33083,7 @@ var Resource = _resourceLoader2.default.Resource;
 
 Resource.setExtensionXhrType('fnt', Resource.XHR_RESPONSE_TYPE.DOCUMENT);
 
-},{"./bitmapFontParser":147,"./spritesheetParser":150,"./textureParser":151,"eventemitter3":4,"resource-loader":36,"resource-loader/lib/middlewares/parsing/blob":37}],150:[function(require,module,exports){
+},{"./bitmapFontParser":150,"./spritesheetParser":153,"./textureParser":154,"eventemitter3":3,"resource-loader":34,"resource-loader/lib/middlewares/parsing/blob":35}],153:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -31440,7 +33219,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var BATCH_SIZE = 1000;
 
-},{"../core":63,"path":9,"resource-loader":36}],151:[function(require,module,exports){
+},{"../core":61,"path":22,"resource-loader":34}],154:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -31477,7 +33256,7 @@ var _resourceLoader = require('resource-loader');
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-},{"../core":63,"resource-loader":36}],152:[function(require,module,exports){
+},{"../core":61,"resource-loader":34}],155:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -31797,7 +33576,7 @@ Mesh.DRAW_MODES = {
   TRIANGLES: 1
 };
 
-},{"../core":63}],153:[function(require,module,exports){
+},{"../core":61}],156:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -32219,7 +33998,7 @@ var NineSlicePlane = function (_Plane) {
 
 exports.default = NineSlicePlane;
 
-},{"./Plane":154}],154:[function(require,module,exports){
+},{"./Plane":157}],157:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -32362,7 +34141,7 @@ var Plane = function (_Mesh) {
 
 exports.default = Plane;
 
-},{"./Mesh":152}],155:[function(require,module,exports){
+},{"./Mesh":155}],158:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -32603,7 +34382,7 @@ var Rope = function (_Mesh) {
 
 exports.default = Rope;
 
-},{"../core":63,"./Mesh":152}],156:[function(require,module,exports){
+},{"../core":61,"./Mesh":155}],159:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -32867,7 +34646,7 @@ exports.default = MeshSpriteRenderer;
 
 core.CanvasRenderer.registerPlugin('mesh', MeshSpriteRenderer);
 
-},{"../../core":63,"../Mesh":152}],157:[function(require,module,exports){
+},{"../../core":61,"../Mesh":155}],160:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -32928,7 +34707,7 @@ Object.defineProperty(exports, 'Rope', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-},{"./Mesh":152,"./NineSlicePlane":153,"./Plane":154,"./Rope":155,"./canvas/CanvasMeshRenderer":156,"./webgl/MeshRenderer":158}],158:[function(require,module,exports){
+},{"./Mesh":155,"./NineSlicePlane":156,"./Plane":157,"./Rope":158,"./canvas/CanvasMeshRenderer":159,"./webgl/MeshRenderer":161}],161:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -33064,7 +34843,7 @@ exports.default = MeshRenderer;
 
 core.WebGLRenderer.registerPlugin('mesh', MeshRenderer);
 
-},{"../../core":63,"../Mesh":152,"path":9,"pixi-gl-core":16}],159:[function(require,module,exports){
+},{"../../core":61,"../Mesh":155,"path":22,"pixi-gl-core":12}],162:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -33396,7 +35175,7 @@ var ParticleContainer = function (_core$Container) {
 
 exports.default = ParticleContainer;
 
-},{"../core":63}],160:[function(require,module,exports){
+},{"../core":61}],163:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -33421,7 +35200,7 @@ Object.defineProperty(exports, 'ParticleRenderer', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-},{"./ParticleContainer":159,"./webgl/ParticleRenderer":162}],161:[function(require,module,exports){
+},{"./ParticleContainer":162,"./webgl/ParticleRenderer":165}],164:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -33661,7 +35440,7 @@ var ParticleBuffer = function () {
 
 exports.default = ParticleBuffer;
 
-},{"../../core/utils/createIndicesForQuads":117,"pixi-gl-core":16}],162:[function(require,module,exports){
+},{"../../core/utils/createIndicesForQuads":115,"pixi-gl-core":12}],165:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -34105,7 +35884,7 @@ exports.default = ParticleRenderer;
 
 core.WebGLRenderer.registerPlugin('particle', ParticleRenderer);
 
-},{"../../core":63,"./ParticleBuffer":161,"./ParticleShader":163}],163:[function(require,module,exports){
+},{"../../core":61,"./ParticleBuffer":164,"./ParticleShader":166}],166:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -34148,7 +35927,7 @@ var ParticleShader = function (_Shader) {
 
 exports.default = ParticleShader;
 
-},{"../../core/Shader":43}],164:[function(require,module,exports){
+},{"../../core/Shader":41}],167:[function(require,module,exports){
 "use strict";
 
 // References:
@@ -34166,7 +35945,7 @@ if (!Math.sign) {
     };
 }
 
-},{}],165:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 'use strict';
 
 var _objectAssign = require('object-assign');
@@ -34181,7 +35960,7 @@ if (!Object.assign) {
 // https://github.com/sindresorhus/object-assign
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
 
-},{"object-assign":7}],166:[function(require,module,exports){
+},{"object-assign":5}],169:[function(require,module,exports){
 'use strict';
 
 require('./Object.assign');
@@ -34206,7 +35985,7 @@ if (!window.Uint16Array) {
     window.Uint16Array = Array;
 }
 
-},{"./Math.sign":164,"./Object.assign":165,"./requestAnimationFrame":167}],167:[function(require,module,exports){
+},{"./Math.sign":167,"./Object.assign":168,"./requestAnimationFrame":170}],170:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -34232,15 +36011,17 @@ if (!(Date.now && Date.prototype.getTime)) {
 
 // performance.now
 if (!(global.performance && global.performance.now)) {
-    var startTime = Date.now();
+    (function () {
+        var startTime = Date.now();
 
-    if (!global.performance) {
-        global.performance = {};
-    }
+        if (!global.performance) {
+            global.performance = {};
+        }
 
-    global.performance.now = function () {
-        return Date.now() - startTime;
-    };
+        global.performance.now = function () {
+            return Date.now() - startTime;
+        };
+    })();
 }
 
 // requestAnimationFrame
@@ -34284,7 +36065,7 @@ if (!global.cancelAnimationFrame) {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],168:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -34669,7 +36450,7 @@ function findTextStyle(item, queue) {
     return false;
 }
 
-},{"../core":63,"./limiters/CountLimiter":171}],169:[function(require,module,exports){
+},{"../core":61,"./limiters/CountLimiter":174}],172:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -34815,7 +36596,7 @@ function findBaseTextures(item, queue) {
 
 core.CanvasRenderer.registerPlugin('prepare', CanvasPrepare);
 
-},{"../../core":63,"../BasePrepare":168}],170:[function(require,module,exports){
+},{"../../core":61,"../BasePrepare":171}],173:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -34867,7 +36648,7 @@ Object.defineProperty(exports, 'TimeLimiter', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-},{"./BasePrepare":168,"./canvas/CanvasPrepare":169,"./limiters/CountLimiter":171,"./limiters/TimeLimiter":172,"./webgl/WebGLPrepare":173}],171:[function(require,module,exports){
+},{"./BasePrepare":171,"./canvas/CanvasPrepare":172,"./limiters/CountLimiter":174,"./limiters/TimeLimiter":175,"./webgl/WebGLPrepare":176}],174:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34925,7 +36706,7 @@ var CountLimiter = function () {
 
 exports.default = CountLimiter;
 
-},{}],172:[function(require,module,exports){
+},{}],175:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34983,7 +36764,7 @@ var TimeLimiter = function () {
 
 exports.default = TimeLimiter;
 
-},{}],173:[function(require,module,exports){
+},{}],176:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -35130,7 +36911,7 @@ function findGraphics(item, queue) {
 
 core.WebGLRenderer.registerPlugin('prepare', WebGLPrepare);
 
-},{"../../core":63,"../BasePrepare":168}],174:[function(require,module,exports){
+},{"../../core":61,"../BasePrepare":171}],177:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -35236,7 +37017,7 @@ global.PIXI = exports; // eslint-disable-line
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./accessibility":42,"./core":63,"./deprecation":122,"./extract":124,"./extras":133,"./filters":144,"./interaction":2,"./loaders":148,"./mesh":157,"./particles":160,"./polyfill":166,"./prepare":170}]},{},[174])(174)
+},{"./accessibility":40,"./core":61,"./deprecation":120,"./extract":122,"./extras":131,"./filters":142,"./interaction":148,"./loaders":151,"./mesh":160,"./particles":163,"./polyfill":169,"./prepare":173}]},{},[177])(177)
 });
 
 
